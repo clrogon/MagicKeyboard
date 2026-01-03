@@ -1,7 +1,8 @@
 # Teclado Mágico | Magic Keyboard
 
 > **EN**: A gamified, AI-powered typing trainer designed for children learning European Portuguese.
-> **PT**: Um treinador de digitação gamificado e impulsionado por IA, desenhado para crianças a aprender Português Europeu.
+>
+>  **PT**: Um treinador de digitação gamificado e impulsionado por IA, desenhado para crianças a aprender Português Europeu.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
