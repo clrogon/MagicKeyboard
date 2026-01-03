@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { GameState, AppScreen, Level, SessionResult, GameMode, ErrorStats } from './types';
-import { LEVELS, SUCCESS_MESSAGES } from './constants';
+import { LEVELS, SUCCESS_MESSAGES, ACHIEVEMENTS } from './constants';
 import LevelSelector from './components/LevelSelector';
 import TypingArea from './components/TypingArea';
 import StatsBoard from './components/StatsBoard';
@@ -16,14 +16,18 @@ const App: React.FC = () => {
     // Load from localStorage if available
     const saved = localStorage.getItem('keyboardHeroState');
     if (saved) {
-      return JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      // Ensure new fields exist if loading from old state
+      if (!parsed.achievements) parsed.achievements = [];
+      return parsed;
     }
     return {
       currentLevelId: 1,
       unlockedLevels: [1],
       history: [],
       isPlaying: false,
-      errorStats: {}
+      errorStats: {},
+      achievements: []
     };
   });
 
@@ -32,6 +36,7 @@ const App: React.FC = () => {
   const [activeMode, setActiveMode] = useState<GameMode>(GameMode.Campaign);
   const [timeLimit, setTimeLimit] = useState<number | undefined>(undefined);
   const [lastResult, setLastResult] = useState<SessionResult | null>(null);
+  const [justUnlockedAchievement, setJustUnlockedAchievement] = useState<string | null>(null);
 
   // Persist state
   useEffect(() => {
@@ -94,9 +99,10 @@ const App: React.FC = () => {
       setCurrentScreen(AppScreen.Exercise);
   }
 
-  const handleLevelComplete = (result: SessionResult, sessionErrors: ErrorStats) => {
+  const handleLevelComplete = (result: SessionResult, sessionErrors: ErrorStats, sessionCorrects: ErrorStats) => {
     const isWin = result.stars > 1; 
-    
+    setJustUnlockedAchievement(null);
+
     // Confetti
     if (isWin || result.mode === GameMode.Timed) {
        confetti({
@@ -113,6 +119,7 @@ const App: React.FC = () => {
     setGameState(prev => {
         const newHistory = [...prev.history, result];
         let newUnlocked = [...prev.unlockedLevels];
+        let newAchievements = [...prev.achievements];
         
         // Unlock logic only for Campaign
         if (result.mode === GameMode.Campaign && isWin && result.levelId === Math.max(...prev.unlockedLevels)) {
@@ -122,20 +129,43 @@ const App: React.FC = () => {
             }
         }
 
-        // Merge Errors
+        // --- ERROR DECAY SYSTEM ---
+        // 1. Merge new errors
         const newErrorStats = { ...prev.errorStats };
         Object.entries(sessionErrors).forEach(([char, count]) => {
             newErrorStats[char] = (newErrorStats[char] || 0) + count;
         });
+        
+        // 2. Apply decay based on correct presses
+        // Rule: Every 3 correct presses reduce 1 historical error
+        const DECAY_RATE = 0.33; 
+        Object.entries(sessionCorrects).forEach(([char, count]) => {
+            if (newErrorStats[char] && newErrorStats[char] > 0) {
+                 const reduction = Math.floor(count * DECAY_RATE);
+                 newErrorStats[char] = Math.max(0, newErrorStats[char] - reduction);
+            }
+        });
 
-        // Decay errors slightly if successful? 
-        // For now, let's just accumulate to identify hotspots.
+        // --- ACHIEVEMENT SYSTEM ---
+        const checkForAchievement = (id: string, condition: boolean) => {
+            if (condition && !newAchievements.includes(id)) {
+                newAchievements.push(id);
+                setJustUnlockedAchievement(id);
+            }
+        };
+
+        checkForAchievement('first_3_stars', result.stars === 3);
+        checkForAchievement('speed_demon', result.wpm >= 50);
+        checkForAchievement('accuracy_master', result.accuracy === 100 && result.levelId > 0);
+        checkForAchievement('session_streak', newHistory.length >= 10);
+        checkForAchievement('home_row_master', result.levelId === 3 && result.stars === 3);
 
         return {
             ...prev,
             history: newHistory,
             unlockedLevels: newUnlocked,
-            errorStats: newErrorStats
+            errorStats: newErrorStats,
+            achievements: newAchievements
         };
     });
 
@@ -156,10 +186,21 @@ const App: React.FC = () => {
                 : "Vamos tentar outra vez!";
     }
 
+    const unlockedBadge = justUnlockedAchievement 
+        ? ACHIEVEMENTS.find(a => a.id === justUnlockedAchievement) 
+        : null;
+
     return (
         <div className="min-h-screen bg-indigo-600 flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl p-8 max-w-md w-full text-center shadow-2xl animate-bounce-in">
-                <h2 className="text-3xl font-bold text-gray-800 mb-2 fun-font">{message}</h2>
+            <div className="bg-white rounded-3xl p-8 max-w-md w-full text-center shadow-2xl animate-bounce-in relative overflow-hidden">
+                
+                {unlockedBadge && (
+                    <div className="absolute top-0 left-0 w-full bg-yellow-400 py-2 text-white font-bold animate-pulse">
+                        🏆 Nova Conquista Desbloqueada!
+                    </div>
+                )}
+
+                <h2 className="text-3xl font-bold text-gray-800 mb-2 fun-font mt-6">{message}</h2>
                 
                 {lastResult.mode !== GameMode.Timed && (
                     <div className="flex justify-center gap-2 my-6">
@@ -173,7 +214,7 @@ const App: React.FC = () => {
                     </div>
                 )}
 
-                <div className="grid grid-cols-2 gap-4 mb-8 mt-4">
+                <div className="grid grid-cols-2 gap-4 mb-4 mt-4">
                     <div className="bg-blue-50 p-4 rounded-xl">
                         <div className="text-sm text-gray-500 font-bold uppercase">Velocidade</div>
                         <div className="text-3xl font-bold text-blue-600">{lastResult.wpm} <span className="text-sm text-gray-400">PPM</span></div>
@@ -183,6 +224,16 @@ const App: React.FC = () => {
                         <div className="text-3xl font-bold text-green-600">{lastResult.accuracy}%</div>
                     </div>
                 </div>
+
+                {unlockedBadge && (
+                     <div className="bg-gradient-to-r from-yellow-100 to-orange-100 p-4 rounded-xl mb-8 flex items-center gap-4 border-2 border-yellow-300">
+                        <div className="text-4xl">🏅</div>
+                        <div className="text-left">
+                            <div className="font-bold text-yellow-800">{unlockedBadge.title}</div>
+                            <div className="text-xs text-yellow-600">{unlockedBadge.description}</div>
+                        </div>
+                     </div>
+                )}
 
                 <div className="flex flex-col gap-3">
                     <button 
@@ -241,6 +292,7 @@ const App: React.FC = () => {
             history={gameState.history} 
             unlockedLevels={gameState.unlockedLevels}
             levels={LEVELS}
+            achievements={gameState.achievements}
             onBack={() => setCurrentScreen(AppScreen.Dashboard)}
           />
       )}

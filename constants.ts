@@ -1,4 +1,4 @@
-import { Finger, KeyConfig, Level } from './types';
+import { Finger, KeyConfig, Level, Achievement } from './types';
 
 // Standard Portuguese Layout mapping for visual keyboard
 export const KEYBOARD_LAYOUT: KeyConfig[][] = [
@@ -45,6 +45,44 @@ export const KEYBOARD_LAYOUT: KeyConfig[][] = [
   ]
 ];
 
+export const ACHIEVEMENTS: Achievement[] = [
+  {
+    id: 'first_3_stars',
+    title: 'Estrela Nascente',
+    description: 'Conquistaste 3 estrelas pela primeira vez!',
+    icon: 'Star',
+    color: 'bg-yellow-400'
+  },
+  {
+    id: 'speed_demon',
+    title: 'Relâmpago',
+    description: 'Atingiste 50 Palavras por Minuto!',
+    icon: 'Zap',
+    color: 'bg-blue-500'
+  },
+  {
+    id: 'accuracy_master',
+    title: 'Perfeccionista',
+    description: 'Completaste um nível com 100% de precisão.',
+    icon: 'Target',
+    color: 'bg-emerald-500'
+  },
+  {
+    id: 'session_streak',
+    title: 'Dedicação',
+    description: 'Completaste 10 sessões de treino.',
+    icon: 'Calendar',
+    color: 'bg-purple-500'
+  },
+  {
+    id: 'home_row_master',
+    title: 'Mestre da Base',
+    description: 'Completaste o Nível 3 (Home Row Completa) com 3 estrelas.',
+    icon: 'Crown',
+    color: 'bg-pink-500'
+  }
+];
+
 // Progressive Levels designed for Kids learning PT (European/Angolan style)
 export const LEVELS: Level[] = [
   {
@@ -54,10 +92,16 @@ export const LEVELS: Level[] = [
     newKeys: ['f', 'j', ' '],
     allKeys: ['f', 'j', ' '],
     textSamples: [
-      "fff jjj fjf jfj",
-      "fala ja",
-      "faj jaf",
-      "jj ff jf"
+      "fff jjj", "jfjf", "fjf jfj", "jjj fff", "jf jf", 
+      "fj fj", "jj ff", "f f j j", "j j f f", "fff jjj fff",
+      "jjj fff jjj", "fjfjf", "jfjfj", "jjff", "ffjj",
+      "j f j f", "f j f j", "fjj", "jff", "jfj",
+      "fjf jjj", "jf f jf", "j f j", "f j f", "jf jf jf",
+      "ff jj ff", "jj ff jj", "fjfjf jfjfj", "j f", "f j",
+      "fffjjj", "jjjfff", "f j f j f", "j f j f j", "ff j ff",
+      "jj f jj", "fjfjfj", "jfjfjf", "fff j fff", "jjj f jjj",
+      "fj ff jj", "jf jj ff", "f f f", "j j j", "fj",
+      "jf", "ff", "jj", "fjf", "jfj", "f f j j f f j j"
     ],
     difficulty: 'easy',
     minWpm: 5,
@@ -70,10 +114,17 @@ export const LEVELS: Level[] = [
     newKeys: ['d', 'k'],
     allKeys: ['f', 'j', ' ', 'd', 'k'],
     textSamples: [
-      "dad kad fada",
-      "kapa daka",
-      "fada dada",
-      "kaka da jaf"
+      "df jk", "fd kj", "dk dk", "kd kd", "dd kk", 
+      "kk dd", "dfjk", "kjdf", "fjdk", "dkfj",
+      "k d k d", "d k d k", "fff ddd", "jjj kkk", "ddff",
+      "kkjj", "dkfj", "fkjd", "kdjf", "jd kf",
+      "dk dk dk", "kd kd kd", "df df", "jk jk", "kjd",
+      "dfk", "kfd", "jkd", "dkf", "fjk",
+      "kdf", "jd k", "kf d", "dd kk dd", "kk dd kk",
+      "dfjk dfjk", "kjdf kjdf", "d f k j", "k j d f", "ddk",
+      "kkd", "ffd", "jjk", "ddf", "kkj",
+      "k k d d", "d d k k", "fd fd", "jk jk", "kdk",
+      "dkf jkd", "fkj dkf", "kdj fkd", "jkd fjk", "dk dk"
     ],
     difficulty: 'easy',
     minWpm: 8,
@@ -86,10 +137,20 @@ export const LEVELS: Level[] = [
     newKeys: ['s', 'l', 'a', 'ç'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç'],
     textSamples: [
-      "sal alas laça",
-      "falsa sala",
-      "laço dado",
-      "asada lasca"
+      "ala", "asa", "fala", "sala", "fada", "dada",
+      "lala", "assa", "salsa", "falsa", "laça", "faça",
+      "saca", "jaca", "faca", "caca", "laca", "laska",
+      "alas", "asas", "falas", "salas", "fadas", "dadas",
+      "lalas", "assas", "salsas", "falsas", "laças", "faças",
+      "salada", "calada", "sacada", "ada", "adas", "alfa",
+      "asdf", "jklç", "çlkj", "fdsa", "asdfg", "hjklç",
+      "sad", "lad", "kad", "fad", "jad", "dalas",
+      "lasca", "casca", "sasca", "falda", "safas",
+      "safada", "calas", "falas", "faia", "saia",
+      "gaia", "gaja", "laja", "saja", "kaja",
+      "fafa", "jaja", "kaka", "sasa", "lala", "dada",
+      "a fada fala", "a sala dada", "lala assa", "a salsa falsa",
+      "a s d f j k l ç", "fala a fada", "a sala e falsa"
     ],
     difficulty: 'medium',
     minWpm: 10,
@@ -102,10 +163,20 @@ export const LEVELS: Level[] = [
     newKeys: ['e', 'i'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i'],
     textSamples: [
-      "ele ela ilha",
-      "feia ideia",
-      "fale ali",
-      "sede lide"
+      "ele", "ela", "eles", "elas", "esse", "essa",
+      "isso", "ilha", "ideia", "feia", "seia", "leia",
+      "fale", "fali", "sale", "sali", "cale", "cali",
+      "dela", "dele", "seda", "sede", "ceda", "cedi",
+      "fiel", "fies", "lies", "dias", "fias", "lias",
+      "ideias", "ilhas", "feias", "seias", "leias", "fales",
+      "falis", "sales", "salis", "cales", "calis", "delas",
+      "deles", "sedas", "sedes", "cedas", "cedis", "fiei",
+      "liei", "siei", "fale", "fali", "file", "fili",
+      "se", "si", "li", "da", "de", "di", "fe", "fi",
+      "je", "ji", "ke", "ki", "le", "fia", "sia",
+      "leal", "laje", "aida", "lidia", "seis", "lei",
+      "ela le", "ele ri", "a fada le", "a sala e feia",
+      "ideia fiel", "dia de lida", "ela e leal"
     ],
     difficulty: 'medium',
     minWpm: 12,
@@ -118,10 +189,21 @@ export const LEVELS: Level[] = [
     newKeys: ['r', 'u'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'r', 'u'],
     textSamples: [
-      "rua riu feriu",
-      "fura rara",
-      "usar rir",
-      "aula real"
+      "rua", "riu", "rio", "reu", "rasa", "raso",
+      "rara", "raro", "rula", "rulo", "rura", "ruro",
+      "ura", "ure", "uri", "uro", "usa", "use",
+      "usi", "uso", "fura", "fure", "furi", "furo",
+      "sura", "sure", "suri", "suro", "dura", "dure",
+      "duri", "duro", "cura", "cure", "curi", "curo",
+      "lura", "lure", "luri", "luro", "jura", "jure",
+      "juri", "juro", "ruras", "ruros", "uras", "ures",
+      "uris", "uros", "usas", "uses", "usis", "usos",
+      "furas", "fures", "furis", "furos", "suras", "sures",
+      "ar", "lar", "sal", "ser", "ler", "dar", "ir",
+      "rir", "sair", "cair", "falar", "andar", "saltar",
+      "saude", "saudade", "idade", "real", "rede", "rei",
+      "lei", "sul", "lua", "a rua e dura", "a lua riu",
+      "fura a rede", "a saude e real", "rir e falar"
     ],
     difficulty: 'hard',
     minWpm: 15,
@@ -134,10 +216,19 @@ export const LEVELS: Level[] = [
     newKeys: ['ShiftLeft', 'ShiftRight'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'r', 'u', 'ShiftLeft', 'ShiftRight'],
     textSamples: [
-      "Ana e Ela",
-      "Rui e Sara",
-      "Fada Fria",
-      "Dia de Sol"
+      "Ana", "Rui", "Luis", "Sara", "Duarte", "Carla",
+      "Filipe", "Isa", "Elias", "Raul", "Lara", "Katia",
+      "Sura", "Dalia", "Ariel", "Iris", "Luisa", "Rita",
+      "Kika", "Ze", "Fe", "Li", "Du", "Ju",
+      "Ana e Rui", "Sara e Luis", "Carla e Raul", "Isa e Elias", "Lara e Filipe",
+      "Duarte e Katia", "Rita e Ariel", "Luisa e Sura", "Kika e Dalia", "Ze e Fe",
+      "Li e Du", "Ju e Iris", "Rui e Ana", "Luis e Sara", "Raul e Carla",
+      "Elias e Isa", "Filipe e Lara", "Katia e Duarte", "Ariel e Rita", "Sura e Luisa",
+      "Dalia e Kika", "Fe e Ze", "Du e Li", "Iris e Ju", "Eu sou",
+      "Tu es", "Ele e", "Ela e", "Nos somos", "Eles sao",
+      "A Ana ri", "O Rui le", "A Sara fala", "A Lara sai",
+      "Dalia e Lidia", "Kika e Kaka", "Lulu e Lili", "Rute e Rita",
+      "Ariel e Raul", "Sara e Luis e Ana"
     ],
     difficulty: 'hard',
     minWpm: 12,
@@ -150,10 +241,19 @@ export const LEVELS: Level[] = [
     newKeys: ['.', ',', ';'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'r', 'u', 'ShiftLeft', 'ShiftRight', '.', ',', ';'],
     textSamples: [
-      "fale, ria.",
-      "ele riu; ela riu.",
-      "dia, sol, sal.",
-      "fui. sai."
+      "fale, ria.", "ele riu; ela riu.", "dia, sol, sal.", "fui. sai.", "sim, nao.",
+      "ola; adeus.", "um, dois.", "tres; quatro.", "luz, cor.", "ceu. mar.",
+      "lua; sol.", "pai, mae.", "tio; tia.", "avo. avo.", "irma, irmao.",
+      "casa; rua.", "porta, janela.", "mesa; cadeira.", "copo. prato.", "garfo, faca.",
+      "colher; taca.", "agua. sumo.", "leite, pao.", "queijo; fiambre.", "ovo. fruta.",
+      "maca, pera.", "uva; banana.", "doce. salgado.", "quente, frio.", "alto; baixo.",
+      "gordo. magro.", "bom, mau.", "feio; bonito.", "rico. pobre.", "novo, velho.",
+      "grande; pequeno.", "largo. estreito.", "cheio, vazio.", "limpo; sujo.", "seco. molhado.",
+      "duro, mole.", "aspero; liso.", "claro. escuro.", "dia, noite.", "cedo; tarde.",
+      "hoje. amanha.", "ontem, agora.", "sempre; nunca.", "talvez. quiça.", "sim, claro.",
+      "Eu sou a Ana.", "Tu es o Rui.", "Ela ri; ele fala.", "A rua e larga.",
+      "O dia e lindo.", "A lua e clara.", "Sair, rir, ler.",
+      "A Ana ri; o Rui fala.", "Lara, sai da rua.", "Eu li, tu leste."
     ],
     difficulty: 'hard',
     minWpm: 15,

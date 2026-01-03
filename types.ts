@@ -40,12 +40,21 @@ export interface ErrorStats {
   [targetChar: string]: number; // Count of misses for this character
 }
 
+export interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  icon: string; // Lucide icon name
+  color: string;
+}
+
 export interface GameState {
   currentLevelId: number;
   unlockedLevels: number[];
   history: SessionResult[];
   isPlaying: boolean;
   errorStats: ErrorStats;
+  achievements: string[]; // IDs of unlocked achievements
 }
 
 export interface SessionResult {
@@ -56,6 +65,7 @@ export interface SessionResult {
   date: string;
   stars: 1 | 2 | 3;
   duration?: number;
+  correctStats?: ErrorStats; // New: track correct presses for decay logic
 }
 
 export enum AppScreen {

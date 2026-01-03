@@ -10,7 +10,7 @@ interface TypingAreaProps {
   mode: GameMode;
   errorStats?: ErrorStats;
   timeLimit?: number; // seconds
-  onComplete: (result: SessionResult, errors: ErrorStats) => void;
+  onComplete: (result: SessionResult, errors: ErrorStats, corrects: ErrorStats) => void;
   onExit: () => void;
 }
 
@@ -20,6 +20,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
   const [startTime, setStartTime] = useState<number | null>(null);
   const [sessionErrors, setSessionErrors] = useState(0);
   const [sessionErrorMap, setSessionErrorMap] = useState<ErrorStats>({});
+  const [sessionCorrectMap, setSessionCorrectMap] = useState<ErrorStats>({}); // Track correct keystrokes
   const [typedChars, setTypedChars] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState<number | null>(timeLimit || null);
@@ -35,6 +36,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
     setCurrentIndex(0);
     setSessionErrors(0);
     setSessionErrorMap({});
+    setSessionCorrectMap({});
     setTypedChars("");
     setStartTime(null);
     setLoading(false);
@@ -100,7 +102,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
     const char = e.key;
     const targetChar = text[currentIndex];
 
-    if (char.length > 1 && char !== 'Backspace' && !['Shift'].includes(char)) return; // Allow Shift key pass through? Actually e.key for shift is "Shift", we ignore it as input.
+    if (char.length > 1 && char !== 'Backspace' && !['Shift'].includes(char)) return; 
     if (char === 'Shift' || char === 'Alt' || char === 'Control' || char === 'CapsLock') return;
 
     if (!startTime) {
@@ -114,14 +116,19 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
     if (char === targetChar) { // Case sensitive match
       // Correct
       setTypedChars(prev => prev + char);
+      
+      // Track correct stats for decay
+      setSessionCorrectMap(prev => ({
+          ...prev,
+          [targetChar]: (prev[targetChar] || 0) + 1
+      }));
+
       const nextIndex = currentIndex + 1;
       setCurrentIndex(nextIndex);
 
       if (nextIndex >= text.length) {
         if (mode === GameMode.Timed) {
-            // In timed mode, if we finish text, generate more? Or just loop?
-            // Simple approach: Loop text for MVP smoothness
-            // Better: Append duplicate text
+            // In timed mode, append text to loop
             setText(prev => prev + " " + prev);
         } else {
             finishLevel();
@@ -165,17 +172,16 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
       accuracy: Math.max(0, accuracy),
       date: new Date().toISOString(),
       stars,
-      duration: durationMin * 60
-    }, sessionErrorMap);
+      duration: durationMin * 60,
+      correctStats: sessionCorrectMap
+    }, sessionErrorMap, sessionCorrectMap);
   };
 
   const renderText = () => {
-    // Sliding window for long text in timed mode?
-    // For now, simple wrap with windowing if index gets huge
+    // Sliding window logic
     const visibleStart = Math.max(0, currentIndex - 20);
     const visibleEnd = visibleStart + 40;
     const displayText = text.slice(visibleStart, visibleEnd);
-    const offset = currentIndex - visibleStart;
 
     return (
       <div className="flex flex-wrap justify-center gap-1 text-4xl md:text-5xl font-bold mb-8 font-mono leading-relaxed min-h-[100px] content-center">
