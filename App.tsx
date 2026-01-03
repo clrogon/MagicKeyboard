@@ -5,6 +5,7 @@ import { LEVELS, SUCCESS_MESSAGES, ACHIEVEMENTS } from './constants';
 import LevelSelector from './components/LevelSelector';
 import TypingArea from './components/TypingArea';
 import StatsBoard from './components/StatsBoard';
+import { ArrowRight, RotateCcw, AlertTriangle, Map } from 'lucide-react';
 
 // Utility for simple sound
 const playSound = (type: 'win' | 'click') => {
@@ -190,6 +191,17 @@ const App: React.FC = () => {
         ? ACHIEVEMENTS.find(a => a.id === justUnlockedAchievement) 
         : null;
 
+    // Adaptive Logic
+    const isCampaign = lastResult.mode === GameMode.Campaign;
+    const nextLevelId = lastResult.levelId + 1;
+    const hasNextLevel = LEVELS.some(l => l.id === nextLevelId);
+    
+    // Performance Tiers
+    // Excellent: >90% Acc AND 3 Stars (implies WPM met)
+    const isExcellent = lastResult.accuracy >= 90 && lastResult.stars === 3;
+    // Struggle: <85% Acc
+    const isStruggle = lastResult.accuracy < 85;
+
     return (
         <div className="min-h-screen bg-indigo-600 flex items-center justify-center p-4">
             <div className="bg-white rounded-3xl p-8 max-w-md w-full text-center shadow-2xl animate-bounce-in relative overflow-hidden">
@@ -225,6 +237,23 @@ const App: React.FC = () => {
                     </div>
                 </div>
 
+                {/* Adaptive Recommendation */}
+                {lastResult.mode === GameMode.Campaign && (
+                    <div className={`mb-6 p-4 rounded-xl border-2 text-sm text-left shadow-sm ${
+                        isExcellent ? 'bg-green-50 border-green-200 text-green-900' :
+                        isStruggle ? 'bg-red-50 border-red-200 text-red-900' :
+                        'bg-blue-50 border-blue-200 text-blue-900'
+                    }`}>
+                        <div className="font-bold mb-1 flex items-center gap-2">
+                            {isExcellent ? '🚀 Excelente!' : isStruggle ? '🛡️ Dica do Treinador' : '💡 Continua assim!'}
+                        </div>
+                        {isExcellent && hasNextLevel && "Estás a dominar! A tua precisão é fantástica. Segue para o próximo nível."}
+                        {isExcellent && !hasNextLevel && "Incrível! Completaste todos os níveis disponíveis. Tenta bater o teu recorde no Contra-Relógio."}
+                        {isStruggle && "Parece que algumas teclas estão difíceis. Que tal fazeres um Treino de Erros ou repetires este nível mais devagar?"}
+                        {!isExcellent && !isStruggle && "Bom trabalho. Tenta aumentar um pouco a precisão antes de avançar para o próximo desafio."}
+                    </div>
+                )}
+
                 {unlockedBadge && (
                      <div className="bg-gradient-to-r from-yellow-100 to-orange-100 p-4 rounded-xl mb-8 flex items-center gap-4 border-2 border-yellow-300">
                         <div className="text-4xl">🏅</div>
@@ -236,20 +265,49 @@ const App: React.FC = () => {
                 )}
 
                 <div className="flex flex-col gap-3">
+                    
+                    {/* Adaptive Actions */}
+                    {isExcellent && hasNextLevel && lastResult.mode === GameMode.Campaign && (
+                         <button 
+                            onClick={() => {
+                                const nextLevel = LEVELS.find(l => l.id === nextLevelId);
+                                if (nextLevel) handleStartLevel(nextLevel);
+                            }}
+                            className="w-full bg-green-500 text-white font-bold py-3 rounded-xl shadow-lg hover:bg-green-600 transition flex items-center justify-center gap-2 animate-pulse"
+                        >
+                            Próximo Nível <ArrowRight size={20} />
+                        </button>
+                    )}
+
+                    {isStruggle && lastResult.mode === GameMode.Campaign && (
+                        <button 
+                            onClick={handleStartErrorMode}
+                            className="w-full bg-red-100 text-red-600 font-bold py-3 rounded-xl border-2 border-red-200 hover:bg-red-200 transition flex items-center justify-center gap-2"
+                        >
+                            <AlertTriangle size={20} />
+                            Fazer Treino de Erros
+                        </button>
+                    )}
+
                     <button 
                         onClick={() => {
                             if (activeMode === GameMode.Timed && timeLimit) handleStartTimedMode(timeLimit);
                             else if (activeMode === GameMode.ErrorDrill) handleStartErrorMode();
                             else handleStartLevel(activeLevel);
                         }}
-                        className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl shadow-lg hover:bg-indigo-700 transition"
+                        className={`w-full font-bold py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2 ${
+                            (isExcellent && hasNextLevel) ? 'bg-white text-gray-600 border-2 border-gray-100 hover:bg-gray-50' : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                        }`}
                     >
-                        Tentar Novamente
+                        <RotateCcw size={20} />
+                        {isExcellent && hasNextLevel ? 'Repetir este Nível' : 'Tentar Novamente'}
                     </button>
+                    
                     <button 
                          onClick={() => setCurrentScreen(AppScreen.Dashboard)}
-                         className="w-full bg-white text-gray-500 font-bold py-3 rounded-xl border-2 border-gray-100 hover:bg-gray-50 transition"
+                         className="w-full bg-transparent text-gray-500 font-bold py-3 rounded-xl hover:text-gray-700 transition flex items-center justify-center gap-2"
                     >
+                        <Map size={20} />
                         Voltar ao Mapa
                     </button>
                 </div>
