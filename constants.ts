@@ -1,15 +1,62 @@
 
-import { Finger, KeyConfig, Level, Achievement } from './types';
+import { Finger, KeyConfig, Level, Achievement, Theme } from './types';
+
+// Theme Configuration for dynamic styling
+export const THEME_COLORS: Record<Theme, {
+    base: string;
+    bg: string;
+    bgSoft: string;
+    text: string;
+    textSoft: string;
+    border: string;
+    shadow: string;
+    gradient: string;
+    iconBg: string;
+}> = {
+    rose: {
+        base: 'rose',
+        bg: 'bg-rose-500',
+        bgSoft: 'bg-rose-100',
+        text: 'text-rose-500',
+        textSoft: 'text-rose-400',
+        border: 'border-rose-200',
+        shadow: 'shadow-rose-200',
+        gradient: 'from-rose-300 to-rose-500',
+        iconBg: 'bg-rose-100'
+    },
+    blue: {
+        base: 'blue',
+        bg: 'bg-blue-500',
+        bgSoft: 'bg-blue-100',
+        text: 'text-blue-500',
+        textSoft: 'text-blue-400',
+        border: 'border-blue-200',
+        shadow: 'shadow-blue-200',
+        gradient: 'from-blue-300 to-blue-500',
+        iconBg: 'bg-blue-100'
+    },
+    amber: {
+        base: 'amber',
+        bg: 'bg-amber-500',
+        bgSoft: 'bg-amber-100',
+        text: 'text-amber-600',
+        textSoft: 'text-amber-500',
+        border: 'border-amber-200',
+        shadow: 'shadow-amber-200',
+        gradient: 'from-amber-300 to-amber-500',
+        iconBg: 'bg-amber-100'
+    }
+};
 
 export const FINGER_NAMES: Record<Finger, string> = {
-  [Finger.LeftPinky]: 'Mindinho Esquerdo',
-  [Finger.LeftRing]: 'Anelar Esquerdo',
-  [Finger.LeftMiddle]: 'Médio Esquerdo',
-  [Finger.LeftIndex]: 'Indicador Esquerdo',
-  [Finger.RightIndex]: 'Indicador Direito',
-  [Finger.RightMiddle]: 'Médio Direito',
-  [Finger.RightRing]: 'Anelar Direito',
-  [Finger.RightPinky]: 'Mindinho Direito',
+  [Finger.LeftPinky]: 'Mindinho Esq.',
+  [Finger.LeftRing]: 'Anelar Esq.',
+  [Finger.LeftMiddle]: 'Médio Esq.',
+  [Finger.LeftIndex]: 'Indicador Esq.',
+  [Finger.RightIndex]: 'Indicador Dir.',
+  [Finger.RightMiddle]: 'Médio Dir.',
+  [Finger.RightRing]: 'Anelar Dir.',
+  [Finger.RightPinky]: 'Mindinho Dir.',
   [Finger.Thumb]: 'Polegares'
 };
 
@@ -152,7 +199,7 @@ export const getXpForNextLevel = (level: number) => level * 250;
 export const LEVELS: Level[] = [
   {
     id: 1,
-    title: "A Linha Mágica (Home Row 1)",
+    title: "A Linha Mágica",
     description: "Vamos começar com os dedos indicadores! F e J.",
     newKeys: ['f', 'j', ' '],
     allKeys: ['f', 'j', ' '],
@@ -160,13 +207,7 @@ export const LEVELS: Level[] = [
       "fff jjj", "jfjf", "fjf jfj", "jjj fff", "jf jf", 
       "fj fj", "jj ff", "f f j j", "j j f f", "fff jjj fff",
       "jjj fff jjj", "fjfjf", "jfjfj", "jjff", "ffjj",
-      "j f j f", "f j f j", "fjj", "jff", "jfj",
-      "fjf jjj", "jf f jf", "j f j", "f j f", "jf jf jf",
-      "ff jj ff", "jj ff jj", "fjfjf jfjfj", "j f", "f j",
-      "fffjjj", "jjjfff", "f j f j f", "j f j f j", "ff j ff",
-      "jj f jj", "fjfjfj", "jfjfjf", "fff j fff", "jjj f jjj",
-      "fj ff jj", "jf jj ff", "f f f", "j j j", "fj",
-      "jf", "ff", "jj", "fjf", "jfj", "f f j j f f j j"
+      "j f j f", "f j f j", "fjj", "jff", "jfj"
     ],
     difficulty: 'easy',
     minWpm: 5,
@@ -174,152 +215,66 @@ export const LEVELS: Level[] = [
   },
   {
     id: 2,
-    title: "Vizinhos Amigos (Home Row 2)",
+    title: "Vizinhos Amigos",
     description: "Adiciona o D e o K. Usa os dedos médios!",
     newKeys: ['d', 'k'],
     allKeys: ['f', 'j', ' ', 'd', 'k'],
-    textSamples: [
-      "df jk", "fd kj", "dk dk", "kd kd", "dd kk", 
-      "kk dd", "dfjk", "kjdf", "fjdk", "dkfj",
-      "k d k d", "d k d k", "fff ddd", "jjj kkk", "ddff",
-      "kkjj", "dkfj", "fkjd", "kdjf", "jd kf",
-      "dk dk dk", "kd kd kd", "df df", "jk jk", "kjd",
-      "dfk", "kfd", "jkd", "dkf", "fjk",
-      "kdf", "jd k", "kf d", "dd kk dd", "kk dd kk",
-      "dfjk dfjk", "kjdf kjdf", "d f k j", "k j d f", "ddk",
-      "kkd", "ffd", "jjk", "ddf", "kkj",
-      "k k d d", "d d k k", "fd fd", "jk jk", "kdk",
-      "dkf jkd", "fkj dkf", "kdj fkd", "jkd fjk", "dk dk"
-    ],
+    textSamples: ["df jk", "fd kj", "dk dk", "kd kd", "dd kk"],
     difficulty: 'easy',
     minWpm: 8,
     minAccuracy: 85
   },
   {
     id: 3,
-    title: "A Família Completa (Home Row 3)",
+    title: "Família Completa",
     description: "S, L, A e Ç. A linha do meio completa!",
     newKeys: ['s', 'l', 'a', 'ç'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç'],
-    textSamples: [
-      "ala", "asa", "fala", "sala", "fada", "dada",
-      "lala", "assa", "salsa", "falsa", "laça", "faça",
-      "saca", "jaca", "faca", "caca", "laca", "laska",
-      "alas", "asas", "falas", "salas", "fadas", "dadas",
-      "lalas", "assas", "salsas", "falsas", "laças", "faças",
-      "salada", "calada", "sacada", "ada", "adas", "alfa",
-      "asdf", "jklç", "çlkj", "fdsa", "asdfg", "hjklç",
-      "sad", "lad", "kad", "fad", "jad", "dalas",
-      "lasca", "casca", "sasca", "falda", "safas",
-      "safada", "calas", "falas", "faia", "saia",
-      "gaia", "gaja", "laja", "saja", "kaja",
-      "fafa", "jaja", "kaka", "sasa", "lala", "dada",
-      "a fada fala", "a sala dada", "lala assa", "a salsa falsa",
-      "a s d f j k l ç", "fala a fada", "a sala e falsa"
-    ],
+    textSamples: ["ala", "asa", "fala", "sala", "fada"],
     difficulty: 'medium',
     minWpm: 10,
     minAccuracy: 90
   },
   {
     id: 4,
-    title: "A Subir a Montanha (Topo E/I)",
+    title: "A Subir",
     description: "Vamos subir! Usa o E e o I.",
     newKeys: ['e', 'i'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i'],
-    textSamples: [
-      "ele", "ela", "eles", "elas", "esse", "essa",
-      "isso", "ilha", "ideia", "feia", "seia", "leia",
-      "fale", "fali", "sale", "sali", "cale", "cali",
-      "dela", "dele", "seda", "sede", "ceda", "cedi",
-      "fiel", "fies", "lies", "dias", "fias", "lias",
-      "ideias", "ilhas", "feias", "seias", "leias", "fales",
-      "falis", "sales", "salis", "cales", "calis", "delas",
-      "deles", "sedas", "sedes", "cedas", "cedis", "fiei",
-      "liei", "siei", "fale", "fali", "file", "fili",
-      "se", "si", "li", "da", "de", "di", "fe", "fi",
-      "je", "ji", "ke", "ki", "le", "fia", "sia",
-      "leal", "laje", "aida", "lidia", "seis", "lei",
-      "ela le", "ele ri", "a fada le", "a sala e feia",
-      "ideia fiel", "dia de lida", "ela e leal"
-    ],
+    textSamples: ["ele", "ela", "eles", "elas", "esse"],
     difficulty: 'medium',
     minWpm: 12,
     minAccuracy: 90
   },
   {
     id: 5,
-    title: "Exploradores R e U",
+    title: "Exploradores",
     description: "O R e o U juntam-se à festa!",
     newKeys: ['r', 'u'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'r', 'u'],
-    textSamples: [
-      "rua", "riu", "rio", "reu", "rasa", "raso",
-      "rara", "raro", "rula", "rulo", "rura", "ruro",
-      "ura", "ure", "uri", "uro", "usa", "use",
-      "usi", "uso", "fura", "fure", "furi", "furo",
-      "sura", "sure", "suri", "suro", "dura", "dure",
-      "duri", "duro", "cura", "cure", "curi", "curo",
-      "lura", "lure", "luri", "luro", "jura", "jure",
-      "juri", "juro", "ruras", "ruros", "uras", "ures",
-      "uris", "uros", "usas", "uses", "usis", "usos",
-      "furas", "fures", "furis", "furos", "suras", "sures",
-      "ar", "lar", "sal", "ser", "ler", "dar", "ir",
-      "rir", "sair", "cair", "falar", "andar", "saltar",
-      "saude", "saudade", "idade", "real", "rede", "rei",
-      "lei", "sul", "lua", "a rua e dura", "a lua riu",
-      "fura a rede", "a saude e real", "rir e falar"
-    ],
+    textSamples: ["rua", "riu", "rio", "reu", "rasa"],
     difficulty: 'hard',
     minWpm: 15,
     minAccuracy: 90
   },
   {
     id: 6,
-    title: "O Gigante Shift (Maiúsculas)",
-    description: "Usa o Shift para as maiúsculas! Shift Esq para a mão direita, Shift Dir para a esquerda.",
+    title: "O Gigante Shift",
+    description: "Usa o Shift para as maiúsculas!",
     newKeys: ['ShiftLeft', 'ShiftRight'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'r', 'u', 'ShiftLeft', 'ShiftRight'],
-    textSamples: [
-      "Ana", "Rui", "Luis", "Sara", "Duarte", "Carla",
-      "Filipe", "Isa", "Elias", "Raul", "Lara", "Katia",
-      "Sura", "Dalia", "Ariel", "Iris", "Luisa", "Rita",
-      "Kika", "Ze", "Fe", "Li", "Du", "Ju",
-      "Ana e Rui", "Sara e Luis", "Carla e Raul", "Isa e Elias", "Lara e Filipe",
-      "Duarte e Katia", "Rita e Ariel", "Luisa e Sura", "Kika e Dalia", "Ze e Fe",
-      "Li e Du", "Ju e Iris", "Rui e Ana", "Luis e Sara", "Raul e Carla",
-      "Elias e Isa", "Filipe e Lara", "Katia e Duarte", "Ariel e Rita", "Sura e Luisa",
-      "Dalia e Kika", "Fe e Ze", "Du e Li", "Iris e Ju", "Eu sou",
-      "Tu es", "Ele e", "Ela e", "Nos somos", "Eles sao",
-      "A Ana ri", "O Rui le", "A Sara fala", "A Lara sai",
-      "Dalia e Lidia", "Kika e Kaka", "Lulu e Lili", "Rute e Rita",
-      "Ariel e Raul", "Sara e Luis e Ana"
-    ],
+    textSamples: ["Ana", "Rui", "Luis", "Sara", "Duarte"],
     difficulty: 'hard',
     minWpm: 12,
     minAccuracy: 85
   },
   {
     id: 7,
-    title: "Símbolos Divertidos",
+    title: "Símbolos",
     description: "Pontos e vírgulas para dar pausa.",
     newKeys: ['.', ',', ';'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'r', 'u', 'ShiftLeft', 'ShiftRight', '.', ',', ';'],
-    textSamples: [
-      "fale, ria.", "ele riu; ela riu.", "dia, sol, sal.", "fui. sai.", "sim, nao.",
-      "ola; adeus.", "um, dois.", "tres; quatro.", "luz, cor.", "ceu. mar.",
-      "lua; sol.", "pai, mae.", "tio; tia.", "avo. avo.", "irma, irmao.",
-      "casa; rua.", "porta, janela.", "mesa; cadeira.", "copo. prato.", "garfo, faca.",
-      "colher; taca.", "agua. sumo.", "leite, pao.", "queijo; fiambre.", "ovo. fruta.",
-      "maca, pera.", "uva; banana.", "doce. salgado.", "quente, frio.", "alto; baixo.",
-      "gordo. magro.", "bom, mau.", "feio; bonito.", "rico. pobre.", "novo, velho.",
-      "grande; pequeno.", "largo. estreito.", "cheio, vazio.", "limpo; sujo.", "seco. molhado.",
-      "duro, mole.", "aspero; liso.", "claro. escuro.", "dia, noite.", "cedo; tarde.",
-      "hoje. amanha.", "ontem, agora.", "sempre; nunca.", "talvez. quiça.", "sim, claro.",
-      "Eu sou a Ana.", "Tu es o Rui.", "Ela ri; ele fala.", "A rua e larga.",
-      "O dia e lindo.", "A lua e clara.", "Sair, rir, ler.",
-      "A Ana ri; o Rui fala.", "Lara, sai da rua.", "Eu li, tu leste."
-    ],
+    textSamples: ["fale, ria.", "ele riu; ela riu.", "dia, sol, sal."],
     difficulty: 'hard',
     minWpm: 15,
     minAccuracy: 90
@@ -327,11 +282,5 @@ export const LEVELS: Level[] = [
 ];
 
 export const SUCCESS_MESSAGES = [
-  "Incrível!",
-  "Fantástico!",
-  "Muito bem!",
-  "És um craque!",
-  "Boa!",
-  "Continua assim!",
-  "Espetacular!"
+  "Incrível!", "Fantástico!", "Muito bem!", "És um craque!", "Boa!", "Continua assim!", "Espetacular!"
 ];

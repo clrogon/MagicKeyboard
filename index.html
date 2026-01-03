@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-PT">
   <head>
@@ -9,39 +10,36 @@
     <style>
       body {
         font-family: 'Nunito', sans-serif;
-        background-color: #f0f9ff;
-        /* Magical Dust Pattern */
-        background-image:  radial-gradient(#bae6fd 2px, transparent 2px), radial-gradient(#bae6fd 2px, transparent 2px);
-        background-size: 30px 30px;
-        background-position: 0 0, 15px 15px;
+        background-color: #FDF6F0; /* Cream Background */
+        color: #1e293b; /* Slate 800 */
         min-height: 100vh;
+        overflow-x: hidden;
       }
       h1, h2, h3, .fun-font {
         font-family: 'Fredoka', sans-serif;
       }
-      /* Custom scrollbar for game feel */
+      
+      /* Smooth Scrollbar */
       ::-webkit-scrollbar {
-        width: 10px;
+        width: 8px;
       }
       ::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.5); 
+        background: transparent; 
       }
       ::-webkit-scrollbar-thumb {
         background: #cbd5e1; 
-        border-radius: 5px;
-        border: 2px solid transparent;
-        background-clip: content-box;
+        border-radius: 10px;
       }
       ::-webkit-scrollbar-thumb:hover {
         background: #94a3b8; 
       }
       
-      .text-shadow-sm {
-        text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+      .perspective-1000 {
+        perspective: 1000px;
       }
       
-      .text-shadow-lg {
-        text-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+      .transform-style-3d {
+        transform-style: preserve-3d;
       }
     </style>
   <script type="importmap">

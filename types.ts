@@ -11,6 +11,8 @@ export enum Finger {
   Thumb = 'gray-400'
 }
 
+export type Theme = 'rose' | 'blue' | 'amber';
+
 export interface KeyConfig {
   char: string;
   finger: Finger;
@@ -73,6 +75,7 @@ export interface GameState {
   currentTitle: string;
   currentAvatar: string;
   dailyChallenge: DailyChallenge | null;
+  theme: Theme; // New Theme property
 }
 
 export interface SessionResult {
