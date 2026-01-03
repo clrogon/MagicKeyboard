@@ -1,122 +1,110 @@
-# Typing Trainer Development Roadmap 🗺️
+# Teclado Mágico Roadmap | Roteiro
 
-This document outlines the strategic development plan for **Teclado Mágico**. It is grounded in motor learning theory, engagement mechanics, and adaptive error correction.
-
-## Core Principles
-1.  **Motor Learning**: Muscle memory develops through spaced repetition of correct movements.
-2.  **Engagement**: Immediate feedback and visible progress are required to sustain motivation.
-3.  **Diagnosis**: Individual error patterns must be identified and corrected.
+## 📊 Current Version | Versão Actual: 1.0.0 (January 2025)
 
 ---
 
-## ✅ Phase 1: Core Functionality (Current State)
-*Status: Complete*
+## 🎯 Core Objectives | Objectivos Principais
 
-*   [x] **Sequential Lessons**: Progression from home row to full keyboard.
-*   [x] **Visual Keyboard**: Color-coded finger placement guidance.
-*   [x] **Immediate Feedback**: Green/Red visual cues for keystrokes.
-*   [x] **Gamification Layer**: Stars, celebration screens, and basic stats.
-*   [x] **Dual Language**: Support for Portuguese (pt-PT) and English.
-*   [x] **Modes**: Campaign, Timed Challenge, and Error Drill.
+### 01. Pedagogia Motora | Motor Pedagogy
+Desenvolvimento da memória muscular através de repetição espaçada e feedback imediato.
+> Muscle memory development through spaced repetition and immediate feedback.
 
-## 🔜 Phase 2: Data Persistence & Analytics
-*Goal: Enable long-term progress tracking via `window.localStorage`.*
+- [x] Home Row implementation | Implementação da Linha Base
+- [x] Finger color coding | Codificação de cores por dedo
+- [x] Visual Keyboard mapping | Mapeamento visual do teclado
+- [x] Real-time accuracy feedback | Feedback de precisão em tempo real
 
-*   [ ] **User Profile**: Store name, age, and preferred language.
-*   [ ] **Lesson History**: Track completion counts and high scores per lesson.
-*   [ ] **Session Timeline**: Store date, duration, words typed, and WPM for every session.
-*   [ ] **Aggregated Error Tracking**: Track error counts (e.g., 's' vs 'a' confusion) across *all* sessions, not just the current one.
-*   [ ] **Visual Dashboard**:
-    *   Line graph of WPM improvement.
-    *   Keyboard heatmap showing error hotspots.
-    *   Calendar streak view.
+### 02. Conteúdo Dinâmico (IA) | Dynamic Content (AI)
+O sistema nunca repete a mesma lição duas vezes, mantendo o interesse da criança.
+> The system never repeats the same lesson twice, keeping the child's interest.
 
-## 🧠 Phase 3: Adaptive Learning Engine
-*Goal: Transform the tool into an intelligent tutor.*
+- [x] Gemini API Integration | Integração API Gemini
+- [x] Context-aware word generation | Geração de palavras consciente do contexto
+- [x] Error-focused drills | Exercícios focados em erros
+- [x] pt-PT strict grammar rules | Regras gramaticais estritas pt-PT
 
-*   [ ] **Adaptive Sequencing**: Suggest repeating lessons if accuracy < 85%.
-*   [ ] **Micro-Drills**: Inject mini-lessons for specific weak key combinations.
-*   [ ] **Dynamic Difficulty**:
-    *   Increase word length as accuracy improves.
-    *   Increase time pressure in challenges.
-*   [ ] **Stubborn Error Detection**: Identify errors that persist over weeks and modify lesson pace/visual cues to assist.
-*   [ ] **Fatigue Management**: Suggest breaks if performance degrades after 10+ minutes.
+### 03. Gamificação | Gamification
+Tornar a prática divertida para manter a motivação a longo prazo.
+> Make practice fun to maintain long-term motivation.
 
-## 🏆 Phase 4: Enhanced Gamification
-*Goal: Sustain motivation over weeks of practice.*
-
-*   [ ] **Achievement System**:
-    *   **Speed**: "Reached 20 WPM".
-    *   **Accuracy**: "10 perfect words in a row".
-    *   **Consistency**: "Practiced 5 days in a row".
-*   [ ] **Leveling**: XP system based on characters typed (e.g., Rank: "Keyboard Explorer").
-*   [ ] **Unlockables**: Themes, keyboard colors, or avatar decorations.
-*   [ ] **Narrative Wrapper**: A simple story mode where completing lessons advances a plot (e.g., writing a letter to a friend).
-
-## 🎓 Phase 5: Advanced Pedagogy
-*Goal: Sophisticated skill development tools.*
-
-*   [ ] **Timing Analysis**: Measure delay between keystrokes to identify hesitation.
-*   [ ] **Rhythm Analysis**: Detect irregular patterns suggesting "hunting and pecking".
-*   [ ] **Finger Isolation**: Single-finger and same-finger sequence drills.
-*   [ ] **Blind Typing**: Progressive obscuration of the visual keyboard to force memory recall.
-*   [ ] **Fluency**: Transition from random words to full sentences, punctuation, and capitalization.
-
-## 🏗️ Phase 6: Technical Infrastructure
-*Goal: Architecture to support complexity.*
-
-*   [ ] **State Management**: Migrate to `useReducer` or Context for complex state (Session vs. Persistent).
-*   [ ] **Performance**: Memoize keyboard rendering and debounce analytics calculations.
-*   [ ] **Resilience**:
-    *   Graceful degradation if storage fails.
-    *   Auto-save progress mid-lesson.
-    *   Key repeat detection.
-*   [ ] **Codebase**: Separate content (word lists) from logic (scoring engines).
-
-## 📚 Phase 7: Content Expansion
-*Goal: Comprehensive educational content.*
-
-*   [ ] **Vocabulary Sets**:
-    *   High-frequency common words.
-    *   Academic/School vocabulary.
-    *   Themed sets (Animals, Hobbies).
-*   [ ] **Cultural Localization**: Distinct word lists for pt-PT vs English.
-*   [ ] **Practice Variety**:
-    *   "Whack-a-mole" letter reaction games.
-    *   Creative writing prompts.
-
-## 📊 Phase 8: Assessment & Reporting
-*Goal: Visibility for parents and teachers.*
-
-*   [ ] **Benchmark Tests**: Standardized WPM/Accuracy tests at regular intervals.
-*   [ ] **Diagnostic Reports**: PDF export of progress and trouble spots.
-*   [ ] **Parent Dashboard**: Weekly summaries and "stuck" alerts.
-*   [ ] **Certification**: Generate a certificate upon mastering specific levels.
-
-## 📱 Phase 9: Mobile & Accessibility
-*Goal: Inclusive access.*
-
-*   [ ] **Tablet Optimization**: UI scaling for smaller screens (physical keyboard required).
-*   [ ] **Screen Reader Support**: ARIA labels for keys and feedback.
-*   [ ] **Visual Aids**: High contrast modes and adjustable font sizes.
-*   [ ] **Motor Accommodations**: Adjustable timing windows for key presses.
-
-## 🔬 Phase 10: Research & Iteration
-*Goal: Validated effectiveness.*
-
-*   [ ] **Effectiveness Tracking**: Pre-test vs. Post-test analysis.
-*   [ ] **User Research**: Observe children using the app to find friction points.
-*   [ ] **Feedback Loops**: Channels for bug reporting and feature requests.
+- [x] Star rating system | Sistema de classificação por estrelas
+- [x] Confetti celebrations | Celebrações com confetes
+- [x] Time Attack Mode (30s/60s) | Modo Contra-Relógio
+- [ ] Streak system (Daily login) | Sistema de sequências (Login diário)
+- [ ] Unlockable avatars | Avatares desbloqueáveis
 
 ---
 
-## Implementation Timeline Estimate
+## ✅ Version 1.0 - The Foundation (Complete | Completo)
 
-| Phase | Est. Time | Priority |
-| :--- | :--- | :--- |
-| **Phase 2 (Persistence)** | 2-3 Weeks | 🔴 High |
-| **Phase 3 (Adaptive)** | 1-2 Months | 🟡 Medium |
-| **Phase 4 (Gamification)** | 3-4 Weeks | 🟢 Low |
-| **Phase 7 (Content)** | Ongoing | 🔴 High |
+### Core Mechanics | Mecânicas Principais
+- [x] Lesson Engine (Typing validation) | Motor de Lições (Validação de digitação)
+- [x] WPM & Accuracy calculation | Cálculo de PPM e Precisão
+- [x] Progressive Levels (1-7) | Níveis Progressivos (1-7)
+- [x] Shift Key logic | Lógica da tecla Shift
 
-*Note: Timeline estimates assume part-time development effort.*
+### UI/UX
+- [x] Child-friendly interface | Interface amigável para crianças
+- [x] Responsive layout | Layout responsivo
+- [x] Result screens | Ecrãs de resultados
+- [x] Dashboard navigation | Navegação do painel
+
+---
+
+## 🚧 Version 1.1 - Persistence & Analytics (Next Up | Próximo)
+
+### Data Persistence | Persistência de Dados
+- [ ] Browser LocalStorage implementation | Implementação LocalStorage
+- [ ] User Profiles (Name/Age) | Perfis de Utilizador (Nome/Idade)
+- [ ] Session history tracking | Rastreamento de histórico de sessões
+
+### Visual Analytics | Análises Visuais
+- [ ] WPM Evolution Chart | Gráfico de Evolução de PPM
+- [ ] Accuracy Trends | Tendências de Precisão
+- [ ] Weak Keys Heatmap | Mapa de Calor de Teclas Fracas
+
+---
+
+## 📋 Version 1.2 - Adaptive Learning (Planned | Planeado)
+
+### Smart Tutor | Tutor Inteligente
+- [ ] Adaptive difficulty (Word length) | Dificuldade adaptativa (Tamanho da palavra)
+- [ ] Automatic lesson recommendations | Recomendações automáticas de lições
+- [ ] Fatigue detection | Detecção de fadiga
+
+### Gamification ++
+- [ ] Badge System (Speedster, Perfectionist) | Sistema de Medalhas
+- [ ] Level/XP System | Sistema de Nível/XP
+- [ ] Sound Effects | Efeitos Sonoros
+
+---
+
+## 🔮 Version 2.0 - Classroom Edition (Vision | Visão)
+
+### Teacher Tools | Ferramentas para Professores
+- [ ] Multi-student profiles | Perfis multi-estudante
+- [ ] Progress reports (PDF) | Relatórios de progresso
+- [ ] Custom word lists | Listas de palavras personalizadas
+
+### Accessibility | Acessibilidade
+- [ ] High contrast mode | Modo de alto contraste
+- [ ] Screen reader support | Suporte a leitor de ecrã
+- [ ] Dyslexia-friendly fonts | Fontes amigáveis para dislexia
+
+---
+
+## ❓ FAQ | Perguntas Frequentes
+
+### Why European Portuguese? | Porquê Português Europeu?
+A maioria das ferramentas online foca-se em pt-BR. As crianças em Portugal e Angola precisam de praticar a gramática e vocabulário que usam na escola ("Tu" vs "Você").
+> Most online tools focus on pt-BR. Children in Portugal and Angola need to practice the grammar and vocabulary they use at school.
+
+### Is it safe for kids? | É seguro para crianças?
+Sim. A IA é instruída especificamente para gerar apenas conteúdo apropriado para crianças e positivo. Não há chat ou interação social externa.
+> Yes. The AI is specifically instructed to generate only child-appropriate and positive content. There is no chat or external social interaction.
+
+---
+
+**Have suggestions? | Tem sugestões?** 
+[Open a feature request | Abra um pedido de funcionalidade](https://github.com/yourusername/teclado-magico/issues)

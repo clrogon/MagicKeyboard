@@ -1,84 +1,147 @@
-# Teclado Mágico (Magic Keyboard) 🎹✨
+# Teclado Mágico | Magic Keyboard
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Language](https://img.shields.io/badge/language-TypeScript-blue)
-![Framework](https://img.shields.io/badge/framework-React-cyan)
+> **EN**: A gamified, AI-powered typing trainer designed for children learning European Portuguese.
+> **PT**: Um treinador de digitação gamificado e impulsionado por IA, desenhado para crianças a aprender Português Europeu.
 
-**Teclado Mágico** is a gamified typing trainer designed specifically for children learning to type in **European and Angolan Portuguese**. Unlike generic typing tools, it avoids Brazilian Portuguese phrasing and focuses on the "Tu" (informal singular) form, making it culturally appropriate for children in these regions.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-19-61dafb)](https://react.dev/)
+[![Gemini](https://img.shields.io/badge/AI-Gemini-8E75B2)](https://deepmind.google/technologies/gemini/)
+[![Status](https://img.shields.io/badge/Status-Active-green)](https://github.com/yourusername/teclado-magico)
 
-The application starts with the home row and gradually introduces new keys through game-like exercises, using positive reinforcement (stars, levels, confetti) to build muscle memory.
+---
 
-## 🚀 Features
+## 📊 Current Status | Estado Actual (January 2025)
 
--   **Progressive Learning**: 7 distinct levels starting from the home row (F & J) up to Shift keys and symbols.
--   **Gamification**: Earn stars, unlock levels, and view confetti celebrations upon completion.
--   **Smart Drills**: Uses **Google Gemini AI** to generate infinite, context-aware typing exercises.
--   **Special Modes**:
-    -   **Campaign**: Unlock levels one by one.
-    -   **Time Attack**: 30s and 60s speed challenges.
-    -   **Error Drill**: AI-generated sentences targeting your specific weak keys.
--   **Visual Guidance**: On-screen keyboard showing exact finger placement.
--   **Child-Friendly UI**: Bright colors, large text, and encouraging feedback in European Portuguese.
+| Module | Status EN | Estado PT |
+|--------|-----------|-----------|
+| **Core Typing Engine** | ✅ Complete | ✅ Completo |
+| **Visual Keyboard** | ✅ Complete | ✅ Completo |
+| **Level Progression** | ✅ Complete | ✅ Completo |
+| **AI Text Generation** | ✅ Complete | ✅ Completo |
+| **European PT Logic** | ✅ Complete | ✅ Completo |
+| **Data Persistence** | 🚧 In Progress | 🚧 Em Progresso |
+| **User Analytics** | 🚧 In Progress | 🚧 Em Progresso |
+| **Teacher Dashboard** | 🔮 Planned | 🔮 Planeado |
 
-## 🗺️ Roadmap
+---
 
-We have a comprehensive 10-phase development plan focusing on pedagogy and engagement.
-👉 **[View the full ROADMAP.md](./ROADMAP.md)**
+## 🎯 Overview | Visão Geral
 
-## 🛠️ Tech Stack
+### EN-US
+**Teclado Mágico** is an educational web application that helps children master touch typing. Unlike generic tools, it focuses specifically on **European Portuguese** vocabulary and grammar (addressing the user as "Tu" instead of "Você"), making it culturally appropriate for Portugal and Angola. It uses Google's Gemini AI to generate infinite, context-aware typing drills.
 
--   **Frontend**: React 19, TypeScript
--   **Styling**: Tailwind CSS
--   **Animations**: Framer Motion, Canvas Confetti
--   **AI Integration**: Google GenAI SDK (Gemini 2.5/3 models)
--   **Icons**: Lucide React
--   **Charts**: Recharts
+### PT-PT
+**Teclado Mágico** é uma aplicação web educativa que ajuda crianças a dominar a digitação. Ao contrário de ferramentas genéricas, foca-se especificamente no vocabulário e gramática do **Português Europeu** (tratando o utilizador por "Tu"), tornando-a culturalmente apropriada para Portugal e Angola. Utiliza a IA Gemini da Google para gerar exercícios infinitos e conscientes do contexto.
 
-## 📦 Installation & Setup
+---
 
-This project uses modern browser standards (ES Modules via `importmap`) and can be run without a complex build step for development, or bundled for production.
+## ✨ Core Features | Funcionalidades Principais
 
-### Prerequisites
+### Progressive Learning | Aprendizagem Progressiva
+- **EN**: 7 distinct levels starting from the Home Row (F & J) expanding outward • Finger placement guidance • Difficulty scaling
+- **PT**: 7 níveis distintos começando pela Linha Base (F & J) e expandindo • Guia de posicionamento dos dedos • Escalonamento de dificuldade
 
--   A Google Gemini API Key (for dynamic text generation).
--   A local web server (e.g., Live Server, python http.server, or Vite).
+### AI-Powered Drills | Exercícios com IA
+- **EN**: Google Gemini integration generates unique sentences every time • Context-aware vocabulary • Error-focused drill generation
+- **PT**: Integração Google Gemini gera frases únicas a cada vez • Vocabulário consciente do contexto • Geração de exercícios focados nos erros
 
-### Quick Start
+### Gamification | Gamificação
+- **EN**: Star rating system based on accuracy and speed • Confetti celebrations • Visual feedback (Green/Red) • Time Attack modes
+- **PT**: Sistema de classificação por estrelas baseado na precisão e velocidade • Celebrações com confetes • Feedback visual (Verde/Vermelho) • Modos Contra-Relógio
 
-1.  **Clone the repository**
-    ```bash
-    git clone https://github.com/yourusername/teclado-magico.git
-    cd teclado-magico
-    ```
+### Visual Guidance | Guia Visual
+- **EN**: On-screen keyboard highlighting active keys • Color-coded fingers (Pinky to Index) • Shift key coordination visualizer
+- **PT**: Teclado no ecrã destacando teclas activas • Dedos codificados por cores (Mindinho a Indicador) • Visualizador de coordenação da tecla Shift
 
-2.  **Environment Setup**
-    Create a `.env` file (if using a build tool) or export your API key in your environment.
-    *Note: For the pure browser version included in `index.html`, ensure you have a way to inject `process.env.API_KEY` or modify `services/geminiService.ts` to handle the key securely.*
+### Localization | Localização
+- **EN**: Strict pt-PT grammar rules • Avoids gerunds (uses "a fazer" vs "fazendo") • Culturally relevant vocabulary
+- **PT**: Regras gramaticais estritas de pt-PT • Evita gerúndios (usa "a fazer" vs "fazendo") • Vocabulário culturalmente relevante
 
-3.  **Run**
-    Simply serve the root directory.
-    ```bash
-    # Using python
-    python3 -m http.server 8000
+---
+
+## 🏗️ Architecture | Arquitectura
+
+### Tech Stack | Stack Tecnológico
+
+| Component | Technology | Purpose |
+|-----------|-----------|---------|
+| **Frontend** | React 19 + TypeScript | UI & Game Logic |
+| **Styling** | Tailwind CSS | Responsive Design |
+| **Animations** | Framer Motion | Smooth transitions |
+| **AI Engine** | Google GenAI SDK | Dynamic Content Generation |
+| **Charts** | Recharts | Progress Visualization |
+| **Icons** | Lucide React | Visual Language |
+
+### Data Flow
+
+```mermaid
+flowchart LR
+    User["👶 Learner"]
+    UI["💻 React Interface"]
+    Engine["⚙️ Typing Engine"]
+    AI["🧠 Gemini AI"]
+    Storage["💾 LocalStorage"]
+
+    User -->|Keystrokes| UI
+    UI -->|Input Events| Engine
+    Engine -->|Stats & Errors| UI
+    Engine -->|Progress Save| Storage
     
-    # Or using npx serve
-    npx serve .
-    ```
+    subgraph Content Generation
+    Engine -->|Request Drill| AI
+    AI -->|Generated Text| Engine
+    end
+```
 
-4.  **Open in Browser**
-    Navigate to `http://localhost:8000`
+---
 
-## 🌍 Localization
+## 🚀 Getting Started | Começar
 
-This project is strictly localized for **pt-PT** (European Portuguese).
--   **Pronouns**: Uses "Tu" instead of "Você".
--   **Grammar**: Avoids gerunds (e.g., uses "A preparar" instead of "Preparando").
--   **Vocabulary**: Adapted for children in Portugal and Angola.
+### Prerequisites | Pré-requisitos
+- Node.js 18+ 
+- Google Gemini API Key
 
-## 🤝 Contributing
+### Installation | Instalação
 
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to submit changes, specifically regarding language localization rules.
+**1. Clone the repository | Clonar o repositório**
+```bash
+git clone https://github.com/yourusername/teclado-magico.git
+cd teclado-magico
+```
 
-## 📄 License
+**2. Install dependencies | Instalar dependências**
+```bash
+npm install
+# or
+pnpm install
+```
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+**3. Configure Environment | Configurar Ambiente**
+Create a `.env` file:
+```env
+REACT_APP_GEMINI_API_KEY=your_api_key_here
+```
+
+**4. Start development server | Iniciar servidor**
+```bash
+npm run dev
+```
+
+---
+
+## 🤝 Contributing | Contribuir
+
+**EN**: We welcome contributions! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for our language guidelines (pt-PT vs pt-BR).
+
+**PT**: Acolhemos contribuições! Por favor, leia [CONTRIBUTING.md](CONTRIBUTING.md) para as nossas diretrizes de linguagem (pt-PT vs pt-BR).
+
+---
+
+## 📄 License | Licença
+
+This project is licensed under the MIT License - see [LICENSE](LICENSE) file for details.
+
+---
+
+**Made with ❤️ for education | Feito com ❤️ para a educação**
