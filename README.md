@@ -20,8 +20,8 @@
 | **Level Progression** | ✅ Complete | ✅ Completo |
 | **AI Text Generation** | ✅ Complete | ✅ Completo |
 | **European PT Logic** | ✅ Complete | ✅ Completo |
-| **Data Persistence** | 🚧 In Progress | 🚧 Em Progresso |
-| **User Analytics** | 🚧 In Progress | 🚧 Em Progresso |
+| **Data Persistence** | ✅ Complete | ✅ Completo |
+| **User Analytics** | ✅ Complete | ✅ Completo |
 | **Teacher Dashboard** | 🔮 Planned | 🔮 Planeado |
 
 ---
@@ -47,8 +47,8 @@
 - **PT**: Integração Google Gemini gera frases únicas a cada vez • Vocabulário consciente do contexto • Geração de exercícios focados nos erros
 
 ### Gamification | Gamificação
-- **EN**: Star rating system based on accuracy and speed • Confetti celebrations • Visual feedback (Green/Red) • Time Attack modes
-- **PT**: Sistema de classificação por estrelas baseado na precisão e velocidade • Celebrações com confetes • Feedback visual (Verde/Vermelho) • Modos Contra-Relógio
+- **EN**: Star rating system based on accuracy and speed • Confetti celebrations • Visual feedback (Green/Red) • Time Attack modes • Achievements
+- **PT**: Sistema de classificação por estrelas baseado na precisão e velocidade • Celebrações com confetes • Feedback visual (Verde/Vermelho) • Modos Contra-Relógio • Conquistas
 
 ### Visual Guidance | Guia Visual
 - **EN**: On-screen keyboard highlighting active keys • Color-coded fingers (Pinky to Index) • Shift key coordination visualizer
@@ -120,7 +120,7 @@ pnpm install
 **3. Configure Environment | Configurar Ambiente**
 Create a `.env` file:
 ```env
-REACT_APP_GEMINI_API_KEY=your_api_key_here
+API_KEY=your_api_key_here
 ```
 
 **4. Start development server | Iniciar servidor**
