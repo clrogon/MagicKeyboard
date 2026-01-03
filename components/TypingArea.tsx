@@ -186,10 +186,11 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
     const displayText = text.slice(visibleStart, visibleEnd);
 
     return (
-      <div className="flex flex-wrap justify-center gap-1.5 md:gap-2 text-4xl md:text-5xl font-bold font-mono leading-relaxed min-h-[120px] content-center py-8 px-4">
+      <div className="flex flex-wrap justify-center gap-1.5 md:gap-2 text-4xl md:text-5xl font-bold font-mono leading-relaxed min-h-[140px] content-center py-8 px-4">
         {displayText.split('').map((char, idx) => {
           const actualIdx = visibleStart + idx;
           const isCurrent = actualIdx === currentIndex;
+          const isNext = actualIdx === currentIndex + 1;
           const isPast = actualIdx < currentIndex;
           const dist = Math.abs(currentIndex - actualIdx);
           
@@ -198,19 +199,23 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
           let style: React.CSSProperties = {};
 
           if (isCurrent) {
-             // PROMINENT ACTIVE CHARACTER
-             className += "w-14 h-20 md:w-16 md:h-24 bg-white shadow-xl z-20 text-blue-600 border-b-4 border-blue-400 transform -translate-y-1 md:-translate-y-2 ring-2 ring-blue-100";
+             // PROMINENT ACTIVE CHARACTER - Enhanced
+             className += "w-16 h-22 md:w-20 md:h-28 bg-white shadow-2xl shadow-blue-500/30 z-20 text-blue-600 border-b-4 border-blue-500 transform -translate-y-2 md:-translate-y-4 ring-4 ring-blue-100 scale-105";
              style.textShadow = "0px 2px 0px rgba(0,0,0,0.1)";
           } else {
              // Default size for non-active
              className += "w-10 h-16 md:w-12 md:h-20 ";
              
              if (isPast) {
-                // GRADUAL FADE FOR HISTORY
+                // GRADUAL FADE FOR HISTORY - More gradual
                 className += "text-emerald-600 border-b-2 border-transparent ";
-                // Opacity drops off as it gets further away
-                style.opacity = Math.max(0.2, 1 - (dist * 0.15));
-                style.filter = `blur(${Math.min(2, dist * 0.2)}px)`;
+                // Opacity drops off slower (factor 0.1 instead of 0.15)
+                style.opacity = Math.max(0.25, 1 - (dist * 0.10));
+                style.filter = `blur(${Math.min(1.5, dist * 0.15)}px)`;
+             } else if (isNext) {
+                // NEXT CHARACTER HIGHLIGHT
+                className += "text-slate-600 bg-white/60 border-b-2 border-slate-300 shadow-sm ";
+                style.opacity = 0.9;
              } else {
                 // FUTURE CHARACTERS
                 className += "text-slate-400 border-b-2 border-slate-200/50 ";
