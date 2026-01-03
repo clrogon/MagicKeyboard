@@ -149,21 +149,29 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey })
         relative flex items-center justify-center rounded-xl m-1
         h-10 md:h-14 lg:h-16
         ${!config.width && 'w-10 md:w-14 lg:w-16'}
-        font-bold text-xl uppercase transition-all duration-150
+        font-bold text-xl uppercase
         shadow-sm
     `;
 
     // Visual states: Active vs Next vs Inactive
     let visualClasses = "";
+    let animateProps = {};
     
     if (isActive) {
-        visualClasses = `bg-gradient-to-b ${fingerStyle.active} text-white shadow-lg shadow-${config.finger.split('-')[0]}-200/50 scale-110 -translate-y-2 z-20 border-t border-white/40 border-b-4 border-black/20`;
+        visualClasses = `bg-gradient-to-b ${fingerStyle.active} text-white shadow-lg shadow-${config.finger.split('-')[0]}-200/50 z-20 border-t border-white/40 border-b-4 border-black/20`;
+        animateProps = { 
+            scale: 1.1, 
+            y: -5,
+            transition: { type: 'spring', stiffness: 300, damping: 20 }
+        };
     } else if (isNext) {
         // NEXT Key: Subtle highlight using finger color
-        visualClasses = `${fingerStyle.bgLight} ${fingerStyle.text} border-b-4 ${fingerStyle.border} ring-2 ring-offset-2 ${fingerStyle.ring} scale-100 z-10`;
+        visualClasses = `${fingerStyle.bgLight} ${fingerStyle.text} border-b-4 ${fingerStyle.border} ring-2 ring-offset-2 ${fingerStyle.ring} z-10`;
+        animateProps = { scale: 1, y: 0 };
     } else {
         // Inactive: Standard white key
         visualClasses = `bg-white text-slate-400 border-b-4 border-slate-200 hover:border-b-2 hover:translate-y-[2px]`;
+        animateProps = { scale: 1, y: 0 };
     }
         
     return (
@@ -171,6 +179,8 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey })
         key={config.char}
         style={config.width ? styleWidth : undefined}
         className={`${baseClasses} ${visualClasses}`}
+        animate={animateProps}
+        layout
       >
         {/* Subtle inner highlight for active keys */}
         {isActive && <div className="absolute inset-x-2 top-0 h-[2px] bg-white/40 rounded-full"></div>}
@@ -194,21 +204,31 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey })
      const styles = FINGER_STYLES[Finger.Thumb];
      
      let visualClasses = "";
+     let animateProps = {};
+
      if (isActive) {
-         visualClasses = `bg-gradient-to-b ${styles.active} text-white shadow-lg scale-102 -translate-y-1 border-t border-white/40 border-b-4 border-black/20`;
+         visualClasses = `bg-gradient-to-b ${styles.active} text-white shadow-lg border-t border-white/40 border-b-4 border-black/20`;
+         animateProps = { 
+             scale: 1.05, 
+             y: -3,
+             transition: { type: 'spring', stiffness: 300, damping: 20 }
+         };
      } else if (isNext) {
          visualClasses = `${styles.bgLight} border-b-4 ${styles.border} ring-2 ring-offset-2 ${styles.ring}`;
+         animateProps = { scale: 1, y: 0 };
      } else {
          visualClasses = `bg-white text-slate-400 border-b-4 border-slate-200`;
+         animateProps = { scale: 1, y: 0 };
      }
 
      return (
         <motion.div
             className={`
                 h-10 md:h-14 lg:h-16 rounded-xl m-1 mt-2 w-1/2 mx-auto flex items-center justify-center
-                transition-all duration-150 font-bold tracking-widest text-sm md:text-base
+                font-bold tracking-widest text-sm md:text-base
                 ${visualClasses}
             `}
+            animate={animateProps}
         >
              {isActive && <div className="absolute inset-x-4 top-0 h-[2px] bg-white/40 rounded-full"></div>}
             ESPAÇO

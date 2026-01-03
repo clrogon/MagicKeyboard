@@ -17,11 +17,11 @@
 |--------|-----------|-----------|
 | **Core Typing Engine** | ✅ Complete | ✅ Completo |
 | **Visual Keyboard** | ✅ Complete | ✅ Completo |
-| **Level Progression** | ✅ Complete | ✅ Completo |
 | **AI Text Generation** | ✅ Complete | ✅ Completo |
-| **European PT Logic** | ✅ Complete | ✅ Completo |
-| **Data Persistence** | ✅ Complete | ✅ Completo |
-| **User Analytics** | ✅ Complete | ✅ Completo |
+| **Progression (XP/Levels)**| ✅ Complete | ✅ Completo |
+| **Daily Challenges** | ✅ Complete | ✅ Completo |
+| **Hand Guide** | ✅ Complete | ✅ Completo |
+| **Data Privacy (GDPR)** | ✅ Complete | ✅ Completo |
 | **Teacher Dashboard** | 🔮 Planned | 🔮 Planeado |
 
 ---
@@ -38,25 +38,29 @@
 
 ## ✨ Core Features | Funcionalidades Principais
 
-### Progressive Learning | Aprendizagem Progressiva
-- **EN**: 7 distinct levels starting from the Home Row (F & J) expanding outward • Finger placement guidance • Difficulty scaling
-- **PT**: 7 níveis distintos começando pela Linha Base (F & J) e expandindo • Guia de posicionamento dos dedos • Escalonamento de dificuldade
+### 1. Progressive Learning | Aprendizagem Progressiva
+- **EN**: 7 distinct levels starting from the Home Row (F & J) expanding outward. Includes a visual "Hand Guide" modal teaching correct finger placement.
+- **PT**: 7 níveis distintos começando pela Linha Base (F & J) e expandindo. Inclui um "Guia de Mãos" visual que ensina a posição correta dos dedos.
 
-### AI-Powered Drills | Exercícios com IA
-- **EN**: Google Gemini integration generates unique sentences every time • Context-aware vocabulary • Error-focused drill generation
-- **PT**: Integração Google Gemini gera frases únicas a cada vez • Vocabulário consciente do contexto • Geração de exercícios focados nos erros
+### 2. RPG Progression System | Sistema de Progressão RPG
+- **EN**: Earn **XP** for every key pressed. Level up to unlock cool **Titles** (e.g., "Keyboard Legend") and collect fun **Avatars**.
+- **PT**: Ganha **XP** por cada tecla. Sobe de nível para desbloquear **Títulos** fixes (ex: "Lenda do Teclado") e colecionar **Avatares** divertidos.
 
-### Gamification | Gamificação
-- **EN**: Star rating system based on accuracy and speed • Confetti celebrations • Visual feedback (Green/Red) • Time Attack modes • Achievements
-- **PT**: Sistema de classificação por estrelas baseado na precisão e velocidade • Celebrações com confetes • Feedback visual (Verde/Vermelho) • Modos Contra-Relógio • Conquistas
+### 3. Daily Challenges | Desafios Diários
+- **EN**: A new mission every day (e.g., "Reach 30 WPM", "Get 3 Stars") to keep engagement high, rewarding bonus XP.
+- **PT**: Uma nova missão todos os dias (ex: "Chegar às 30 PPM", "Conseguir 3 Estrelas") para manter o interesse, com bónus de XP.
 
-### Visual Guidance | Guia Visual
-- **EN**: On-screen keyboard highlighting active keys • Color-coded fingers (Pinky to Index) • Shift key coordination visualizer
-- **PT**: Teclado no ecrã destacando teclas activas • Dedos codificados por cores (Mindinho a Indicador) • Visualizador de coordenação da tecla Shift
+### 4. AI-Powered Drills | Exercícios com IA
+- **EN**: Google Gemini integration generates unique sentences every time • Context-aware vocabulary • Error-focused drill generation.
+- **PT**: Integração Google Gemini gera frases únicas a cada vez • Vocabulário consciente do contexto • Geração de exercícios focados nos erros.
 
-### Localization | Localização
-- **EN**: Strict pt-PT grammar rules • Avoids gerunds (uses "a fazer" vs "fazendo") • Culturally relevant vocabulary
-- **PT**: Regras gramaticais estritas de pt-PT • Evita gerúndios (usa "a fazer" vs "fazendo") • Vocabulário culturalmente relevante
+### 5. Gamification | Gamificação
+- **EN**: Star rating system • Confetti celebrations • Visual feedback • Time Attack modes • Achievements (Badges).
+- **PT**: Sistema de classificação por estrelas • Celebrações com confetes • Feedback visual • Modos Contra-Relógio • Conquistas (Medalhas).
+
+### 6. Privacy First | Privacidade Primeiro
+- **EN**: 100% LocalStorage based. No database, no tracking, no personal data collection. Includes GDPR-compliant Data Erasure.
+- **PT**: 100% baseado em LocalStorage. Sem base de dados, sem rastreamento, sem recolha de dados pessoais. Inclui eliminação de dados compatível com RGPD.
 
 ---
 
@@ -68,7 +72,7 @@
 |-----------|-----------|---------|
 | **Frontend** | React 19 + TypeScript | UI & Game Logic |
 | **Styling** | Tailwind CSS | Responsive Design |
-| **Animations** | Framer Motion | Smooth transitions |
+| **Animations** | Framer Motion | Smooth transitions & feedback |
 | **AI Engine** | Google GenAI SDK | Dynamic Content Generation |
 | **Charts** | Recharts | Progress Visualization |
 | **Icons** | Lucide React | Visual Language |
@@ -85,7 +89,7 @@ flowchart LR
 
     User -->|Keystrokes| UI
     UI -->|Input Events| Engine
-    Engine -->|Stats & Errors| UI
+    Engine -->|XP, Stats & Errors| UI
     Engine -->|Progress Save| Storage
     
     subgraph Content Generation

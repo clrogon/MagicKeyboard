@@ -1,10 +1,10 @@
 import React from 'react';
 import { ACHIEVEMENTS } from '../constants';
-import { Star, Zap, Target, Calendar, Crown, Lock, ArrowLeft, Medal } from 'lucide-react';
+import { Star, Zap, Target, Calendar, Crown, Lock, ArrowLeft, Medal, Hash, CalendarCheck, ShieldCheck, Clock } from 'lucide-react';
 
 // Map string names from constants to Lucide components
 const IconMap: Record<string, React.ElementType> = {
-    Star, Zap, Target, Calendar, Crown
+    Star, Zap, Target, Calendar, Crown, Hash, CalendarCheck, ShieldCheck, Clock
 };
 
 interface AchievementsScreenProps {

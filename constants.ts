@@ -1,3 +1,4 @@
+
 import { Finger, KeyConfig, Level, Achievement } from './types';
 
 export const FINGER_NAMES: Record<Finger, string> = {
@@ -66,11 +67,18 @@ export const ACHIEVEMENTS: Achievement[] = [
     color: 'bg-yellow-400'
   },
   {
+    id: 'wpm_30',
+    title: 'Velocista Júnior',
+    description: 'Atingiste 30 Palavras por Minuto!',
+    icon: 'Zap',
+    color: 'bg-blue-400'
+  },
+  {
     id: 'speed_demon',
     title: 'Relâmpago',
     description: 'Atingiste 50 Palavras por Minuto!',
     icon: 'Zap',
-    color: 'bg-blue-500'
+    color: 'bg-blue-600'
   },
   {
     id: 'accuracy_master',
@@ -87,13 +95,58 @@ export const ACHIEVEMENTS: Achievement[] = [
     color: 'bg-purple-500'
   },
   {
+    id: 'streak_7',
+    title: 'Semana Perfeita',
+    description: 'Treinaste 7 dias seguidos!',
+    icon: 'CalendarCheck',
+    color: 'bg-orange-500'
+  },
+  {
     id: 'home_row_master',
     title: 'Mestre da Base',
     description: 'Completaste o Nível 3 (Home Row Completa) com 3 estrelas.',
     icon: 'Crown',
     color: 'bg-pink-500'
+  },
+  {
+    id: 'symbol_expert',
+    title: 'Mestre dos Símbolos',
+    description: 'Dominaste o Nível 7 com 3 estrelas.',
+    icon: 'Hash',
+    color: 'bg-indigo-500'
+  },
+  {
+    id: 'error_crusher',
+    title: 'Caçador de Erros',
+    description: '100% de precisão num Treino de Erros.',
+    icon: 'ShieldCheck',
+    color: 'bg-red-500'
+  },
+  {
+    id: 'time_lord',
+    title: 'Senhor do Tempo',
+    description: '+30 PPM num desafio de 60s.',
+    icon: 'Clock',
+    color: 'bg-violet-500'
   }
 ];
+
+export const PLAYER_TITLES: Record<number, string> = {
+    1: 'Aprendiz',
+    2: 'Estudante',
+    3: 'Teclista',
+    5: 'Escritor Veloz',
+    8: 'Mestre das Palavras',
+    10: 'Hacker Júnior',
+    15: 'Lenda do Teclado',
+    20: 'Divindade da Digitação',
+    30: 'O Escolhido'
+};
+
+export const AVATARS = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🦄', '🐙', '🦖', '🚀', '👽', '🤖'];
+
+// Calculate XP needed for next level: 100 * Level
+export const getXpForNextLevel = (level: number) => level * 250;
 
 // Progressive Levels designed for Kids learning PT (European/Angolan style)
 export const LEVELS: Level[] = [

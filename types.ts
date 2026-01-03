@@ -1,3 +1,4 @@
+
 export enum Finger {
   LeftPinky = 'pink-500',
   LeftRing = 'blue-500',
@@ -48,6 +49,16 @@ export interface Achievement {
   color: string;
 }
 
+export interface DailyChallenge {
+  date: string; // YYYY-MM-DD
+  description: string;
+  targetType: 'stars' | 'wpm' | 'accuracy' | 'matches';
+  targetValue: number;
+  currentValue: number;
+  completed: boolean;
+  rewardXp: number;
+}
+
 export interface GameState {
   currentLevelId: number;
   unlockedLevels: number[];
@@ -55,6 +66,13 @@ export interface GameState {
   isPlaying: boolean;
   errorStats: ErrorStats;
   achievements: string[]; // IDs of unlocked achievements
+  
+  // Progression System
+  xp: number;
+  playerLevel: number;
+  currentTitle: string;
+  currentAvatar: string;
+  dailyChallenge: DailyChallenge | null;
 }
 
 export interface SessionResult {
