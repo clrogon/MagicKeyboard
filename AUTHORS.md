@@ -4,7 +4,7 @@ This file lists all individuals having contributed content to the repository.
 
 ## Core Maintainers
 
-*   **[Your Name]** - *Initial work* - [YourGitHubProfile](https://github.com/yourusername)
+*   **Cláudio Gonçalves** - *Initial work* - https://github.com/clrogon/
 
 ## Contributors
 
