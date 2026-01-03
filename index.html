@@ -10,6 +10,11 @@
       body {
         font-family: 'Nunito', sans-serif;
         background-color: #f0f9ff;
+        /* Magical Dust Pattern */
+        background-image:  radial-gradient(#bae6fd 2px, transparent 2px), radial-gradient(#bae6fd 2px, transparent 2px);
+        background-size: 30px 30px;
+        background-position: 0 0, 15px 15px;
+        min-height: 100vh;
       }
       h1, h2, h3, .fun-font {
         font-family: 'Fredoka', sans-serif;
@@ -19,14 +24,24 @@
         width: 10px;
       }
       ::-webkit-scrollbar-track {
-        background: #f1f1f1; 
+        background: rgba(255, 255, 255, 0.5); 
       }
       ::-webkit-scrollbar-thumb {
-        background: #888; 
+        background: #cbd5e1; 
         border-radius: 5px;
+        border: 2px solid transparent;
+        background-clip: content-box;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: #555; 
+        background: #94a3b8; 
+      }
+      
+      .text-shadow-sm {
+        text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+      }
+      
+      .text-shadow-lg {
+        text-shadow: 3px 3px 0px rgba(0,0,0,0.1);
       }
     </style>
   <script type="importmap">
