@@ -6,7 +6,9 @@ import LevelSelector from './components/LevelSelector';
 import TypingArea from './components/TypingArea';
 import StatsBoard from './components/StatsBoard';
 import AchievementsScreen from './components/AchievementsScreen';
-import { ArrowRight, RotateCcw, AlertTriangle, Map, Zap } from 'lucide-react';
+import PrivacyModal from './components/PrivacyModal';
+import CookieBanner from './components/CookieBanner';
+import { ArrowRight, RotateCcw, AlertTriangle, Map, Zap, Heart, Shield } from 'lucide-react';
 
 // Utility for simple sound
 const playSound = (type: 'win' | 'click') => {
@@ -40,11 +42,18 @@ const App: React.FC = () => {
   const [timeLimit, setTimeLimit] = useState<number | undefined>(undefined);
   const [lastResult, setLastResult] = useState<SessionResult | null>(null);
   const [justUnlockedAchievement, setJustUnlockedAchievement] = useState<string | null>(null);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
 
   // Persist state
   useEffect(() => {
     localStorage.setItem('keyboardHeroState', JSON.stringify(gameState));
   }, [gameState]);
+
+  const handleClearData = () => {
+    localStorage.removeItem('keyboardHeroState');
+    localStorage.removeItem('cookieConsent');
+    window.location.reload();
+  };
 
   const handleStartLevel = (level: Level, modifier: 'normal' | 'hard' = 'normal') => {
     setActiveLevel(level);
@@ -332,51 +341,82 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="font-sans text-gray-900">
-      {currentScreen === AppScreen.Dashboard && (
-        <LevelSelector 
-            levels={LEVELS} 
-            unlockedLevels={gameState.unlockedLevels}
-            onSelectLevel={(l) => handleStartLevel(l)}
-            onSelectTimedMode={handleStartTimedMode}
-            onSelectErrorMode={handleStartErrorMode}
-            onViewStats={() => setCurrentScreen(AppScreen.Stats)} 
-        />
-      )}
-      
-      {currentScreen === AppScreen.Exercise && (
-        <TypingArea 
-            level={activeLevel}
-            mode={activeMode}
-            errorStats={gameState.errorStats}
-            timeLimit={timeLimit}
-            difficultyModifier={difficultyModifier}
-            onComplete={handleLevelComplete}
-            onExit={() => setCurrentScreen(AppScreen.Dashboard)}
-        />
-      )}
-
-      {currentScreen === AppScreen.Result && lastResult && (
-          renderResultScreen()
-      )}
-
-      {currentScreen === AppScreen.Stats && (
-          <StatsBoard 
-            history={gameState.history} 
-            unlockedLevels={gameState.unlockedLevels}
-            levels={LEVELS}
-            achievements={gameState.achievements}
-            onBack={() => setCurrentScreen(AppScreen.Dashboard)}
-            onViewAchievements={() => setCurrentScreen(AppScreen.Achievements)}
+    <div className="font-sans text-gray-900 min-h-screen flex flex-col">
+      <div className="flex-grow">
+        {currentScreen === AppScreen.Dashboard && (
+          <LevelSelector 
+              levels={LEVELS} 
+              unlockedLevels={gameState.unlockedLevels}
+              onSelectLevel={(l) => handleStartLevel(l)}
+              onSelectTimedMode={handleStartTimedMode}
+              onSelectErrorMode={handleStartErrorMode}
+              onViewStats={() => setCurrentScreen(AppScreen.Stats)} 
           />
-      )}
-
-      {currentScreen === AppScreen.Achievements && (
-          <AchievementsScreen
-            unlockedIds={gameState.achievements}
-            onBack={() => setCurrentScreen(AppScreen.Stats)}
+        )}
+        
+        {currentScreen === AppScreen.Exercise && (
+          <TypingArea 
+              level={activeLevel}
+              mode={activeMode}
+              errorStats={gameState.errorStats}
+              timeLimit={timeLimit}
+              difficultyModifier={difficultyModifier}
+              onComplete={handleLevelComplete}
+              onExit={() => setCurrentScreen(AppScreen.Dashboard)}
           />
-      )}
+        )}
+
+        {currentScreen === AppScreen.Result && lastResult && (
+            renderResultScreen()
+        )}
+
+        {currentScreen === AppScreen.Stats && (
+            <StatsBoard 
+              history={gameState.history} 
+              unlockedLevels={gameState.unlockedLevels}
+              levels={LEVELS}
+              achievements={gameState.achievements}
+              onBack={() => setCurrentScreen(AppScreen.Dashboard)}
+              onViewAchievements={() => setCurrentScreen(AppScreen.Achievements)}
+            />
+        )}
+
+        {currentScreen === AppScreen.Achievements && (
+            <AchievementsScreen
+              unlockedIds={gameState.achievements}
+              onBack={() => setCurrentScreen(AppScreen.Stats)}
+            />
+        )}
+      </div>
+
+      <footer className="py-6 text-center text-slate-500 text-sm bg-white/40 backdrop-blur-md border-t border-white/30 mt-auto relative z-10">
+         <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-6 px-4">
+            <span>&copy; {new Date().getFullYear()} <strong>Teclado Mágico</strong></span>
+            <span className="hidden md:inline text-slate-300">|</span>
+            <span className="flex items-center gap-1">
+                Criado por <strong>Cláudio Gonçalves</strong>
+            </span>
+            <span className="hidden md:inline text-slate-300">|</span>
+            <span className="flex items-center gap-1 text-xs uppercase tracking-wide opacity-80">
+                <Zap size={12} className="text-yellow-500 fill-yellow-500" /> Powered by Gemini
+            </span>
+            <span className="hidden md:inline text-slate-300">|</span>
+            <button 
+                onClick={() => setShowPrivacyModal(true)}
+                className="flex items-center gap-1 hover:text-indigo-600 transition font-semibold"
+            >
+                <Shield size={12} /> Privacidade
+            </button>
+         </div>
+      </footer>
+
+      {/* GDPR & Security Components */}
+      <CookieBanner onOpenPolicy={() => setShowPrivacyModal(true)} />
+      <PrivacyModal 
+        isOpen={showPrivacyModal} 
+        onClose={() => setShowPrivacyModal(false)}
+        onClearData={handleClearData}
+      />
     </div>
   );
 };
