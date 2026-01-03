@@ -5,7 +5,8 @@ import { LEVELS, SUCCESS_MESSAGES, ACHIEVEMENTS } from './constants';
 import LevelSelector from './components/LevelSelector';
 import TypingArea from './components/TypingArea';
 import StatsBoard from './components/StatsBoard';
-import { ArrowRight, RotateCcw, AlertTriangle, Map } from 'lucide-react';
+import AchievementsScreen from './components/AchievementsScreen';
+import { ArrowRight, RotateCcw, AlertTriangle, Map, Zap } from 'lucide-react';
 
 // Utility for simple sound
 const playSound = (type: 'win' | 'click') => {
@@ -35,6 +36,7 @@ const App: React.FC = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>(AppScreen.Dashboard);
   const [activeLevel, setActiveLevel] = useState<Level>(LEVELS[0]);
   const [activeMode, setActiveMode] = useState<GameMode>(GameMode.Campaign);
+  const [difficultyModifier, setDifficultyModifier] = useState<'normal' | 'hard'>('normal');
   const [timeLimit, setTimeLimit] = useState<number | undefined>(undefined);
   const [lastResult, setLastResult] = useState<SessionResult | null>(null);
   const [justUnlockedAchievement, setJustUnlockedAchievement] = useState<string | null>(null);
@@ -44,9 +46,10 @@ const App: React.FC = () => {
     localStorage.setItem('keyboardHeroState', JSON.stringify(gameState));
   }, [gameState]);
 
-  const handleStartLevel = (level: Level) => {
+  const handleStartLevel = (level: Level, modifier: 'normal' | 'hard' = 'normal') => {
     setActiveLevel(level);
     setActiveMode(GameMode.Campaign);
+    setDifficultyModifier(modifier);
     setTimeLimit(undefined);
     setCurrentScreen(AppScreen.Exercise);
     playSound('click');
@@ -72,6 +75,7 @@ const App: React.FC = () => {
       
       setActiveLevel(timedLevel);
       setActiveMode(GameMode.Timed);
+      setDifficultyModifier('normal');
       setTimeLimit(duration);
       setCurrentScreen(AppScreen.Exercise);
   };
@@ -96,6 +100,7 @@ const App: React.FC = () => {
 
       setActiveLevel(errorLevel);
       setActiveMode(GameMode.ErrorDrill);
+      setDifficultyModifier('normal');
       setTimeLimit(undefined);
       setCurrentScreen(AppScreen.Exercise);
   }
@@ -248,7 +253,7 @@ const App: React.FC = () => {
                             {isExcellent ? '🚀 Excelente!' : isStruggle ? '🛡️ Dica do Treinador' : '💡 Continua assim!'}
                         </div>
                         {isExcellent && hasNextLevel && "Estás a dominar! A tua precisão é fantástica. Segue para o próximo nível."}
-                        {isExcellent && !hasNextLevel && "Incrível! Completaste todos os níveis disponíveis. Tenta bater o teu recorde no Contra-Relógio."}
+                        {isExcellent && !hasNextLevel && "Incrível! Completaste todos os níveis disponíveis. Que tal um desafio mais difícil ou contra-relógio?"}
                         {isStruggle && "Parece que algumas teclas estão difíceis. Que tal fazeres um Treino de Erros ou repetires este nível mais devagar?"}
                         {!isExcellent && !isStruggle && "Bom trabalho. Tenta aumentar um pouco a precisão antes de avançar para o próximo desafio."}
                     </div>
@@ -279,6 +284,16 @@ const App: React.FC = () => {
                         </button>
                     )}
 
+                    {isExcellent && lastResult.mode === GameMode.Campaign && (
+                        <button 
+                            onClick={() => handleStartLevel(activeLevel, 'hard')}
+                            className="w-full bg-orange-100 text-orange-700 font-bold py-3 rounded-xl border-2 border-orange-200 hover:bg-orange-200 transition flex items-center justify-center gap-2"
+                        >
+                             <Zap size={20} />
+                             Desafio Extra (Mais Difícil) 🌶️
+                        </button>
+                    )}
+
                     {isStruggle && lastResult.mode === GameMode.Campaign && (
                         <button 
                             onClick={handleStartErrorMode}
@@ -293,7 +308,7 @@ const App: React.FC = () => {
                         onClick={() => {
                             if (activeMode === GameMode.Timed && timeLimit) handleStartTimedMode(timeLimit);
                             else if (activeMode === GameMode.ErrorDrill) handleStartErrorMode();
-                            else handleStartLevel(activeLevel);
+                            else handleStartLevel(activeLevel, 'normal');
                         }}
                         className={`w-full font-bold py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2 ${
                             (isExcellent && hasNextLevel) ? 'bg-white text-gray-600 border-2 border-gray-100 hover:bg-gray-50' : 'bg-indigo-600 text-white hover:bg-indigo-700'
@@ -322,10 +337,10 @@ const App: React.FC = () => {
         <LevelSelector 
             levels={LEVELS} 
             unlockedLevels={gameState.unlockedLevels}
-            onSelectLevel={handleStartLevel}
+            onSelectLevel={(l) => handleStartLevel(l)}
             onSelectTimedMode={handleStartTimedMode}
             onSelectErrorMode={handleStartErrorMode}
-            onViewStats={() => setCurrentScreen(AppScreen.Result)} // Redirect to stats board (fallback)
+            onViewStats={() => setCurrentScreen(AppScreen.Stats)} 
         />
       )}
       
@@ -335,6 +350,7 @@ const App: React.FC = () => {
             mode={activeMode}
             errorStats={gameState.errorStats}
             timeLimit={timeLimit}
+            difficultyModifier={difficultyModifier}
             onComplete={handleLevelComplete}
             onExit={() => setCurrentScreen(AppScreen.Dashboard)}
         />
@@ -344,14 +360,21 @@ const App: React.FC = () => {
           renderResultScreen()
       )}
 
-      {/* Override for Stats View if triggered from dashboard but no result */}
-      {currentScreen === AppScreen.Result && !lastResult && (
+      {currentScreen === AppScreen.Stats && (
           <StatsBoard 
             history={gameState.history} 
             unlockedLevels={gameState.unlockedLevels}
             levels={LEVELS}
             achievements={gameState.achievements}
             onBack={() => setCurrentScreen(AppScreen.Dashboard)}
+            onViewAchievements={() => setCurrentScreen(AppScreen.Achievements)}
+          />
+      )}
+
+      {currentScreen === AppScreen.Achievements && (
+          <AchievementsScreen
+            unlockedIds={gameState.achievements}
+            onBack={() => setCurrentScreen(AppScreen.Stats)}
           />
       )}
     </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { SessionResult, Level } from '../types';
-import { Star, Trophy, Target, Zap, Medal, Lock } from 'lucide-react';
+import { Star, Trophy, Target, Zap, Medal, ArrowRight } from 'lucide-react';
 import { ACHIEVEMENTS } from '../constants';
 
 interface StatsBoardProps {
@@ -10,9 +10,10 @@ interface StatsBoardProps {
   levels: Level[];
   achievements: string[];
   onBack: () => void;
+  onViewAchievements: () => void;
 }
 
-const StatsBoard: React.FC<StatsBoardProps> = ({ history, unlockedLevels, levels, achievements, onBack }) => {
+const StatsBoard: React.FC<StatsBoardProps> = ({ history, unlockedLevels, levels, achievements, onBack, onViewAchievements }) => {
   // Process data for charts
   const data = history.map((h, idx) => ({
     name: `Sessão ${idx + 1}`,
@@ -23,13 +24,15 @@ const StatsBoard: React.FC<StatsBoardProps> = ({ history, unlockedLevels, levels
   const totalStars = history.reduce((acc, curr) => acc + curr.stars, 0);
   const maxWpm = history.reduce((acc, curr) => Math.max(acc, curr.wpm), 0);
   const avgAccuracy = Math.round(history.reduce((acc, curr) => acc + curr.accuracy, 0) / (history.length || 1));
+  const unlockedAchievementsCount = achievements.length;
+  const totalAchievementsCount = ACHIEVEMENTS.length;
 
   return (
     <div className="min-h-screen bg-indigo-50 p-6 overflow-y-auto">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-8">
             <h1 className="text-4xl font-bold text-indigo-900 fun-font">O Teu Progresso</h1>
-            <button onClick={onBack} className="bg-white text-indigo-600 px-6 py-2 rounded-full font-bold shadow hover:bg-indigo-50">
+            <button onClick={onBack} className="bg-white text-indigo-600 px-6 py-2 rounded-full font-bold shadow hover:bg-indigo-50 transition">
                 Voltar
             </button>
         </div>
@@ -58,36 +61,25 @@ const StatsBoard: React.FC<StatsBoardProps> = ({ history, unlockedLevels, levels
             </div>
         </div>
 
-        {/* Achievements Section */}
-        <div className="mb-8">
-            <h2 className="text-2xl font-bold text-indigo-900 mb-4 fun-font flex items-center gap-2">
-                <Medal className="text-yellow-500" /> Conquistas
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                {ACHIEVEMENTS.map(ach => {
-                    const isUnlocked = achievements.includes(ach.id);
-                    return (
-                        <div 
-                            key={ach.id} 
-                            className={`
-                                relative p-4 rounded-xl flex flex-col items-center text-center border-2 transition-all
-                                ${isUnlocked 
-                                    ? `bg-white border-yellow-400 shadow-md` 
-                                    : 'bg-gray-100 border-gray-200 opacity-60 grayscale'}
-                            `}
-                        >
-                            <div className={`
-                                w-12 h-12 rounded-full flex items-center justify-center mb-3 text-white
-                                ${isUnlocked ? ach.color : 'bg-gray-400'}
-                            `}>
-                                {isUnlocked ? <Medal size={24} /> : <Lock size={20} />}
-                            </div>
-                            <div className="font-bold text-gray-800 text-sm">{ach.title}</div>
-                            <div className="text-xs text-gray-500 mt-1">{ach.description}</div>
-                        </div>
-                    );
-                })}
+        {/* Achievements Summary Banner */}
+        <div className="bg-gradient-to-r from-violet-500 to-purple-600 rounded-2xl p-8 text-white shadow-lg mb-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-6">
+                <div className="bg-white/20 p-4 rounded-full backdrop-blur-sm">
+                    <Medal size={48} className="text-yellow-300" />
+                </div>
+                <div>
+                    <h2 className="text-2xl font-bold mb-1">As Tuas Conquistas</h2>
+                    <p className="text-purple-100 text-lg">
+                        Já desbloqueaste <span className="font-bold text-white">{unlockedAchievementsCount}</span> de <span className="font-bold text-white">{totalAchievementsCount}</span> medalhas!
+                    </p>
+                </div>
             </div>
+            <button 
+                onClick={onViewAchievements}
+                className="bg-white text-purple-600 px-8 py-4 rounded-xl font-bold shadow-md hover:bg-gray-100 hover:scale-105 transition flex items-center gap-2 whitespace-nowrap"
+            >
+                Ver Coleção <ArrowRight size={20} />
+            </button>
         </div>
 
         {/* Charts */}

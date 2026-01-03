@@ -1,5 +1,17 @@
 import { Finger, KeyConfig, Level, Achievement } from './types';
 
+export const FINGER_NAMES: Record<Finger, string> = {
+  [Finger.LeftPinky]: 'Mindinho Esquerdo',
+  [Finger.LeftRing]: 'Anelar Esquerdo',
+  [Finger.LeftMiddle]: 'Médio Esquerdo',
+  [Finger.LeftIndex]: 'Indicador Esquerdo',
+  [Finger.RightIndex]: 'Indicador Direito',
+  [Finger.RightMiddle]: 'Médio Direito',
+  [Finger.RightRing]: 'Anelar Direito',
+  [Finger.RightPinky]: 'Mindinho Direito',
+  [Finger.Thumb]: 'Polegares'
+};
+
 // Standard Portuguese Layout mapping for visual keyboard
 export const KEYBOARD_LAYOUT: KeyConfig[][] = [
   // Top Row (QWERTY...)

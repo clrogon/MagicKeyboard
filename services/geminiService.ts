@@ -14,7 +14,8 @@ try {
 export const generateSmartExercise = async (
     level: Level, 
     mode: GameMode = GameMode.Campaign,
-    errorStats?: ErrorStats
+    errorStats?: ErrorStats,
+    difficultyModifier: 'normal' | 'hard' = 'normal'
 ): Promise<string> => {
   if (!genAI) {
     // Fallback logic
@@ -70,14 +71,19 @@ export const generateSmartExercise = async (
         `;
     } else {
         // Campaign Mode
+        const lengthInstruction = difficultyModifier === 'hard' 
+            ? "Generate a longer sentence (8-10 words) or a list of harder/longer words." 
+            : "Generate a single line of text (about 4-6 words).";
+
         prompt = `
             ${systemInstruction}
-            Generate a single line of text (about 4-6 words) for a typing exercise.
+            ${lengthInstruction}
             Use ONLY these letters: [${availableKeys}].
-            ${level.newKeys.includes('ShiftLeft') ? "Include some capitalized proper nouns (names)." : "Keep it mostly lowercase."}
+            ${level.newKeys.includes('ShiftLeft') ? "Include capitalized proper nouns." : "Keep it mostly lowercase."}
             Do NOT use any punctuation unless it is in the list above.
-            The text should be simple, real European Portuguese words if possible.
+            The text should be simple, real European Portuguese words.
             Keep it positive and kid-friendly.
+            ${difficultyModifier === 'hard' ? "Challenge the user with slightly more complex word combinations." : ""}
         `;
     }
 

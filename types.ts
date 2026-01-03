@@ -71,5 +71,7 @@ export interface SessionResult {
 export enum AppScreen {
   Dashboard = 'DASHBOARD',
   Exercise = 'EXERCISE',
-  Result = 'RESULT'
+  Result = 'RESULT',
+  Stats = 'STATS',
+  Achievements = 'ACHIEVEMENTS'
 }
