@@ -28,13 +28,22 @@ export const generateSmartExercise = async (
     errorStats?: ErrorStats,
     difficultyModifier: 'normal' | 'hard' = 'normal'
 ): Promise<string> => {
+  // Helper to get a random fallback
+  const getFallback = () => {
+      if (level.textSamples && level.textSamples.length > 0) {
+          return level.textSamples[Math.floor(Math.random() * level.textSamples.length)];
+      }
+      return "a a a"; // Absolute last resort to prevent crashes
+  };
+
   // 1. Fallback Logic: If no API key or client, return hardcoded samples.
   if (!genAI) {
     if (mode === GameMode.Timed) {
         // Concatenate random samples to make it long enough for a timer
-        return Array(5).fill(null).map(() => level.textSamples[Math.floor(Math.random() * level.textSamples.length)]).join(' ');
+        const samples = level.textSamples && level.textSamples.length > 0 ? level.textSamples : ["o rato roeu", "a garrafa do rei", "tres pratos de trigo"];
+        return Array(5).fill(null).map(() => samples[Math.floor(Math.random() * samples.length)]).join(' ');
     }
-    return level.textSamples[Math.floor(Math.random() * level.textSamples.length)];
+    return getFallback();
   }
 
   try {
@@ -131,11 +140,11 @@ export const generateSmartExercise = async (
     }
     
     // Fallback if response was empty
-    return level.textSamples[0];
+    return getFallback();
 
   } catch (error) {
     console.error("Gemini generation failed", error);
     // Silent fail to fallback
-    return level.textSamples[Math.floor(Math.random() * level.textSamples.length)];
+    return getFallback();
   }
 };

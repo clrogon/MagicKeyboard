@@ -68,7 +68,11 @@ const App: React.FC = () => {
   const currentUser = appState.activeUserId ? appState.users[appState.activeUserId] : null;
 
   // UI State
-  const [currentScreen, setCurrentScreen] = useState<AppScreen>(AppScreen.UserSelect);
+  // FIX: Initialize to Dashboard if user is already logged in, otherwise UserSelect
+  const [currentScreen, setCurrentScreen] = useState<AppScreen>(
+      currentUser ? AppScreen.Dashboard : AppScreen.UserSelect
+  );
+  
   const [activeLevel, setActiveLevel] = useState<Level>(LEVELS[0]);
   const [activeMode, setActiveMode] = useState<GameMode>(GameMode.Campaign);
   
@@ -275,7 +279,7 @@ const App: React.FC = () => {
           description: "Corra!",
           newKeys: [],
           allKeys: uniqueKeys,
-          textSamples: [],
+          textSamples: ["O rato roeu a rolha da garrafa do rei da Rússia.", "Três tristes tigres.", "Quem conta um conto acrescenta um ponto."], // Fallback text
           difficulty: 'medium',
           minWpm: 0,
           minAccuracy: 0
@@ -299,7 +303,8 @@ const App: React.FC = () => {
           description: "Foco!",
           newKeys: [],
           allKeys: uniqueKeys,
-          textSamples: [],
+          // FIX: Add fallback samples to prevent blank screen if AI fails
+          textSamples: ["foca nos teus erros", "pratica para melhorar", "devagar se vai ao longe", "atenção aos detalhes"],
           difficulty: 'hard',
           minWpm: 0,
           minAccuracy: 0
@@ -323,7 +328,8 @@ const App: React.FC = () => {
           description: "Era uma vez...",
           newKeys: [],
           allKeys: uniqueKeys,
-          textSamples: [],
+          // FIX: Add fallback samples to prevent blank screen if AI fails
+          textSamples: ["Era uma vez um gato que queria aprender a teclar.", "A Ana foi à escola e aprendeu muitas coisas novas hoje.", "O sol brilha no céu azul de Portugal."],
           difficulty: 'hard',
           minWpm: 0,
           minAccuracy: 0
