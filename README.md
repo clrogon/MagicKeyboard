@@ -67,6 +67,30 @@
 
 ## 🏗️ Arquitetura | Architecture
 
+### Diagrama de Fluxo | Flow Diagram
+
+```mermaid
+graph TD
+    User([Utilizador / User]) -->|Inputs Keyboard| App
+    
+    subgraph "Teclado Mágico App"
+        App[React + Vite PWA]
+        Logic[Game Engine & Validation]
+        Audio[Web Audio API]
+        Store[(LocalStorage)]
+    end
+    
+    subgraph "Google Cloud"
+        Gemini[Gemini Flash 1.5 API]
+    end
+
+    App -->|Render| Logic
+    Logic -->|Generate Drills| Gemini
+    Gemini -->|Return Text (PT/AO)| Logic
+    Logic -->|Play Sounds| Audio
+    Logic -->|Save Progress| Store
+```
+
 ### Stack Tecnológico
 
 | Componente | Tecnologia | Propósito |
