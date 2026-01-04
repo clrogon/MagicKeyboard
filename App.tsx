@@ -15,6 +15,7 @@ import HandGuideModal from './components/HandGuideModal';
 import { ClayButton } from './components/ClayButton';
 import { Shield, Zap, Star, LogOut, Heart, ArrowRight, Download, WifiOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { audioService } from './services/audioService';
 
 /**
  * App Component
@@ -45,7 +46,8 @@ const App: React.FC = () => {
                 theme: parsed.theme || 'rose',
                 unlockedLevels: parsed.unlockedLevels || [1],
                 history: parsed.history || [],
-                errorStats: parsed.errorStats || {}
+                errorStats: parsed.errorStats || {},
+                soundEnabled: true // Default for migrated users
             };
             return {
                 users: { 'legacy': legacyUser },
@@ -192,7 +194,8 @@ const App: React.FC = () => {
           history: [],
           errorStats: {},
           achievements: [],
-          dailyChallenge: null
+          dailyChallenge: null,
+          soundEnabled: true
       };
       
       setAppState(prev => ({
@@ -257,6 +260,15 @@ const App: React.FC = () => {
       updateUser(currentUser.id, { theme });
   };
 
+  const handleToggleSound = (enabled: boolean) => {
+      if (!currentUser) return;
+      updateUser(currentUser.id, { soundEnabled: enabled });
+      if (enabled) {
+          audioService.init();
+          audioService.playClick();
+      }
+  };
+
   // --- GAME START HANDLERS ---
 
   const handleStartLevel = (level: Level, modifier: 'normal' | 'hard' = 'normal') => {
@@ -303,7 +315,6 @@ const App: React.FC = () => {
           description: "Foco!",
           newKeys: [],
           allKeys: uniqueKeys,
-          // FIX: Add fallback samples to prevent blank screen if AI fails
           textSamples: ["foca nos teus erros", "pratica para melhorar", "devagar se vai ao longe", "atenção aos detalhes"],
           difficulty: 'hard',
           minWpm: 0,
@@ -328,7 +339,6 @@ const App: React.FC = () => {
           description: "Era uma vez...",
           newKeys: [],
           allKeys: uniqueKeys,
-          // FIX: Add fallback samples to prevent blank screen if AI fails
           textSamples: ["Era uma vez um gato que queria aprender a teclar.", "A Ana foi à escola e aprendeu muitas coisas novas hoje.", "O sol brilha no céu azul de Portugal."],
           difficulty: 'hard',
           minWpm: 0,
@@ -376,8 +386,10 @@ const App: React.FC = () => {
     setJustUnlockedAchievement(null);
     setLevelUpData(null);
 
-    // Trigger Confetti on Win
+    // Trigger Confetti & Sound on Win
     if (isWin || result.mode === GameMode.Timed || result.mode === GameMode.Story) {
+       if (currentUser.soundEnabled) audioService.playWin();
+       
        const confettiColors = currentUser.theme === 'rose' 
          ? ['#F43F5E', '#FB7185', '#FDA4AF', '#FFF1F2'] 
          : currentUser.theme === 'blue'
@@ -681,6 +693,7 @@ const App: React.FC = () => {
                 onChangeAvatar={handleChangeAvatar}
                 onShowHandGuide={() => setShowHandGuide(true)}
                 onToggleBlindMode={setBlindMode}
+                onToggleSound={handleToggleSound}
                 isBlindMode={blindMode}
             />
             )}
@@ -694,6 +707,7 @@ const App: React.FC = () => {
                 timeLimit={timeLimit}
                 difficultyModifier={difficultyModifier}
                 blindMode={blindMode}
+                soundEnabled={currentUser.soundEnabled}
                 onComplete={handleLevelComplete}
                 onExit={() => setCurrentScreen(AppScreen.Dashboard)}
             />

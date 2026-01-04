@@ -142,10 +142,10 @@
 
 ---
 
-## Phase 7: PWA & Offline Capability (New)
+## Phase 7: PWA & Offline Capability (Complete)
 **Duration:** 1-2 weeks
 **Priority:** MEDIUM
-**Status:** 🚧 In Progress
+**Status:** ✓ Complete
 
 ### Milestone 7.1: Service Worker Integration
 **Goal:** Cache assets for offline play.
@@ -158,6 +158,25 @@
 ### Milestone 7.3: Offline Handling
 **Goal:** Detect network status and provide fallback content when AI is unreachable.
 **Implementation:** Network event listeners and fallback static drills.
+
+---
+
+## Phase 8: Audio Immersion & Accessibility (New)
+**Duration:** 1 week
+**Priority:** LOW
+**Status:** 🚧 In Progress
+
+### Milestone 8.1: Generative Sound Engine
+**Goal:** Create sound effects without external assets for offline reliability.
+**Implementation:** `audioService.ts` using Web Audio API (Oscillators).
+
+### Milestone 8.2: Audio Feedback
+**Goal:** Provide auditory cues for correct hits, errors, and level completion.
+**Implementation:** Integration with `TypingArea` and `App` state.
+
+### Milestone 8.3: Settings Control
+**Goal:** Allow users to toggle sound on/off per profile.
+**Implementation:** `soundEnabled` field in User Profile.
 
 ---
 

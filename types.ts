@@ -127,6 +127,7 @@ export interface UserProfile {
   currentAvatar: string;
   dailyChallenge: DailyChallenge | null;
   theme: Theme;
+  soundEnabled: boolean; // New Phase 8 Feature
 }
 
 /**

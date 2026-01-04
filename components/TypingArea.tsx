@@ -7,6 +7,7 @@ import VirtualKeyboard from './VirtualKeyboard';
 import { RotateCcw, Timer, X, Play, Info, EyeOff } from 'lucide-react';
 import { generateSmartExercise } from '../services/geminiService';
 import { THEME_COLORS } from '../constants';
+import { audioService } from '../services/audioService';
 
 interface TypingAreaProps {
   level: Level;
@@ -15,6 +16,7 @@ interface TypingAreaProps {
   timeLimit?: number; // seconds (for Timed mode)
   difficultyModifier?: 'normal' | 'hard';
   blindMode?: boolean; // New Phase 4 Feature: Hide key labels
+  soundEnabled: boolean; // New Phase 8 Feature
   theme: Theme;
   onComplete: (result: SessionResult, errors: ErrorStats, corrects: ErrorStats) => void;
   onExit: () => void;
@@ -30,9 +32,10 @@ interface TypingAreaProps {
  * 4. Real-time validation (Hit/Miss)
  * 5. WPM, Accuracy AND Consistency calculation
  * 6. Timer logic (for Timed mode)
+ * 7. Audio Feedback (Click/Error)
  */
 const TypingArea: React.FC<TypingAreaProps> = ({ 
-    level, mode, errorStats, timeLimit, difficultyModifier = 'normal', blindMode = false, theme, onComplete, onExit 
+    level, mode, errorStats, timeLimit, difficultyModifier = 'normal', blindMode = false, soundEnabled = true, theme, onComplete, onExit 
 }) => {
   // Game State
   const [isBriefing, setIsBriefing] = useState(true); // Start in Briefing mode
@@ -143,6 +146,9 @@ const TypingArea: React.FC<TypingAreaProps> = ({
 
   const handleStartGame = () => {
       setIsBriefing(false);
+      // Init audio context
+      if(soundEnabled) audioService.init();
+      if(soundEnabled) audioService.playStart();
       // Slight delay to ensure DOM update before focus
       setTimeout(() => inputRef.current?.focus(), 100);
   };
@@ -189,6 +195,8 @@ const TypingArea: React.FC<TypingAreaProps> = ({
       // -- CORRECT HIT --
       setTypedChars(prev => prev + char);
       
+      if(soundEnabled) audioService.playClick();
+      
       // Phase 4: Rhythm Tracking
       if (lastKeystrokeTime) {
           const interval = now - lastKeystrokeTime;
@@ -217,6 +225,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
       }
     } else {
       // -- ERROR --
+      if(soundEnabled) audioService.playError();
       setSessionErrors(prev => prev + 1);
       setSessionErrorMap(prev => ({
           ...prev,

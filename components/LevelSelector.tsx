@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Level, UserProfile } from '../types';
 import { ClayButton } from './ClayButton';
-import { Lock, Star, Play, Clock, AlertCircle, RefreshCw, Trophy, Zap, Shield, Crown, Eye, EyeOff, BookOpen } from 'lucide-react';
+import { Lock, Star, Play, Clock, AlertCircle, RefreshCw, Trophy, Zap, Shield, Crown, Eye, EyeOff, BookOpen, Volume2, VolumeX } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getXpForNextLevel, THEME_COLORS } from '../constants';
 
@@ -18,6 +18,7 @@ interface LevelSelectorProps {
   onChangeAvatar: () => void;
   onShowHandGuide: () => void;
   onToggleBlindMode: (enabled: boolean) => void;
+  onToggleSound: (enabled: boolean) => void; // New prop
   isBlindMode: boolean;
 }
 
@@ -45,9 +46,9 @@ const itemVariants = {
  * 5. Campaign Level Grid (Locked vs Unlocked).
  */
 const LevelSelector: React.FC<LevelSelectorProps> = ({ 
-    levels, unlockedLevels, gameState, onSelectLevel, onSelectTimedMode, onSelectErrorMode, onSelectStoryMode, onViewStats, onChangeAvatar, onShowHandGuide, onToggleBlindMode, isBlindMode
+    levels, unlockedLevels, gameState, onSelectLevel, onSelectTimedMode, onSelectErrorMode, onSelectStoryMode, onViewStats, onChangeAvatar, onShowHandGuide, onToggleBlindMode, onToggleSound, isBlindMode
 }) => {
-  const { xp, playerLevel, currentTitle, currentAvatar, dailyChallenge, theme } = gameState;
+  const { xp, playerLevel, currentTitle, currentAvatar, dailyChallenge, theme, soundEnabled } = gameState;
   
   // XP Logic
   const xpNeeded = getXpForNextLevel(playerLevel);
@@ -155,7 +156,7 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                         variant={isBlindMode ? "primary" : "secondary"} 
                         theme="rose"
                         onClick={() => onToggleBlindMode(!isBlindMode)} 
-                        className="w-full py-4 text-left justify-start px-6"
+                        className="w-full py-4 mb-3 text-left justify-start px-6"
                     >
                         <div className={`p-2 rounded-xl mr-3 ${isBlindMode ? 'bg-rose-200 text-rose-600' : 'bg-slate-200 text-slate-500'}`}>
                             {isBlindMode ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -163,6 +164,21 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                         <div>
                             <div className={`text-xs font-bold uppercase ${isBlindMode ? 'text-rose-200' : 'text-slate-400'}`}>Desafio</div>
                             <div className={isBlindMode ? 'text-white' : 'text-slate-700'}>Modo Cego</div>
+                        </div>
+                    </ClayButton>
+
+                    {/* Sound Toggle */}
+                     <ClayButton 
+                        variant="secondary"
+                        onClick={() => onToggleSound(!soundEnabled)} 
+                        className="w-full py-4 text-left justify-start px-6"
+                    >
+                        <div className={`p-2 rounded-xl mr-3 ${soundEnabled ? 'bg-emerald-100 text-emerald-500' : 'bg-slate-200 text-slate-500'}`}>
+                            {soundEnabled ? <Volume2 size={20} /> : <VolumeX size={20} />}
+                        </div>
+                        <div>
+                            <div className="text-xs font-bold text-slate-400 uppercase">Áudio</div>
+                            <div className="text-slate-700 font-bold">{soundEnabled ? 'Sons Ligados' : 'Sons Desligados'}</div>
                         </div>
                     </ClayButton>
                 </div>
@@ -176,7 +192,6 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                         <ClayButton variant="primary" theme="rose" onClick={onSelectErrorMode} className="w-full py-3 bg-gradient-to-r from-red-400 to-red-500 shadow-red-200">
                             <AlertCircle size={18} className="mr-2" /> Treinar Erros
                         </ClayButton>
-                        {/* New Story Mode Button */}
                         <ClayButton variant="primary" theme="blue" onClick={onSelectStoryMode} className="w-full py-3 bg-gradient-to-r from-blue-400 to-indigo-500 shadow-blue-200">
                             <BookOpen size={18} className="mr-2" /> Modo História
                         </ClayButton>
