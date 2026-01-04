@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Level, UserProfile } from '../types';
 import { ClayButton } from './ClayButton';
@@ -18,7 +17,7 @@ interface LevelSelectorProps {
   onChangeAvatar: () => void;
   onShowHandGuide: () => void;
   onToggleBlindMode: (enabled: boolean) => void;
-  onToggleSound: (enabled: boolean) => void; // New prop
+  onToggleSound: (enabled: boolean) => void; 
   isBlindMode: boolean;
 }
 
@@ -35,22 +34,11 @@ const itemVariants = {
     visible: { y: 0, opacity: 1 }
 };
 
-/**
- * LevelSelector Component
- * 
- * The main dashboard for the application. Displays:
- * 1. User Profile (Avatar, Level, XP Bar, Title).
- * 2. Daily Challenge status.
- * 3. Quick Actions (Hand Guide, Stats).
- * 4. Extra Modes (Timed, Error Drill).
- * 5. Campaign Level Grid (Locked vs Unlocked).
- */
 const LevelSelector: React.FC<LevelSelectorProps> = ({ 
     levels, unlockedLevels, gameState, onSelectLevel, onSelectTimedMode, onSelectErrorMode, onSelectStoryMode, onViewStats, onChangeAvatar, onShowHandGuide, onToggleBlindMode, onToggleSound, isBlindMode
 }) => {
   const { xp, playerLevel, currentTitle, currentAvatar, dailyChallenge, theme, soundEnabled } = gameState;
   
-  // XP Logic
   const xpNeeded = getXpForNextLevel(playerLevel);
   const xpProgress = Math.min(100, (xp / xpNeeded) * 100);
   
@@ -60,7 +48,6 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
     <div className="min-h-screen p-4 md:p-8 relative z-10">
       <div className="max-w-7xl mx-auto">
         
-        {/* Header / Profile Card */}
         <motion.div 
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -82,7 +69,6 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                         <h2 className="text-2xl font-bold text-slate-800 fun-font">{currentTitle}</h2>
                     </div>
                     
-                    {/* XP Progress Bar */}
                     <div className="w-full md:w-64 h-4 bg-slate-100 rounded-full overflow-hidden relative shadow-inner">
                         <motion.div 
                             initial={{ width: 0 }}
@@ -97,7 +83,6 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                 </div>
             </div>
 
-            {/* Daily Challenge Pill */}
             {dailyChallenge && (
                 <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-3xl p-5 w-full md:w-80 relative overflow-hidden group border border-orange-200/50">
                      <div className="flex justify-between items-start mb-2">
@@ -122,7 +107,6 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
         </motion.div>
 
         <div className="flex flex-col lg:flex-row gap-8 items-start">
-            {/* Sidebar Utility */}
             <motion.div 
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
@@ -148,7 +132,6 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                     </ClayButton>
                 </div>
                 
-                {/* Advanced Options Block */}
                 <div className="bg-white/60 backdrop-blur-md p-6 rounded-[2rem] border border-white/50">
                     <h3 className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-4 ml-2">Desafios Especiais</h3>
                     
@@ -167,7 +150,6 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                         </div>
                     </ClayButton>
 
-                    {/* Sound Toggle */}
                      <ClayButton 
                         variant="secondary"
                         onClick={() => onToggleSound(!soundEnabled)} 
@@ -199,7 +181,6 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                 </div>
             </motion.div>
 
-            {/* Level Grid */}
             <motion.div 
                 variants={containerVariants}
                 initial="hidden"
@@ -242,7 +223,6 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                                 <p className="text-sm text-slate-400 font-bold">{level.description}</p>
                             </div>
 
-                            {/* Keys Indicator (Preview of what is learnt in this level) */}
                             <div className="absolute top-6 left-20 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                 {level.newKeys.slice(0, 5).map(k => (
                                     <span key={k} className="bg-slate-800 text-white text-[10px] px-1.5 py-0.5 rounded uppercase font-bold">

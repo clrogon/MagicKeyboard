@@ -229,6 +229,7 @@ export const getXpForNextLevel = (level: number) => level * 250;
 
 /**
  * Progression Levels.
+ * Designed for children learning PT (European/Angolan style).
  */
 export const LEVELS: Level[] = [
   {

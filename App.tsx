@@ -16,33 +16,17 @@ import { Shield, Zap, Star, LogOut, Heart, ArrowRight, Download, WifiOff } from 
 import { motion } from 'framer-motion';
 import { audioService } from './services/audioService';
 
-/**
- * App Component
- * 
- * The root component of the application.
- * Manages global Game State, Routing (simple state-based navigation), and High-level Logic.
- */
 const App: React.FC = () => {
-  // --- STATE INITIALIZATION & MIGRATION ---
-  
-  // Initialize State from LocalStorage or Default
-  // We use a lazy initializer function to handle complex migration logic only on first render.
   const [appState, setAppState] = useState<AppState>(() => {
-    // Load from localStorage if available
     const saved = localStorage.getItem('keyboardHeroState');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        
-        // MIGRATION 1: Single User -> Multi User (v1.0 -> v1.2)
-        // If the save file lacks a 'users' object, it's from the old version.
-        // We wrap the existing data into a 'legacy' user profile.
         if (!parsed.users) {
             const legacyUser: UserProfile = {
                 id: 'legacy',
                 name: 'Jogador',
-                ...parsed, // Spread existing fields
-                // Ensure new fields exist (defaults for missing props)
+                ...parsed, 
                 achievements: parsed.achievements || [],
                 xp: parsed.xp || 0,
                 playerLevel: parsed.playerLevel || 1,
@@ -56,78 +40,58 @@ const App: React.FC = () => {
             };
             return {
                 users: { 'legacy': legacyUser },
-                activeUserId: null // Force selection screen so they see the new UI
+                activeUserId: null
             };
         }
-
-        // MIGRATION 2: Audio Settings (v1.2 -> v1.3)
-        // Ensure older multi-user saves have the 'soundEnabled' property.
         if (parsed.users) {
            Object.keys(parsed.users).forEach(key => {
                const user = parsed.users[key];
                if (user.soundEnabled === undefined) user.soundEnabled = true;
            });
         }
-
         return parsed;
       } catch (e) {
           console.error("Save migration failed", e);
       }
     }
-    // Default Empty State for fresh installs
     return {
       users: {},
       activeUserId: null
     };
   });
 
-  // Derived State: Shortcut to the currently active user profile
   const currentUser = appState.activeUserId ? appState.users[appState.activeUserId] : null;
 
-  // --- UI STATE ---
-  
-  // Initialize to Dashboard if user is already logged in (persisted), otherwise UserSelect
   const [currentScreen, setCurrentScreen] = useState<AppScreen>(
       currentUser ? AppScreen.Dashboard : AppScreen.UserSelect
   );
   
-  // Track which level/mode is currently being played
   const [activeLevel, setActiveLevel] = useState<Level>(LEVELS[0]);
   const [activeMode, setActiveMode] = useState<GameMode>(GameMode.Campaign);
   
-  // Game Configuration State (Passed to TypingArea)
   const [difficultyModifier, setDifficultyModifier] = useState<'normal' | 'hard'>('normal');
   const [timeLimit, setTimeLimit] = useState<number | undefined>(undefined);
   const [blindMode, setBlindMode] = useState<boolean>(false); 
   
-  // Session Result State (for displaying the End Screen)
   const [lastResult, setLastResult] = useState<SessionResult | null>(null);
   const [levelUpData, setLevelUpData] = useState<{old: number, new: number} | null>(null);
 
-  // Modals State
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showHandGuide, setShowHandGuide] = useState(false);
 
-  // PWA & Network State
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [installPrompt, setInstallPrompt] = useState<any>(null);
 
-  // Determine current theme colors for global UI elements (Header, Background)
   const colors = currentUser ? THEME_COLORS[currentUser.theme] : THEME_COLORS['rose'];
 
-  // --- EFFECTS ---
-
-  // Effect: Persist state to LocalStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('keyboardHeroState', JSON.stringify(appState));
   }, [appState]);
 
-  // Effect: Handle Network Status & PWA Install Prompts
   useEffect(() => {
       const handleOnline = () => setIsOffline(false);
       const handleOffline = () => setIsOffline(true);
       
-      // Capture the 'beforeinstallprompt' event to show a custom install button later
       const handleInstallPrompt = (e: Event) => {
           e.preventDefault();
           setInstallPrompt(e);
@@ -154,23 +118,18 @@ const App: React.FC = () => {
       });
   };
 
-  // Effect: Generate Daily Challenge logic
-  // Runs whenever the active user changes to check if a new challenge is needed for today.
   useEffect(() => {
     if (!currentUser) return;
     
     const today = new Date().toISOString().split('T')[0];
-    // Check if challenge exists and if it's from today
     if (!currentUser.dailyChallenge || currentUser.dailyChallenge.date !== today) {
         
         const types: ('stars' | 'wpm' | 'accuracy' | 'matches')[] = ['stars', 'wpm', 'accuracy', 'matches'];
         const type = types[Math.floor(Math.random() * types.length)];
         let target = 0;
         let desc = "";
-        // Reward scales with level
         const reward = 150 + (currentUser.playerLevel * 10); 
 
-        // Challenge Generation Logic
         if (type === 'stars') { target = 3; desc = "Consegue 3 Estrelas num nível hoje"; }
         else if (type === 'wpm') { target = Math.min(60, 15 + (currentUser.playerLevel * 2)); desc = `Atinge ${target} Palavras por Minuto`; }
         else if (type === 'accuracy') { target = 100; desc = "Completa um exercício com 100% de Precisão"; }
@@ -190,7 +149,6 @@ const App: React.FC = () => {
     }
   }, [appState.activeUserId]);
 
-  // Helper to update specific user data immutably
   const updateUser = (userId: string, updates: Partial<UserProfile>) => {
       setAppState(prev => ({
           ...prev,
@@ -200,8 +158,6 @@ const App: React.FC = () => {
           }
       }));
   };
-
-  // --- USER MANAGEMENT HANDLERS ---
 
   const handleCreateUser = (name: string, avatar: string, theme: Theme) => {
       const newUser: UserProfile = {
@@ -235,9 +191,8 @@ const App: React.FC = () => {
   };
 
   const handleOpenParentDashboard = () => {
-    // Simple "Parent Gate" - Math Challenge to prevent kids from deleting profiles
-    const num1 = Math.floor(Math.random() * 5) + 3; // 3 to 7
-    const num2 = Math.floor(Math.random() * 4) + 2; // 2 to 5
+    const num1 = Math.floor(Math.random() * 5) + 3; 
+    const num2 = Math.floor(Math.random() * 4) + 2; 
     const answer = prompt(`Controlo Parental:\nQuanto é ${num1} + ${num2}?`);
     
     if (answer && parseInt(answer) === num1 + num2) {
@@ -286,14 +241,11 @@ const App: React.FC = () => {
   const handleToggleSound = (enabled: boolean) => {
       if (!currentUser) return;
       updateUser(currentUser.id, { soundEnabled: enabled });
-      // Play a test sound so user knows it's on
       if (enabled) {
           audioService.init();
           audioService.playClick();
       }
   };
-
-  // --- GAME START HANDLERS ---
 
   const handleStartLevel = (level: Level, modifier: 'normal' | 'hard' = 'normal') => {
     setActiveLevel(level);
@@ -303,7 +255,6 @@ const App: React.FC = () => {
     setCurrentScreen(AppScreen.Exercise);
   };
 
-  // Timed Mode: Generates a level using all currently unlocked keys
   const handleStartTimedMode = (duration: number) => {
       if (!currentUser) return;
       const maxUnlocked = Math.max(...currentUser.unlockedLevels);
@@ -316,7 +267,7 @@ const App: React.FC = () => {
           description: "Corra!",
           newKeys: [],
           allKeys: uniqueKeys,
-          textSamples: ["O rato roeu a rolha da garrafa do rei da Rússia.", "Três tristes tigres.", "Quem conta um conto acrescenta um ponto."], // Fallback
+          textSamples: ["O rato roeu a rolha da garrafa do rei da Rússia.", "Três tristes tigres.", "Quem conta um conto acrescenta um ponto."], 
           difficulty: 'medium',
           minWpm: 0,
           minAccuracy: 0
@@ -328,7 +279,6 @@ const App: React.FC = () => {
       setCurrentScreen(AppScreen.Exercise);
   };
 
-  // Error Mode: Targets keys with high error count in UserStats
   const handleStartErrorMode = () => {
       if (!currentUser) return;
       const maxUnlocked = Math.max(...currentUser.unlockedLevels);
@@ -353,7 +303,6 @@ const App: React.FC = () => {
       setCurrentScreen(AppScreen.Exercise);
   };
 
-  // Story Mode: Generates narrative content
   const handleStartStoryMode = () => {
       if (!currentUser) return;
       const maxUnlocked = Math.max(...currentUser.unlockedLevels);
@@ -378,14 +327,10 @@ const App: React.FC = () => {
       setCurrentScreen(AppScreen.Exercise);
   };
 
-  // --- GAME COMPLETION & PROGRESSION LOGIC ---
-
   const checkStreak = (history: SessionResult[]) => {
-      // Get unique dates played
       const dates = [...new Set(history.map(h => h.date.split('T')[0]))].sort();
       if (dates.length < 7) return false;
       
-      // Check for 7 consecutive days looking backwards
       let consecutive = 1;
       for (let i = dates.length - 1; i > 0; i--) {
           const d1 = new Date(dates[i]);
@@ -399,23 +344,21 @@ const App: React.FC = () => {
   };
 
   const calculateSessionXp = (result: SessionResult): number => {
-      let xp = 20; // Base XP for participation
-      xp += result.stars * 15; // Star Bonus
-      xp += Math.round(result.wpm); // Speed Bonus
-      if (result.accuracy === 100) xp += 20; // Perfection Bonus
-      if (result.mode === GameMode.ErrorDrill) xp += 10; // Drill Bonus
-      if (result.mode === GameMode.Story) xp += 15; // Story Bonus
+      let xp = 20; 
+      xp += result.stars * 15; 
+      xp += Math.round(result.wpm); 
+      if (result.accuracy === 100) xp += 20; 
+      if (result.mode === GameMode.ErrorDrill) xp += 10; 
+      if (result.mode === GameMode.Story) xp += 15; 
       return xp;
   };
 
   const handleLevelComplete = (result: SessionResult, sessionErrors: ErrorStats, sessionCorrects: ErrorStats) => {
     if (!currentUser) return;
     
-    // Win Condition: Now >= 1 star (Level Completion) is enough to progress
     const isWin = result.stars >= 1; 
     setLevelUpData(null);
 
-    // Trigger Confetti & Sound on Win
     if (isWin || result.mode === GameMode.Timed || result.mode === GameMode.Story) {
        if (currentUser.soundEnabled) audioService.playWin();
        
@@ -435,27 +378,21 @@ const App: React.FC = () => {
 
     setLastResult(result);
     
-    // Calculate New State
     const newHistory = [...currentUser.history, result];
     let newUnlocked = [...currentUser.unlockedLevels];
     let newAchievements = [...currentUser.achievements];
     
-    // Unlock next level logic (only in Campaign mode)
     if (result.mode === GameMode.Campaign && isWin && result.levelId === Math.max(...currentUser.unlockedLevels)) {
         const nextLevelId = result.levelId + 1;
-        // Check if level exists in constants before unlocking
         if (LEVELS.find(l => l.id === nextLevelId) && !newUnlocked.includes(nextLevelId)) {
             newUnlocked.push(nextLevelId);
         }
     }
 
-    // Update Global Error Stats (Heatmap)
     const newErrorStats = { ...currentUser.errorStats };
-    // Add new errors
     Object.entries(sessionErrors).forEach(([char, count]) => {
         newErrorStats[char] = (newErrorStats[char] || 0) + count;
     });
-    // Decay errors (Healing mechanic): Correct hits reduce the error count for that key
     const DECAY_RATE = 0.33; 
     Object.entries(sessionCorrects).forEach(([char, count]) => {
         if (newErrorStats[char] && newErrorStats[char] > 0) {
@@ -464,7 +401,6 @@ const App: React.FC = () => {
         }
     });
 
-    // Check Achievements
     const checkForAchievement = (id: string, condition: boolean) => {
         if (condition && !newAchievements.includes(id)) {
             newAchievements.push(id);
@@ -481,10 +417,8 @@ const App: React.FC = () => {
     checkForAchievement('error_crusher', result.mode === GameMode.ErrorDrill && result.accuracy === 100 && result.levelId === -2);
     checkForAchievement('time_lord', result.mode === GameMode.Timed && (result.duration || 0) >= 1 && result.wpm >= 30);
 
-    // XP & Leveling Logic
     let sessionXp = calculateSessionXp(result);
     
-    // Daily Challenge Progress
     let daily = currentUser.dailyChallenge ? { ...currentUser.dailyChallenge } : null;
     if (daily && !daily.completed) {
         let increment = 0;
@@ -510,7 +444,6 @@ const App: React.FC = () => {
     let nextLevelXp = getXpForNextLevel(currentLevel);
     let leveledUp = false;
     
-    // Handle multiple level ups
     while (currentXp >= nextLevelXp) {
         currentXp -= nextLevelXp;
         currentLevel++;
@@ -518,7 +451,6 @@ const App: React.FC = () => {
         leveledUp = true;
     }
     
-    // Update Title if level requirements met
     let newTitle = currentUser.currentTitle;
     if (leveledUp) {
         const unlockedTitles = Object.keys(PLAYER_TITLES)
@@ -532,7 +464,6 @@ const App: React.FC = () => {
         setLevelUpData({ old: currentUser.playerLevel, new: currentLevel });
     }
 
-    // UPDATE STATE
     updateUser(currentUser.id, {
         history: newHistory,
         unlockedLevels: newUnlocked,
@@ -559,7 +490,19 @@ const App: React.FC = () => {
         message = lastResult.stars === 3 ? SUCCESS_MESSAGES[0] : lastResult.stars === 2 ? "Muito bem!" : "Bom esforço!";
     }
 
-    // Calculate Next Level Logic for button display
+    const getAccuracyLabel = (val: number) => {
+        if (val === 100) return "Perfeita!";
+        if (val >= 95) return "Quase Perfeita!";
+        if (val >= 85) return "Muito Boa!";
+        return "Vamos Treinar!";
+    };
+
+    const getConsistencyLabel = (val: number) => {
+        if (val >= 90) return "Super Regular!";
+        if (val >= 70) return "Regular";
+        return "A melhorar";
+    };
+
     let nextLevel = null;
     if (lastResult.mode === GameMode.Campaign && lastResult.stars >= 1) { 
         const nextId = lastResult.levelId + 1;
@@ -573,7 +516,6 @@ const App: React.FC = () => {
                 animate={{ scale: 1, opacity: 1 }}
                 className="bg-white rounded-[2.5rem] p-8 max-w-md w-full text-center shadow-2xl relative overflow-hidden border-4 border-white"
             >
-                {/* Level Up Overlay */}
                 {levelUpData && (
                     <motion.div 
                         initial={{ opacity: 0 }}
@@ -599,16 +541,19 @@ const App: React.FC = () => {
                     </div>
                     <div className="bg-emerald-50 p-3 rounded-2xl">
                         <div className="text-[10px] md:text-xs font-bold text-emerald-400 uppercase">Precisão</div>
-                        <div className="text-2xl md:text-3xl font-bold text-emerald-600">{lastResult.accuracy}%</div>
+                        <div className="text-base md:text-lg font-bold text-emerald-600 leading-tight pt-1">
+                            {getAccuracyLabel(lastResult.accuracy)}
+                        </div>
                     </div>
                     <div className="bg-purple-50 p-3 rounded-2xl">
                          <div className="text-[10px] md:text-xs font-bold text-purple-400 uppercase">Ritmo</div>
-                         <div className="text-2xl md:text-3xl font-bold text-purple-600">{lastResult.consistency ?? 100}%</div>
+                         <div className="text-base md:text-lg font-bold text-purple-600 leading-tight pt-1">
+                             {getConsistencyLabel(lastResult.consistency ?? 100)}
+                         </div>
                     </div>
                 </div>
                 
                 <div className="flex flex-col gap-3">
-                    {/* Next Level Button (Primary) */}
                     {nextLevel && (
                         <ClayButton 
                             variant="primary" 
@@ -620,7 +565,6 @@ const App: React.FC = () => {
                         </ClayButton>
                     )}
 
-                    {/* Retry Button (Secondary if won, Primary if lost) */}
                     {!nextLevel && (
                         <ClayButton 
                             variant={lastResult.stars < 2 ? "primary" : "secondary"}
@@ -631,7 +575,6 @@ const App: React.FC = () => {
                         </ClayButton>
                     )}
                     
-                    {/* Return to Menu */}
                     <ClayButton variant="secondary" onClick={() => setCurrentScreen(AppScreen.Dashboard)}>
                         Menu Principal
                     </ClayButton>
@@ -641,7 +584,6 @@ const App: React.FC = () => {
     );
   };
 
-  // If no user is selected, show User Selection Screen
   if (!currentUser) {
       if (currentScreen === AppScreen.ParentDashboard) {
           return (
@@ -663,7 +605,6 @@ const App: React.FC = () => {
       );
   }
 
-  // Lava Lamp Background Colors based on theme
   const BlobColor1 = currentUser.theme === 'rose' ? 'bg-purple-200' : currentUser.theme === 'blue' ? 'bg-blue-200' : 'bg-yellow-200';
   const BlobColor2 = currentUser.theme === 'rose' ? 'bg-yellow-100' : currentUser.theme === 'blue' ? 'bg-cyan-100' : 'bg-orange-100';
   const BlobColor3 = currentUser.theme === 'rose' ? 'bg-pink-100' : currentUser.theme === 'blue' ? 'bg-indigo-100' : 'bg-amber-100';
@@ -671,7 +612,6 @@ const App: React.FC = () => {
   return (
     <div className="font-sans text-slate-800 min-h-screen flex flex-col relative overflow-hidden transition-colors duration-500">
       
-      {/* Lava Lamp Blobs Background Effect */}
       <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
           <div className={`absolute top-[-10%] left-[-10%] w-[500px] h-[500px] ${BlobColor1} rounded-full mix-blend-multiply filter blur-[80px] opacity-40 animate-blob transition-colors duration-1000`}></div>
           <div className={`absolute top-[-10%] right-[-10%] w-[500px] h-[500px] ${BlobColor2} rounded-full mix-blend-multiply filter blur-[80px] opacity-40 animate-blob animation-delay-2000 transition-colors duration-1000`}></div>
@@ -686,7 +626,6 @@ const App: React.FC = () => {
                  </div>
                  <h1 className="text-2xl font-bold text-slate-700 fun-font hidden md:block">Teclado Mágico</h1>
                  
-                 {/* Network Status Indicator */}
                  {isOffline && (
                     <div className="flex items-center gap-2 bg-red-100 text-red-500 px-3 py-1 rounded-full text-xs font-bold animate-pulse">
                         <WifiOff size={14} />
@@ -696,27 +635,24 @@ const App: React.FC = () => {
              </div>
              
              <div className="flex items-center gap-4">
-                 {/* Theme Selector */}
                  <div className="bg-white/50 backdrop-blur-sm p-1 rounded-full flex items-center gap-1 shadow-sm border border-white">
                      <button onClick={() => handleSetTheme('rose')} className={`w-6 h-6 rounded-full bg-rose-400 border-2 transition-transform ${currentUser.theme === 'rose' ? 'border-rose-600 scale-110' : 'border-transparent hover:scale-105'}`} aria-label="Tema Rosa" />
                      <button onClick={() => handleSetTheme('blue')} className={`w-6 h-6 rounded-full bg-blue-400 border-2 transition-transform ${currentUser.theme === 'blue' ? 'border-blue-600 scale-110' : 'border-transparent hover:scale-105'}`} aria-label="Tema Azul" />
                      <button onClick={() => handleSetTheme('amber')} className={`w-6 h-6 rounded-full bg-amber-400 border-2 transition-transform ${currentUser.theme === 'amber' ? 'border-amber-600 scale-110' : 'border-transparent hover:scale-105'}`} aria-label="Tema Amarelo" />
                  </div>
 
-                 {/* Logout Button */}
                  <button onClick={handleLogout} className="text-slate-400 hover:text-red-500 transition" title="Sair">
                     <LogOut size={20} />
                  </button>
              </div>
         </header>
 
-        {/* --- ROUTER VIEW --- */}
         <div className="flex-grow">
             {currentScreen === AppScreen.Dashboard && (
             <LevelSelector 
                 levels={LEVELS} 
                 unlockedLevels={currentUser.unlockedLevels}
-                gameState={currentUser as any} // Cast for compatibility with shared props
+                gameState={currentUser as any} 
                 onSelectLevel={(l) => handleStartLevel(l)}
                 onSelectTimedMode={handleStartTimedMode}
                 onSelectErrorMode={handleStartErrorMode}
@@ -767,7 +703,6 @@ const App: React.FC = () => {
             )}
         </div>
 
-        {/* --- FOOTER with Angolan Reference --- */}
         {currentScreen !== AppScreen.Exercise && (
             <footer className="w-full max-w-7xl mx-auto p-6 text-center text-slate-400 text-sm font-bold flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
                 <div className="flex flex-col items-center gap-2">
@@ -780,7 +715,6 @@ const App: React.FC = () => {
                      <Shield size={14} /> Privacidade e Dados
                 </button>
                 
-                {/* PWA Install Button (Only visible if prompt is captured) */}
                 {installPrompt && (
                     <button 
                         onClick={handleInstallClick} 
@@ -793,7 +727,6 @@ const App: React.FC = () => {
         )}
       </div>
 
-      {/* --- GLOBAL MODALS --- */}
       <CookieBanner onOpenPolicy={() => setShowPrivacyModal(true)} theme={currentUser.theme} />
       <PrivacyModal 
         isOpen={showPrivacyModal} 

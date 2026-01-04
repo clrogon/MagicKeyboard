@@ -1,15 +1,20 @@
-
 /// <reference types="node" />
 
 import { GoogleGenAI } from "@google/genai";
 import { Level, GameMode, ErrorStats } from '../types';
 
+// Defensive declaration for process.env to avoid TS errors in some environments
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      API_KEY?: string;
+    }
+  }
+}
+
 let genAI: GoogleGenAI | null = null;
 
 // Initialize Gemini Client safely
-// The API Key is injected via Vite's environment variable system.
-// We use a try-catch to prevent the app from crashing entirely if the key is missing,
-// allowing it to fall back to hardcoded samples.
 try {
   if (process.env.API_KEY) {
     genAI = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -62,14 +67,12 @@ export const generateSmartExercise = async (
         .toUpperCase();
     
     // Base Instruction: Ensure strict European Portuguese context with Angolan inclusiveness.
-    // We explicitly ban Brazilian terms (e.g., gerunds) to suit the target educational system.
     let systemInstruction = "You are a typing tutor for a child learning European Portuguese (pt-PT). STRICTLY AVOID Brazilian Portuguese terms (e.g., use 'a fazer' instead of 'fazendo'). Address the child as 'Tu'. Include cultural names, places, and context from both Portugal (e.g., Lisboa, Tejo, Serra da Estrela, Galo) and Angola (e.g., Luanda, Kwanza, Muxima, Imbondeiro, Palanca, Benguela, Huambo, Semba).";
     
     let prompt = "";
 
     // 2. Mode-Specific Prompt Engineering
     if (mode === GameMode.ErrorDrill && errorStats) {
-        // Identify top 3 weak keys based on error count to create focused remediation
         const weakKeys = Object.entries(errorStats)
             .sort(([,a], [,b]) => b - a)
             .slice(0, 3)
@@ -89,7 +92,6 @@ export const generateSmartExercise = async (
         }
 
     } else if (mode === GameMode.Timed) {
-        // Timed mode needs a large buffer of text so the user doesn't run out.
         prompt = `
             ${systemInstruction}
             Generate a LONG typing text (approx 30-40 words) for a 60-second challenge.
@@ -99,7 +101,6 @@ export const generateSmartExercise = async (
             Make it fun and varied, mixing words from Portugal and Angola.
         `;
     } else if (mode === GameMode.Story) {
-        // Story Mode Logic: Prioritizes flow and narrative over strict key constraints
         prompt = `
             ${systemInstruction}
             Generate a creative, coherent SHORT STORY (3-4 sentences, about 30-40 words).
@@ -115,7 +116,6 @@ export const generateSmartExercise = async (
             ? "Generate a longer sentence (8-10 words) or a list of harder/longer words." 
             : "Generate a single line of text (about 4-6 words).";
         
-        // Special logic for number levels
         const hasNumbers = level.newKeys.some(k => '0123456789'.includes(k));
         const numberInstruction = hasNumbers ? "Include numbers in the generated text (e.g., dates, quantities, years)." : "";
 
@@ -147,12 +147,10 @@ export const generateSmartExercise = async (
        return cleanText;
     }
     
-    // Fallback if response was empty
     return getFallback();
 
   } catch (error) {
     console.error("Gemini generation failed", error);
-    // Silent fail to fallback to keep the game playable
     return getFallback();
   }
 };

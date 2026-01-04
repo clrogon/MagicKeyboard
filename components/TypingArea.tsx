@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Level, SessionResult, GameMode, ErrorStats, Theme } from '../types';
 import { ClayButton } from './ClayButton';
 import VirtualKeyboard from './VirtualKeyboard';
-import { RotateCcw, Timer, X, Info, EyeOff } from 'lucide-react';
+import { RotateCcw, Timer, X, Info, EyeOff, Sparkles, Flag } from 'lucide-react';
 import { generateSmartExercise } from '../services/geminiService';
 import { THEME_COLORS } from '../constants';
 import { audioService } from '../services/audioService';
@@ -22,23 +21,11 @@ interface TypingAreaProps {
   onExit: () => void;
 }
 
-/**
- * TypingArea Component
- * 
- * The core game loop component. Handles:
- * 1. AI Text Generation via 'initLevel'
- * 2. Pre-Game Briefing (Explanation of goals)
- * 3. Input capture (using a hidden input field for mobile compatibility)
- * 4. Real-time validation (Hit/Miss)
- * 5. WPM, Accuracy AND Consistency calculation
- * 6. Timer logic (for Timed mode)
- * 7. Audio Feedback (Click/Error)
- */
 const TypingArea: React.FC<TypingAreaProps> = ({ 
     level, mode, errorStats, timeLimit, difficultyModifier = 'normal', blindMode = false, soundEnabled = true, theme, onComplete, onExit 
 }) => {
   // Game State
-  const [isBriefing, setIsBriefing] = useState(true); // Start in Briefing mode (modal overlay)
+  const [isBriefing, setIsBriefing] = useState(true);
   const [text, setText] = useState<string>("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [startTime, setStartTime] = useState<number | null>(null);
@@ -48,8 +35,10 @@ const TypingArea: React.FC<TypingAreaProps> = ({
   const [sessionErrorMap, setSessionErrorMap] = useState<ErrorStats>({}); 
   const [sessionCorrectMap, setSessionCorrectMap] = useState<ErrorStats>({}); 
   
+  // Motivational Feedback System
+  const [motivationalMessage, setMotivationalMessage] = useState<string>("Prepara-te...");
+  
   // Rhythm/Consistency Tracking
-  // We track the time interval between every keystroke to calculate standard deviation later.
   const [lastKeystrokeTime, setLastKeystrokeTime] = useState<number | null>(null);
   const [keystrokeIntervals, setKeystrokeIntervals] = useState<number[]>([]);
 
@@ -59,16 +48,16 @@ const TypingArea: React.FC<TypingAreaProps> = ({
   const [timeLeft, setTimeLeft] = useState<number | null>(timeLimit || null);
 
   // Refs
-  const inputRef = useRef<HTMLInputElement>(null); // Hidden input for mobile keyboard triggering
+  const inputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<number | null>(null);
 
   const colors = THEME_COLORS[theme];
 
-  // Initialize Level: Calls AI service to generate text
+  // Initialize Level
   const initLevel = useCallback(async () => {
     setLoading(true);
+    setMotivationalMessage("A carregar magia...");
     
-    // Safety Timeout: If AI takes too long (>8s), force enable the button with fallback text
     const safetyTimeout = setTimeout(() => {
         setLoading((currentLoading) => {
             if (currentLoading) {
@@ -85,6 +74,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
         clearTimeout(safetyTimeout);
         setText(newText);
         setLoading(false);
+        setMotivationalMessage("Vamos começar!");
     } catch (e) {
         clearTimeout(safetyTimeout);
         console.error("Level init error:", e);
@@ -92,7 +82,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({
         setLoading(false);
     }
 
-    // Reset Game State variables
     setCurrentIndex(0);
     setSessionErrors(0);
     setSessionErrorMap({});
@@ -114,9 +103,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     }
   }, [initLevel]);
 
-  // FOCUS MANAGEMENT:
-  // Maintain focus on hidden input to capture keystrokes.
-  // This is critical for Mobile Safari/Chrome to keep the virtual keyboard open.
+  // Focus Management
   useEffect(() => {
     const interval = setInterval(() => {
       if (!loading && !isBriefing) inputRef.current?.focus();
@@ -124,7 +111,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     return () => clearInterval(interval);
   }, [loading, isBriefing]);
 
-  // Timer Countdown Logic
+  // Timer Countdown
   useEffect(() => {
     if (startTime && timeLimit && timeLeft !== null && !isBriefing) {
         timerRef.current = window.setInterval(() => {
@@ -142,7 +129,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     };
   }, [startTime, timeLimit, isBriefing]);
 
-  // Auto-finish when time runs out
+  // Auto-finish
   useEffect(() => {
       if (timeLeft === 0 && startTime) {
           finishLevel();
@@ -151,27 +138,18 @@ const TypingArea: React.FC<TypingAreaProps> = ({
 
   const handleStartGame = () => {
       setIsBriefing(false);
-      // Init audio context (must be user initiated)
+      setMotivationalMessage("Começa a escrever!");
       if(soundEnabled) audioService.init();
       if(soundEnabled) audioService.playStart();
-      // Slight delay to ensure DOM update before focus
       setTimeout(() => inputRef.current?.focus(), 100);
   };
 
   const handleInput = () => {
-     // Controlled input handler is empty because we use onKeyDown for granular control 
-     // of special keys and prevention of default browser behaviors.
+     // Controlled input handler logic
   };
 
-  /**
-   * Main Input Handler
-   * Compares key press against target char.
-   */
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Ignore if briefing or loading
     if (loading || isBriefing || (timeLeft === 0)) return;
-
-    // Ignore navigation keys (arrows) to prevent scrolling
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
         e.preventDefault();
         return;
@@ -180,40 +158,32 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     const char = e.key;
     const targetChar = text[currentIndex];
 
-    // Ignore modifier keys or multi-char events
     if (char.length > 1 && char !== 'Backspace' && !['Shift'].includes(char)) return; 
     if (char === 'Shift' || char === 'Alt' || char === 'Control' || char === 'CapsLock') return;
 
     const now = Date.now();
 
-    // Start timer on first keypress
     if (!startTime) {
       setStartTime(now);
       setLastKeystrokeTime(now);
     }
 
-    // Disable Backspace (Pedagogical choice: forces forward momentum and prevents "cheating")
-    if (char === 'Backspace') {
-       return;
-    }
+    if (char === 'Backspace') return;
 
-    if (char === targetChar) { // Case sensitive match
-      // -- CORRECT HIT --
+    if (char === targetChar) {
+      // Correct
       setTypedChars(prev => prev + char);
       
       if(soundEnabled) audioService.playClick();
       
-      // Rhythm Tracking: Record interval since last key
       if (lastKeystrokeTime) {
           const interval = now - lastKeystrokeTime;
-          // Ignore pauses > 2s (thinking time vs typing flow)
           if (interval < 2000) { 
               setKeystrokeIntervals(prev => [...prev, interval]);
           }
       }
       setLastKeystrokeTime(now);
 
-      // Track correct stats for heatmap healing
       setSessionCorrectMap(prev => ({
           ...prev,
           [targetChar]: (prev[targetChar] || 0) + 1
@@ -222,19 +192,26 @@ const TypingArea: React.FC<TypingAreaProps> = ({
       const nextIndex = currentIndex + 1;
       setCurrentIndex(nextIndex);
 
-      // Check Completion
+      // --- Progress Feedback (No Percentages) ---
+      const progress = nextIndex / text.length;
+      if (progress >= 0.2 && progress < 0.25) setMotivationalMessage("Bom começo! 👍");
+      else if (progress >= 0.5 && progress < 0.55) setMotivationalMessage("Já vais a meio! 🏃");
+      else if (progress >= 0.75 && progress < 0.8) setMotivationalMessage("Quase lá! Força! 💪");
+      else if (progress >= 0.9 && progress < 1.0) setMotivationalMessage("Só mais um bocadinho! 🏁");
+      else if (progress === 1) setMotivationalMessage("Conseguiste! 🎉");
+
       if (nextIndex >= text.length) {
         if (mode === GameMode.Timed) {
-            // Infinite scroll for timed mode
             setText(prev => prev + " " + prev);
         } else {
             finishLevel();
         }
       }
     } else {
-      // -- ERROR --
+      // Error
       if(soundEnabled) audioService.playError();
       setSessionErrors(prev => prev + 1);
+      setMotivationalMessage("Ups! Tenta outra vez. 🛡️"); 
       setSessionErrorMap(prev => ({
           ...prev,
           [targetChar]: (prev[targetChar] || 0) + 1
@@ -242,9 +219,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     }
   };
 
-  /**
-   * Calculates final stats and triggers parent callback.
-   */
   const finishLevel = () => {
     const endTime = Date.now();
     let durationMin = 0;
@@ -255,13 +229,10 @@ const TypingArea: React.FC<TypingAreaProps> = ({
         durationMin = (endTime - (startTime || endTime)) / 60000;
     }
     
-    // Stats Calculation
     const totalTyped = currentIndex;
     const grossWpm = Math.round((totalTyped / 5) / (durationMin || 0.001)); 
     const accuracy = totalTyped > 0 ? Math.round(((totalTyped - sessionErrors) / totalTyped) * 100) : 0;
     
-    // Consistency Calculation (Coefficient of Variation)
-    // 100% = Metronomic precision, 0% = Erratic
     let consistency = 100;
     if (keystrokeIntervals.length > 2) {
         const mean = keystrokeIntervals.reduce((a, b) => a + b, 0) / keystrokeIntervals.length;
@@ -271,7 +242,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({
         consistency = Math.max(0, Math.round(100 - (cv * 100)));
     }
 
-    // Star Rating Logic
     let stars: 1 | 2 | 3 = 1;
     if (grossWpm >= level.minWpm && accuracy >= level.minAccuracy) stars = 3;
     else if (accuracy >= level.minAccuracy) stars = 2;
@@ -289,29 +259,37 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     }, sessionErrorMap, sessionCorrectMap);
   };
 
-  // Render the Briefing Overlay (Modal)
+  // Briefing Modal with specific goals
   const renderBriefing = () => {
-      // Determine what to show based on mode
-      let title = level.title;
-      let description = level.description;
-      let goal = "Chega ao fim do exercício para passares de nível!";
+      let title = "";
+      let description = "";
+      let goal = "";
       let keys = level.newKeys;
 
-      if (mode === GameMode.Timed) {
-          title = "Contra-Relógio";
-          description = "Escreve o máximo que conseguires antes que o tempo acabe!";
-          goal = "Mantém a velocidade e não pares!";
-          keys = [];
-      } else if (mode === GameMode.ErrorDrill) {
-          title = "Superar Dificuldades";
-          description = "Vamos focar nas teclas onde tens mais dificuldade.";
-          goal = "Atenção redobrada para eliminar erros!";
-          keys = [];
-      } else if (mode === GameMode.Story) {
-          title = "Hora do Conto";
-          description = "Escreve uma pequena história completa.";
-          goal = "Lê e escreve ao mesmo tempo. Diverte-te!";
-          keys = []; 
+      switch(mode) {
+          case GameMode.Timed:
+              title = "Desafio do Relógio";
+              description = "O tempo vai contar! Escreve o máximo que conseguires.";
+              goal = "Ser rápido e não parar!";
+              keys = [];
+              break;
+          case GameMode.ErrorDrill:
+              title = "Vamos Limpar Erros";
+              description = "Vamos praticar as letras que costumam ser mais difíceis para ti.";
+              goal = "Acertar nas letras difíceis.";
+              keys = [];
+              break;
+          case GameMode.Story:
+              title = "Hora da História";
+              description = "Vais escrever uma pequena aventura.";
+              goal = "Chegar ao fim da história.";
+              keys = [];
+              break;
+          default: 
+              title = `Nível ${level.id}: ${level.title}`;
+              description = level.description;
+              goal = `Chegar ao fim da linha usando as teclas certas!`;
+              break;
       }
 
       return (
@@ -327,11 +305,11 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                  </div>
                  
                  <h2 className="text-3xl md:text-4xl font-bold text-slate-700 fun-font mb-4">{title}</h2>
-                 <p className="text-lg text-slate-500 font-medium mb-8 leading-relaxed">{description}</p>
+                 <p className="text-lg text-slate-500 font-medium mb-6 leading-relaxed">{description}</p>
                  
                  {keys.length > 0 && (
-                     <div className="mb-8 bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                         <p className="text-xs uppercase font-bold text-slate-400 tracking-widest mb-4">Novas Teclas</p>
+                     <div className="mb-6 bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                         <p className="text-xs uppercase font-bold text-slate-400 tracking-widest mb-4">Teclas Mágicas deste Nível</p>
                          <div className="flex justify-center gap-3 flex-wrap">
                              {keys.map(k => (
                                  <span key={k} className="bg-white text-slate-700 font-mono font-bold text-2xl px-4 py-3 rounded-xl shadow-sm border-b-4 border-slate-200 min-w-[3rem]">
@@ -342,8 +320,12 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                      </div>
                  )}
 
-                 <div className={`${colors.bgSoft} p-4 rounded-xl mb-8 border ${colors.border}`}>
-                     <p className={`${colors.text} font-bold text-sm`}>🎯 Objetivo: {goal}</p>
+                 <div className={`${colors.bgSoft} p-4 rounded-xl mb-8 border ${colors.border} flex items-start gap-3 text-left`}>
+                     <Flag size={24} className={`${colors.text} shrink-0 mt-0.5`} />
+                     <div>
+                        <p className={`${colors.text} font-bold text-sm uppercase mb-1`}>O Teu Objetivo</p>
+                        <p className="text-slate-600 font-bold leading-tight">{goal}</p>
+                     </div>
                  </div>
 
                  <ClayButton 
@@ -353,16 +335,14 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                     disabled={loading}
                     className="w-full py-4 text-xl shadow-xl hover:scale-[1.02] active:scale-95 transition-transform"
                  >
-                     {loading ? 'A preparar...' : 'Começar!'}
+                     {loading ? 'A preparar magia...' : 'Aceitar Missão!'}
                  </ClayButton>
              </motion.div>
         </div>
       );
   };
 
-  // Renders the scrolling text area
   const renderText = () => {
-    // Show a window of text centered on the current index
     const visibleStart = Math.max(0, currentIndex - 8); 
     const visibleEnd = visibleStart + 16;
     const displayText = text.slice(visibleStart, visibleEnd);
@@ -378,17 +358,16 @@ const TypingArea: React.FC<TypingAreaProps> = ({
           let className = "relative flex items-center justify-center rounded-2xl transition-all duration-200 ";
           
           if (isCurrent) {
-             // Active Cursor Card (Scale up + Theme Color)
              className += `w-16 h-20 md:w-20 md:h-24 ${colors.bg} text-white shadow-xl ${colors.shadow} z-10 scale-110`;
           } else {
              className += "w-12 h-16 md:w-14 md:h-20 ";
              
              if (isPast) {
-                className += "text-emerald-400 opacity-50"; // Completed chars
+                className += "text-emerald-400 opacity-50"; 
              } else if (isNext) {
-                className += "text-slate-600 bg-white border-2 border-slate-100"; // Upcoming chars
+                className += "text-slate-600 bg-white border-2 border-slate-100";
              } else {
-                className += "text-slate-300"; // Distant future chars
+                className += "text-slate-300";
              }
           }
 
@@ -409,24 +388,27 @@ const TypingArea: React.FC<TypingAreaProps> = ({
 
   return (
     <div className="flex flex-col items-center justify-between min-h-screen pb-10 px-4 relative">
-        
-        {/* Render Briefing as a Modal Overlay */}
         <AnimatePresence>
             {isBriefing && renderBriefing()}
         </AnimatePresence>
 
-        {/* Header / HUD */}
         <div className={`w-full max-w-5xl flex justify-between items-center py-6 transition-all duration-500 ${isBriefing ? 'blur-sm opacity-50' : ''}`}>
             <ClayButton variant="secondary" onClick={onExit} className="px-4 py-2 text-sm">
                 <RotateCcw size={16} className="mr-2" /> Sair
             </ClayButton>
             
+            {!isBriefing && (
+                <div className={`hidden md:flex bg-white/80 backdrop-blur-sm px-6 py-2 rounded-2xl border-2 ${colors.border} shadow-sm items-center gap-2 animate-bounce-slow`}>
+                    <Sparkles size={16} className={colors.text} />
+                    <span className={`font-bold ${colors.text}`}>{motivationalMessage}</span>
+                </div>
+            )}
+
             <div className="flex gap-4">
-                 {/* Blind Mode Indicator */}
                  {blindMode && (
                     <div className="bg-slate-800 text-white rounded-2xl px-4 py-2 flex items-center gap-2 shadow-sm animate-pulse">
                         <EyeOff size={18} />
-                        <span className="font-bold text-sm uppercase">Teclas Invisíveis</span>
+                        <span className="font-bold text-sm uppercase hidden sm:inline">Invisível</span>
                     </div>
                  )}
 
@@ -451,28 +433,32 @@ const TypingArea: React.FC<TypingAreaProps> = ({
             </div>
         </div>
 
-        {/* Typing Stage */}
         <div className={`flex-1 w-full max-w-4xl flex flex-col justify-center items-center transition-all duration-500 ${isBriefing ? 'blur-sm opacity-50' : ''}`}>
             <motion.div 
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 className="w-full bg-white rounded-[3rem] shadow-[0px_20px_40px_-10px_rgba(0,0,0,0.05)] border border-white p-4 md:p-8 relative overflow-hidden min-h-[250px] flex items-center justify-center"
             >
-                {/* Stage Light Effect */}
                 <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-20 ${colors.bg} opacity-5 blur-3xl rounded-full pointer-events-none`}></div>
                 
-                {mode === GameMode.Timed && !isBriefing && (
-                    <div className={`absolute top-4 left-0 right-0 text-center ${colors.textSoft} text-sm font-bold uppercase tracking-widest`}>
-                        Contra-Relógio
+                {text.length > 0 && mode !== GameMode.Timed && (
+                    <div className="absolute top-0 left-0 right-0 h-2 bg-slate-100">
+                        <motion.div 
+                            className={`h-full ${colors.bg}`}
+                            initial={{ width: 0 }}
+                            animate={{ width: `${(currentIndex / text.length) * 100}%` }}
+                        />
                     </div>
                 )}
                 
-                {/* Always render text, but Briefing overlay covers it if active */}
                 {renderText()}
+
+                <div className="md:hidden absolute bottom-4 text-center w-full px-4">
+                     <span className={`text-sm font-bold ${colors.textSoft}`}>{motivationalMessage}</span>
+                </div>
 
             </motion.div>
             
-            {/* Hidden input sink to capture keyboard events on mobile/desktop */}
             <input
                 ref={inputRef}
                 type="text"
@@ -484,13 +470,12 @@ const TypingArea: React.FC<TypingAreaProps> = ({
             />
         </div>
 
-        {/* 3D Keyboard */}
         <div className={`w-full transition-all duration-500 ${isBriefing ? 'blur-sm opacity-50' : ''}`}>
             <VirtualKeyboard 
                 activeKey={isBriefing ? null : text[currentIndex]} 
                 nextKey={isBriefing ? null : text[currentIndex + 1]} 
                 theme={theme}
-                showLabels={!blindMode} // Pass Blind Mode toggle
+                showLabels={!blindMode}
             />
         </div>
         
