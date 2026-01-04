@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Level, SessionResult, GameMode, ErrorStats, Theme } from '../types';
 import { ClayButton } from './ClayButton';
 import VirtualKeyboard from './VirtualKeyboard';
-import { RotateCcw, Timer, X, Play, Info, EyeOff } from 'lucide-react';
+import { RotateCcw, Timer, X, Info, EyeOff } from 'lucide-react';
 import { generateSmartExercise } from '../services/geminiService';
 import { THEME_COLORS } from '../constants';
 import { audioService } from '../services/audioService';
@@ -153,7 +153,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
       setTimeout(() => inputRef.current?.focus(), 100);
   };
 
-  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInput = () => {
      // Controlled input handler is empty because we use onKeyDown for granular control 
   };
 

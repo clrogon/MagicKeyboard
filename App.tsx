@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
-import { AppState, UserProfile, AppScreen, Level, SessionResult, GameMode, ErrorStats, DailyChallenge, Theme } from './types';
+import { AppState, UserProfile, AppScreen, Level, SessionResult, GameMode, ErrorStats, Theme } from './types';
 import { LEVELS, SUCCESS_MESSAGES, PLAYER_TITLES, AVATARS, THEME_COLORS, getXpForNextLevel } from './constants';
 import LevelSelector from './components/LevelSelector';
 import TypingArea from './components/TypingArea';
@@ -14,7 +14,7 @@ import CookieBanner from './components/CookieBanner';
 import HandGuideModal from './components/HandGuideModal';
 import { ClayButton } from './components/ClayButton';
 import { Shield, Zap, Star, LogOut, Heart, ArrowRight, Download, WifiOff } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { audioService } from './services/audioService';
 
 /**
@@ -31,7 +31,8 @@ const App: React.FC = () => {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        // Migration: If old save format (no 'users' key), migrate to new format
+        
+        // Fix 1: Legacy migration (pre-multi-user)
         if (!parsed.users) {
             const legacyUser: UserProfile = {
                 id: 'legacy',
@@ -47,13 +48,22 @@ const App: React.FC = () => {
                 unlockedLevels: parsed.unlockedLevels || [1],
                 history: parsed.history || [],
                 errorStats: parsed.errorStats || {},
-                soundEnabled: true // Default for migrated users
+                soundEnabled: true 
             };
             return {
                 users: { 'legacy': legacyUser },
                 activeUserId: null // Force selection screen
             };
         }
+
+        // Fix 2: Migration for existing multi-user saves that miss Phase 8 fields
+        if (parsed.users) {
+           Object.keys(parsed.users).forEach(key => {
+               const user = parsed.users[key];
+               if (user.soundEnabled === undefined) user.soundEnabled = true;
+           });
+        }
+
         return parsed;
       } catch (e) {
           console.error("Save migration failed", e);
@@ -85,9 +95,7 @@ const App: React.FC = () => {
   
   // Session Result State
   const [lastResult, setLastResult] = useState<SessionResult | null>(null);
-  const [justUnlockedAchievement, setJustUnlockedAchievement] = useState<string | null>(null);
   const [levelUpData, setLevelUpData] = useState<{old: number, new: number} | null>(null);
-  const [earnedXp, setEarnedXp] = useState<number>(0);
 
   // Modals State
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
@@ -383,7 +391,6 @@ const App: React.FC = () => {
     
     // Win Condition: Now >= 1 star (Level Completion) is enough to progress
     const isWin = result.stars >= 1; 
-    setJustUnlockedAchievement(null);
     setLevelUpData(null);
 
     // Trigger Confetti & Sound on Win
@@ -436,7 +443,6 @@ const App: React.FC = () => {
     const checkForAchievement = (id: string, condition: boolean) => {
         if (condition && !newAchievements.includes(id)) {
             newAchievements.push(id);
-            setJustUnlockedAchievement(id);
         }
     };
     checkForAchievement('first_3_stars', result.stars === 3);
@@ -473,7 +479,6 @@ const App: React.FC = () => {
             sessionXp += daily.rewardXp;
         }
     }
-    setEarnedXp(sessionXp);
 
     let currentXp = currentUser.xp + sessionXp;
     let currentLevel = currentUser.playerLevel;

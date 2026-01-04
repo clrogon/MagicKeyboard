@@ -1,8 +1,8 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Level, UserProfile } from '../types';
 import { ClayButton } from './ClayButton';
-import { Lock, Star, Play, Clock, AlertCircle, RefreshCw, Trophy, Zap, Shield, Crown, Eye, EyeOff, BookOpen, Volume2, VolumeX } from 'lucide-react';
+import { Lock, Play, Clock, AlertCircle, RefreshCw, Trophy, Shield, Crown, Eye, EyeOff, BookOpen, Volume2, VolumeX } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getXpForNextLevel, THEME_COLORS } from '../constants';
 

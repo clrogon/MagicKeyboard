@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { KEYBOARD_LAYOUT, FINGER_NAMES, THEME_COLORS } from '../constants';
 import { KeyConfig, Finger, Theme } from '../types';
 import { HandsDisplay } from './HandsDisplay';

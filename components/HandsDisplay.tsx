@@ -64,7 +64,8 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
       return activeFinger === finger ? '#fff' : '#cbd5e1';
   };
 
-  const getOpacity = (finger: Finger) => {
+  // Simplified: no specific opacity logic needed currently
+  const getOpacity = () => {
       return 1;
   }
 
@@ -91,7 +92,7 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
         fill={getFingerColor(finger)} 
         stroke={getStrokeColor(finger)}
         strokeWidth="3"
-        opacity={getOpacity(finger)}
+        opacity={getOpacity()}
         className="transition-all duration-200"
       />
   );
