@@ -74,19 +74,19 @@ graph TD
     User([Utilizador / User]) -->|Inputs Keyboard| App
     
     subgraph "Teclado Mágico App"
-        App[React + Vite PWA]
-        Logic[Game Engine & Validation]
-        Audio[Web Audio API]
-        Store[(LocalStorage)]
+        App["React + Vite PWA"]
+        Logic["Game Engine & Validation"]
+        Audio["Web Audio API"]
+        Store[("LocalStorage")]
     end
     
     subgraph "Google Cloud"
-        Gemini[Gemini 3 Flash API]
+        Gemini["Gemini 3 Flash API"]
     end
 
     App -->|Render| Logic
     Logic -->|Generate Drills| Gemini
-    Gemini -->|Return Text (PT/AO)| Logic
+    Gemini -->|"Return Text (PT/AO)"| Logic
     Logic -->|Play Sounds| Audio
     Logic -->|Save Progress| Store
 ```
