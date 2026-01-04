@@ -1,163 +1,166 @@
 
-# Teclado Mágico | Magic Keyboard
-
-> **PT**: Um treinador de digitação gamificado e impulsionado por IA, desenhado para crianças a aprender Português (Portugal e Angola).
-> **EN**: A gamified, AI-powered typing trainer designed for children learning Portuguese (Portugal and Angola).
+# Teclado Mágico 🇵🇹 🇦🇴
+### O Treinador de Digitação com Alma Lusófona
+### *The Typing Trainer with a Lusophone Soul*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-19-61dafb)](https://react.dev/)
-[![Gemini](https://img.shields.io/badge/AI-Gemini-8E75B2)](https://deepmind.google/technologies/gemini/)
-[![Status](https://img.shields.io/badge/Status-Active-green)](https://github.com/yourusername/teclado-magico)
+[![Version](https://img.shields.io/badge/version-1.4.0-rose)](package.json)
+[![Status](https://img.shields.io/badge/Status-Production_Ready-green)](https://github.com/yourusername/teclado-magico)
+[![Tech Stack](https://img.shields.io/badge/Stack-React_19_%7C_Vite_%7C_Gemini_AI-8E75B2)](https://react.dev/)
 
 ---
 
-## 📊 Estado Atual | Current Status (v1.4.0)
+## 🌟 Porquê o Teclado Mágico? | Why Magic Keyboard?
 
-| Módulo (Module) | Estado PT | Status EN |
-|-----------------|-----------|-----------|
-| **Motor de Digitação** | ✅ Completo | ✅ Complete |
-| **Teclado Visual 3D** | ✅ Completo | ✅ Complete |
-| **Geração de Texto IA** | ✅ Completo (PT/AO) | ✅ Complete (PT/AO) |
-| **Lições Personalizadas** | ✅ Completo | ✅ Complete |
-| **Certificados PDF** | ✅ Completo | ✅ Complete |
-| **Backup de Dados** | ✅ Completo | ✅ Complete |
-| **Inclusão Cultural** | ✅ Completo | ✅ Complete |
+**O Problema:** A maioria dos treinadores de digitação online ou são apenas em Inglês ou, quando em Português, utilizam vocabulário e gramática do Brasil (PT-BR). Para crianças em **Portugal** e **Angola**, isto cria confusão linguística (ex: "tela" vs "ecrã", "mouse" vs "rato", uso do gerúndio).
+
+**A Solução:** O **Teclado Mágico** é uma plataforma educativa "Privacy-First" que utiliza Inteligência Artificial para gerar exercícios infinitos, culturalmente relevantes e gramaticalmente corretos para o contexto Luso-Afro-Europeu.
+
+> **Our Mission:** To provide a safe, engaging, and culturally accurate typing environment for children in the CPLP (Community of Portuguese Language Countries), specifically focusing on the linguistic nuances of Portugal and Angola.
 
 ---
 
-## 🔒 Privacidade e Segurança (GDPR) | Privacy & Safety
+## 🚀 Funcionalidades de Destaque | Feature Highlights
 
-Este projeto foi desenhado com o princípio de **"Privacy by Design"** para garantir a segurança das crianças online.
+### 🧠 Inteligência Artificial Contextual (Gemini Powered)
+Ao contrário de sites que repetem as mesmas frases estáticas, o Teclado Mágico usa a **API Google Gemini** para criar conteúdos dinâmicos.
+*   **Adaptação Cultural**: O sistema sabe a diferença entre o Tejo e o Kwanza. Gera frases sobre *Imbondeiros*, *Pastéis de Nata*, *Palancas Negras* e *Elétricos de Lisboa*.
+*   **Correção de Erros em Tempo Real**: Se a criança falha muito nas teclas "A" e "S", a IA gera automaticamente um "Treino de Dificuldades" focado nessas letras.
+*   **Zero Alucinações**: Prompting rigoroso garante que o conteúdo é seguro para crianças e pedagogicamente útil.
 
-### 1. Sem Base de Dados (No Database)
-*   **PT**: Não temos servidores. Todos os dados (nome do jogador, progresso, estrelas, lições personalizadas) são guardados **exclusivamente no dispositivo** (LocalStorage). Nós não temos acesso a essa informação.
-*   **EN**: We have no servers. All data (player name, progress, stars, custom lessons) is stored **exclusively on the device** (LocalStorage). We do not have access to this information.
+### 🛡️ Soberania de Dados (Privacy by Design)
+A segurança das crianças é a nossa prioridade número um.
+*   **Sem Base de Dados**: Não temos servidores para guardar dados de utilizadores.
+*   **Armazenamento Local**: Todo o progresso, XP e perfis são guardados encriptados no dispositivo (LocalStorage).
+*   **Anonimato na IA**: Quando pedimos frases à Google, enviamos pedidos anónimos (ex: "Gera uma frase com a letra J"). Nenhum dado da criança é enviado para a cloud.
+*   **GDPR/RGPD**: Totalmente compatível com as normas europeias de proteção de dados.
 
-### 2. Uso de IA (AI Usage)
-*   **PT**: Quando usamos a IA (Google Gemini) para gerar textos, enviamos apenas prompts anónimos (ex: "Cria uma frase com a letra A"). **Nenhum dado do perfil da criança é enviado para a Google.**
-*   **EN**: When using AI (Google Gemini) to generate text, we only send anonymous prompts (e.g., "Create a sentence with letter A"). **No child profile data is sent to Google.**
+### 🎮 Gamificação RPG
+Aprender não tem de ser aborrecido. Transformámos a digitação num jogo.
+*   **Sistema de XP e Níveis**: Evolui de "Aprendiz" até "A Lenda do Teclado".
+*   **Streak Diário**: Incentivos para a prática diária consistente.
+*   **Desafios Aleatórios**: Missões diárias (ex: "Atinge 98% de precisão") com recompensas extra.
+*   **Avatares e Temas**: Personalização visual com temas de alto contraste (Rosa, Azul, Âmbar).
 
-### 3. Sem Rastreamento (No Tracking)
-*   **PT**: Não utilizamos Google Analytics, Facebook Pixels ou cookies de terceiros para publicidade.
-*   **EN**: We do not use Google Analytics, Facebook Pixels, or third-party advertising cookies.
-
----
-
-## 🎯 Visão Geral | Overview
-
-### PT-PT (Português)
-**Teclado Mágico** é uma aplicação web educativa que ajuda crianças a dominar a digitação. Ao contrário de ferramentas genéricas, foca-se especificamente no contexto cultural de **Portugal e Angola**, utilizando vocabulário local (ex: Kwanza, Tejo, Imbondeiro) e gramática correta (tratando o utilizador por "Tu"). Utiliza a IA Gemini da Google para gerar exercícios infinitos e adaptados.
-
-### EN-US (English)
-**Teclado Mágico** is an educational web application that helps children master touch typing. Unlike generic tools, it focuses specifically on the cultural context of **Portugal and Angola**, using local vocabulary (e.g., Kwanza, Tejo, Baobab) and correct grammar (addressing the user as "Tu"). It uses Google's Gemini AI to generate infinite, adaptive typing drills.
-
----
-
-## ✨ Funcionalidades Principais | Core Features
-
-### 1. Inclusão Cultural (Portugal & Angola)
-- **PT**: Exercícios que incluem nomes, cidades e referências culturais de ambos os países (Luanda, Lisboa, Benguela, Algarve, Imbondeiro).
-- **EN**: Drills that include names, cities, and cultural references from both countries.
-
-### 2. Teclas Invisíveis (Blind Mode)
-- **PT**: Um modo de "Magia" que esconde as letras do teclado visual, forçando a criança a confiar na memória muscular.
-- **EN**: A "Magic" mode that hides labels on the visual keyboard, forcing children to rely on muscle memory.
-
-### 3. Aprendizagem Progressiva
-- **PT**: 11 níveis distintos começando pela Linha Mágica (F & J) e expandindo para o alfabeto completo, números e símbolos.
-- **EN**: 11 distinct levels starting from the Magic Line (F & J) expanding to the full alphabet, numbers, and symbols.
-
-### 4. Sistema de Progressão RPG
-- **PT**: Ganha **XP** por cada tecla. Sobe de nível para desbloquear **Títulos** fixes (ex: "Mestre das Palavras") e colecionar **Avatares**.
-- **EN**: Earn **XP** for every key pressed. Level up to unlock cool **Titles** and collect fun **Avatars**.
-
-### 5. Área de Pais e Professores (v1.4.0)
-- **PT**: Uma área dedicada para gerir perfis, criar **Lições Personalizadas**, exportar backups de segurança e imprimir **Diplomas**.
-- **EN**: A dedicated area to manage profiles, create **Custom Lessons**, export security backups, and print **Diplomas**.
-
-### 6. Inteligência Artificial (Gemini)
-- **PT**: Integração Google Gemini gera frases únicas a cada vez • Vocabulário consciente do contexto • Geração de exercícios focados nos erros.
-- **EN**: Google Gemini integration generates unique sentences every time • Context-aware vocabulary • Error-focused drill generation.
+### 🎓 Ferramentas para Pais e Professores (v1.4.0)
+*   **Lições Personalizadas**: O professor pode criar um ditado específico ou lista de palavras para TPC.
+*   **Certificados Oficiais**: Geração de Diplomas em PDF diretamente no navegador para celebrar a conclusão de níveis.
+*   **Backup e Portabilidade**: Exporte o progresso do aluno para um ficheiro JSON e leve-o para outro computador.
+*   **Modo Ditado (Acessibilidade)**: Utiliza síntese de voz (TTS) para ditar palavras, treinando a ortografia auditiva.
 
 ---
 
-## 🏗️ Arquitetura | Architecture
+## 🗺️ Inclusão Cultural: Portugal & Angola
 
-### Diagrama de Fluxo | Flow Diagram
+Este projeto celebra a lusofonia. Os níveis avançados e o Modo História introduzem vocabulário específico:
+
+| Categoria | Portugal 🇵🇹 | Angola 🇦🇴 |
+|-----------|-------------|-----------|
+| **Geografia** | Tejo, Serra da Estrela, Algarve | Kwanza, Lubango, Cabinda |
+| **Cultura** | Fado, Galo de Barcelos, Azulejo | Semba, Kizomba, Pensador |
+| **Fauna/Flora**| Lince Ibérico, Sobreiro | Palanca Negra, Imbondeiro |
+| **Culinária** | Sardinha, Caldo Verde | Muamba, Funge, Ginguba |
+
+---
+
+## 🏗️ Arquitetura Técnica | Technical Architecture
+
+O Teclado Mágico é uma **Progressive Web App (PWA)**, o que significa que pode ser instalada no computador/tablet e funciona **Offline**.
+
+### Stack
+*   **Frontend**: React 19 + TypeScript (Performance e Tipagem estrita)
+*   **Build Tool**: Vite (Carregamento instantâneo)
+*   **Styling**: Tailwind CSS (Design responsivo e acessível)
+*   **Audio**: Web Audio API (Sintetizador de som nativo, sem assets pesados)
+*   **Visualização**: Recharts (Gráficos de progresso) & Framer Motion (Animações fluidas)
+
+### Fluxo de Dados (Data Flow)
 
 ```mermaid
 graph TD
-    User([Utilizador / User]) -->|Inputs Keyboard| App
+    User([Aluno / Student]) -->|Interação| UI[React UI Layer]
     
-    subgraph "Teclado Mágico App (Client-Side)"
-        App["React + Vite PWA"]
-        Logic["Game Engine & Validation"]
-        Audio["Web Audio API"]
-        Store[("LocalStorage (Encrypted)")]
+    subgraph "Navegador (Client-Side Only)"
+        UI --> Engine[Game Engine]
+        Engine -->|Validação| Typist[Typing Logic]
+        Engine -->|Sons| Audio[Web Audio Synth]
+        Engine -->|Persistência| LocalStore[LocalStorage]
+        
+        UI -->|Gestão| ParentDash[Área de Pais]
+        ParentDash -->|Export/Import| JSON[Ficheiro Backup]
+        ParentDash -->|Gerar| PDF[jsPDF Generator]
     end
     
-    subgraph "Google Cloud (Anonymous)"
-        Gemini["Gemini 3 Flash API"]
+    subgraph "Cloud (Stateless & Anonymous)"
+        Engine -->|Request: 'Gera frase com F e J'| Gemini[Google Gemini Flash API]
+        Gemini -->|Response: 'A fada fala já'| Engine
     end
-
-    App -->|Render| Logic
-    Logic -->|"Generate Drills (No PII)"| Gemini
-    Gemini -->|"Return Text (PT/AO)"| Logic
-    Logic -->|Play Sounds| Audio
-    Logic -->|Save Progress| Store
-```
-
-### Stack Tecnológico
-
-| Componente | Tecnologia | Propósito |
-|------------|------------|-----------|
-| **Frontend** | React 19 + TypeScript | UI e Lógica de Jogo |
-| **Estilos** | Tailwind CSS | Design Responsivo |
-| **Animações** | Framer Motion | Transições suaves |
-| **Motor IA** | Google GenAI SDK | Geração Dinâmica de Conteúdo |
-| **Gráficos** | Recharts | Visualização de Progresso |
-| **Ícones** | Lucide React | Linguagem Visual |
-| **PDF** | jsPDF | Geração de Certificados (Client-side) |
-
----
-
-## 🚀 Começar | Getting Started
-
-### Pré-requisitos | Prerequisites
-- Node.js 18+ 
-- Google Gemini API Key
-
-### Instalação | Installation
-
-**1. Clonar o repositório**
-```bash
-git clone https://github.com/yourusername/teclado-magico.git
-cd teclado-magico
-```
-
-**2. Instalar dependências**
-```bash
-npm install
-```
-
-**3. Configurar Ambiente**
-Crie um ficheiro `.env`:
-```env
-API_KEY=a_sua_chave_api_aqui
-```
-
-**4. Iniciar servidor**
-```bash
-npm run dev
 ```
 
 ---
 
-## 📄 Licença | License
+## 📦 Instalação e Desenvolvimento
 
-Este projeto está licenciado sob a Licença MIT - ver ficheiro [LICENSE](LICENSE) para detalhes.
+### Pré-requisitos
+*   Node.js 18+
+*   Uma chave de API do Google Gemini (Gratuita para desenvolvimento no Google AI Studio)
+
+### Passos
+1.  **Clonar o Repositório**
+    ```bash
+    git clone https://github.com/yourusername/teclado-magico.git
+    cd teclado-magico
+    ```
+
+2.  **Instalar Dependências**
+    ```bash
+    npm install
+    ```
+
+3.  **Configurar Variáveis de Ambiente**
+    Crie um ficheiro `.env` na raiz:
+    ```env
+    API_KEY=a_tua_chave_api_aqui
+    ```
+
+4.  **Correr Localmente**
+    ```bash
+    npm run dev
+    ```
 
 ---
 
-**Feito com ❤️ para a educação | Made with ❤️ for education**
+## 📚 Roteiro de Conteúdos | Syllabus
+
+O curso está estruturado em 13 fases pedagógicas:
+
+1.  **A Linha Mágica**: F e J (Dedos indicadores)
+2.  **Vizinhos Amigos**: D e K
+3.  **Família Completa**: S, L, A, Ç (Home Row completa)
+4.  **A Subir**: E, I, O, T
+5.  **Exploradores**: R, U, N, M, C, V
+6.  **Mestre do Alfabeto**: B, G, H, P, Q, W, X, Y, Z + Shift
+7.  **Símbolos**: Pontuação básica
+8.  **Números**: Esquerda (1-5)
+9.  **Números**: Direita (6-0)
+10. **Pontuação Extra**: ! ? -
+11. **Histórias do Mundo**: Frases completas PT/AO
+12. **Acentos Agudos**: á, é, í, ó, ú, à
+13. **Ondas e Chapéus**: ã, õ, â, ê, ô
+
+---
+
+## 🤝 Contribuir
+
+Contribuições são muito bem-vindas, especialmente de educadores e falantes nativos de Português Europeu e de Angola para refinar os prompts culturais. Por favor, leia o [CONTRIBUTING.md](CONTRIBUTING.md) antes de submeter um Pull Request.
+
+## 📄 Licença
+
+Distribuído sob a licença MIT. Ver [LICENSE](LICENSE) para mais informações.
+
+---
+
+<p align="center">
+  <strong>Feito com ❤️ para o futuro da educação na CPLP.</strong><br>
+  © 2026 Cláudio Roberto Gonçalves
+</p>
