@@ -70,7 +70,7 @@ export const FINGER_NAMES: Record<Finger, string> = {
 /**
  * Physical Keyboard Layout Definition (QWERTY - PT-PT standard).
  * Mapped to rows for rendering the 3D Virtual Keyboard.
- * Updated to include Shift-characters for symbols (Level 10).
+ * Updated to include Shift-characters for symbols and ACCENTS.
  */
 export const KEYBOARD_LAYOUT: KeyConfig[][] = [
   // Number Row (1234567890')
@@ -85,9 +85,9 @@ export const KEYBOARD_LAYOUT: KeyConfig[][] = [
     { char: '8', subLabel: '(', finger: Finger.RightMiddle, row: 0 },
     { char: '9', subLabel: ')', finger: Finger.RightRing, row: 0 },
     { char: '0', subLabel: '=', finger: Finger.RightPinky, row: 0 },
-    { char: "'", subLabel: '?', finger: Finger.RightPinky, row: 0 }, // The '?' key
+    { char: "'", subLabel: '?', finger: Finger.RightPinky, row: 0 }, 
   ],
-  // Top Row (QWERTY...)
+  // Top Row (QWERTY...) + Acute Accent
   [
     { char: 'q', finger: Finger.LeftPinky, row: 1 },
     { char: 'w', finger: Finger.LeftRing, row: 1 },
@@ -99,8 +99,9 @@ export const KEYBOARD_LAYOUT: KeyConfig[][] = [
     { char: 'i', finger: Finger.RightMiddle, row: 1 },
     { char: 'o', finger: Finger.RightRing, row: 1 },
     { char: 'p', finger: Finger.RightPinky, row: 1 },
+    { char: '´', subLabel: '`', finger: Finger.RightPinky, row: 1 }, // Acute/Grave Accent Key
   ],
-  // Home Row (ASDF...)
+  // Home Row (ASDF...) + Tilde/Circumflex
   [
     { char: 'a', finger: Finger.LeftPinky, row: 2 },
     { char: 's', finger: Finger.LeftRing, row: 2 },
@@ -112,6 +113,7 @@ export const KEYBOARD_LAYOUT: KeyConfig[][] = [
     { char: 'k', finger: Finger.RightMiddle, row: 2 },
     { char: 'l', finger: Finger.RightRing, row: 2 },
     { char: 'ç', finger: Finger.RightPinky, row: 2 },
+    { char: '~', subLabel: '^', finger: Finger.RightPinky, row: 2 }, // Tilde/Circumflex Key
   ],
   // Bottom Row (ZXCV...)
   [
@@ -125,7 +127,7 @@ export const KEYBOARD_LAYOUT: KeyConfig[][] = [
     { char: 'm', finger: Finger.RightIndex, row: 3 },
     { char: ',', finger: Finger.RightMiddle, row: 3 },
     { char: '.', finger: Finger.RightRing, row: 3 }, 
-    { char: '-', subLabel: '_', finger: Finger.RightPinky, row: 3 }, // Explicit - key (generic position)
+    { char: '-', subLabel: '_', finger: Finger.RightPinky, row: 3 },
     { char: 'ShiftRight', label: 'Shift', finger: Finger.RightPinky, row: 3, width: 1.5 },
   ]
 ];
@@ -227,17 +229,6 @@ export const getXpForNextLevel = (level: number) => level * 250;
 
 /**
  * Progression Levels.
- * Designed for children learning PT (European/Angolan style).
- * 
- * Logic:
- * 1-3: Home Row (F/J -> D/K -> S/L/A/Ç)
- * 4: Top Row Vowels + T (E/I/O/T)
- * 5: Bottom/Top Expansion (R/U/N/M/C/V)
- * 6: Full Alphabet Completion (B/G/H/P/Q/W/X/Y/Z)
- * 7: Punctuation
- * 8-9: Numbers
- * 10: Shift/Symbols
- * 11: Story Mode (Full keyboard fluency)
  */
 export const LEVELS: Level[] = [
   {
@@ -365,7 +356,6 @@ export const LEVELS: Level[] = [
     title: "Histórias do Mundo",
     description: "Escreve histórias sobre Portugal e Angola.",
     newKeys: [], 
-    // Implicitly unlock full keyboard for story mode to allow richer vocabulary
     allKeys: [
         'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
         'ç', ' ', 'ShiftLeft', 'ShiftRight', 
@@ -382,6 +372,38 @@ export const LEVELS: Level[] = [
     difficulty: 'hard',
     minWpm: 15,
     minAccuracy: 92
+  },
+  {
+    id: 12,
+    title: "Acentos Agudos",
+    description: "Primeiro o acento, depois a letra! (´ e `)",
+    newKeys: ['´', '`'],
+    allKeys: [
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+        'ç', ' ', 'ShiftLeft', 'ShiftRight', '´', '`'
+    ],
+    textSamples: [
+        "chá", "pé", "avó", "baú", "olá", "sofá", "jacaré", "boné", "dominó", "às vezes", "fácil", "água"
+    ],
+    difficulty: 'hard',
+    minWpm: 10,
+    minAccuracy: 85
+  },
+  {
+    id: 13,
+    title: "Ondas e Chapéus",
+    description: "Usa o Til (~) e o Chapéu (^) nas vogais.",
+    newKeys: ['~', '^'],
+    allKeys: [
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+        'ç', ' ', 'ShiftLeft', 'ShiftRight', '´', '`', '~', '^'
+    ],
+    textSamples: [
+        "mão", "pão", "cão", "avião", "não", "limão", "lã", "leão", "avô", "você", "puré", "bebê", "português", "lâmpada"
+    ],
+    difficulty: 'hard',
+    minWpm: 10,
+    minAccuracy: 85
   }
 ];
 

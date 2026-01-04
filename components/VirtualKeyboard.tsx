@@ -19,25 +19,59 @@ interface VirtualKeyboardProps {
  * 1. The key to be pressed (Active state)
  * 2. The next key in queue (Next state)
  * 3. The correct finger to use via the <HandsDisplay /> integration.
- * 4. Shift key logic (highlighting Shift + Key simultaneously).
+ * 4. Shift key logic.
+ * 5. Accent/Dead Key logic (Highlights accent key if user needs to type 'á', 'ã', etc).
  */
 const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, theme = 'rose', showLabels = true }) => {
   
   const colors = THEME_COLORS[theme];
 
+  // Helper: Decompose an accented character into its Accent Key and Base Key components
+  // Returns [AccentChar, BaseChar, ShiftRequiredForAccent]
+  const decomposeAccent = (char: string | null): [string | null, string | null, boolean] => {
+      if (!char) return [null, null, false];
+      
+      const map: Record<string, [string, string, boolean]> = {
+          // Acute (´) - No Shift on standard PT
+          'á': ['´', 'a', false], 'é': ['´', 'e', false], 'í': ['´', 'i', false], 'ó': ['´', 'o', false], 'ú': ['´', 'u', false],
+          'Á': ['´', 'a', false], 'É': ['´', 'e', false], 'Í': ['´', 'i', false], 'Ó': ['´', 'o', false], 'Ú': ['´', 'u', false],
+          
+          // Grave (`) - Shift + Acute Key
+          'à': ['´', 'a', true], 'À': ['´', 'a', true],
+          
+          // Tilde (~) - No Shift on standard PT (Key right of Ç)
+          'ã': ['~', 'a', false], 'õ': ['~', 'o', false],
+          'Ã': ['~', 'a', false], 'Õ': ['~', 'o', false],
+          
+          // Circumflex (^) - Shift + Tilde Key
+          'â': ['~', 'a', true], 'ê': ['~', 'e', true], 'ô': ['~', 'o', true],
+          'Â': ['~', 'a', true], 'Ê': ['~', 'e', true], 'Ô': ['~', 'o', true]
+      };
+
+      if (map[char]) return map[char];
+      return [null, null, false];
+  };
+
+  const [requiredAccentKey, requiredBaseKey, accentNeedsShift] = decomposeAccent(activeKey);
+
   // Logic: Determine if 'activeKey' is an uppercase letter or special symbol requiring Shift.
   // Returns 'ShiftLeft' or 'ShiftRight' based on standard typing ergonomics (cross-hand shift).
   const getShiftRequirement = (char: string | null): 'ShiftLeft' | 'ShiftRight' | null => {
      if (!char) return null;
-     
-     // Symbol Handling (Manual Map based on PT-PT standard/constants)
-     if ("!\"#$%&/()=?".includes(char)) {
-         // Assuming these are Shift + Number keys (Left hand numbers need Right shift)
-         return 'ShiftRight'; // Simplified for now, typically opposite hand rule applies
+
+     // Special Case: Accents that require shift (Grave ` and Circumflex ^)
+     if (accentNeedsShift) {
+         // Both accent keys are on the Right side (Pinky), so use Left Shift
+         return 'ShiftLeft';
      }
      
-     // If char is same as lowercase and not a special symbol, no shift needed
-     if (char === char.toLowerCase() && !'!@#$%&*()_+{}|:"<>?'.includes(char)) return null; 
+     // Symbol Handling (Manual Map based on PT-PT standard/constants)
+     if ("!\"#$%&/()=?*".includes(char)) {
+         return 'ShiftRight'; 
+     }
+     
+     // Uppercase Check
+     if (char === char.toLowerCase() && !'!@#$%&*()_+{}|:"<>?`^'.includes(char)) return null; 
      
      if (char !== char.toLowerCase()) {
          // Standard typing rule: Use opposite hand for Shift
@@ -51,10 +85,16 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
   const reqShift = getShiftRequirement(activeKey);
 
   // Map the active char to the correct Finger enum
-  // Enhanced to find Shift-symbols (like '!') by looking for subLabel matches
   const getFinger = (key: string | null): Finger | null => {
       if (!key) return null;
       if (key === ' ') return Finger.Thumb;
+
+      // If it's an accented char, return the finger for the ACCENT key first (teaching the order)
+      if (requiredAccentKey) {
+          const flat = KEYBOARD_LAYOUT.flat();
+          const accentKeyConfig = flat.find(k => k.char === requiredAccentKey);
+          return accentKeyConfig ? accentKeyConfig.finger : null;
+      }
       
       const flat = KEYBOARD_LAYOUT.flat();
       
@@ -72,14 +112,26 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
   const activeFinger = getFinger(activeKey);
 
   const renderKey = (config: KeyConfig) => {
-    // Is this the primary key (e.g. 'a') OR the shift-symbol key (e.g. '1' when typing '!')?
     let isActive = false;
+    let isSemiActive = false; // Used for the base key when an accent is active
+
     if (activeKey) {
-        if (activeKey.toLowerCase() === config.char.toLowerCase()) isActive = true;
-        if (config.subLabel === activeKey) isActive = true;
+        if (requiredAccentKey) {
+            // -- Diacritic Mode --
+            // 1. Highlight the Accent Key (e.g., ´ or ~)
+            if (config.char === requiredAccentKey) isActive = true;
+            
+            // 2. Semi-Highlight the Base Key (e.g., 'a') to show connection
+            if (config.char === requiredBaseKey) isSemiActive = true;
+
+        } else {
+            // -- Standard Mode --
+            if (activeKey.toLowerCase() === config.char.toLowerCase()) isActive = true;
+            if (config.subLabel === activeKey) isActive = true;
+        }
     }
     
-    // Handle Special logic for Shift Visualization (Highlight Shift if required)
+    // Handle Special logic for Shift Visualization
     if (config.char === 'ShiftLeft' && reqShift === 'ShiftLeft') isActive = true;
     if (config.char === 'ShiftRight' && reqShift === 'ShiftRight') isActive = true;
 
@@ -112,6 +164,13 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
         animateProps = { 
             scale: 0.98,
         };
+    } else if (isSemiActive) {
+        // Semi-Active: Showing the base letter for an accent combo
+        visualClasses = `
+            ${colors.bgSoft} ${colors.text} 
+            border-2 ${colors.border}
+        `;
+        animateProps = { scale: 1 };
     } else if (isNext) {
         // Next: Slight highlight (Hint)
         visualClasses = `
