@@ -311,7 +311,13 @@ export const LEVELS: Level[] = [
       "fff jjj", "jfjf", "fjf jfj", "jjj fff", "jf jf", 
       "fj fj", "jj ff", "f f j j", "j j f f", "fff jjj fff",
       "jjj fff jjj", "fjfjf", "jfjfj", "jjff", "ffjj",
-      "j f j f", "f j f j", "fjj", "jff", "jfj"
+      "j f j f", "f j f j", "fjj", "jff", "jfj",
+      "jjj f f", "fff j j", "jf jf jf", "fj fj fj", "j f j",
+      "f j f", "jjf jjf", "ffj ffj", "jjjfff", "fffjjj",
+      "jf jf jf jf", "fj fj fj fj", "f j f j f", "j f j f j", "fff jjj f f j j",
+      "j j f f j j", "f f j j f f", "jfjf jfjf", "fjfj fjfj", "jj ff jj ff",
+      "j j j f f f", "f f f j j j", "jf jf jf", "f j f j", "jjj fff jj f",
+      "fff jjj ff j", "j f j f j f", "f j f j f j"
     ],
     difficulty: 'easy',
     minWpm: 5,
@@ -323,7 +329,18 @@ export const LEVELS: Level[] = [
     description: "Adiciona o D e o K. Usa os dedos médios!",
     newKeys: ['d', 'k'],
     allKeys: ['f', 'j', ' ', 'd', 'k'],
-    textSamples: ["df jk", "fd kj", "dk dk", "kd kd", "dd kk"],
+    textSamples: [
+        "df jk", "fd kj", "dk dk", "kd kd", "dd kk",
+        "k k d d", "d d k k", "j k d f", "f d k j", "jkjk",
+        "dfdf", "kdkd", "djdj", "fkfk", "dkjf",
+        "fjdk", "kdjf", "dj fk", "fk dj", "ddkk",
+        "kkdd", "jk df", "fd jk", "kj fd", "jkdf",
+        "fdkj", "d k d k", "k d k d", "j k j k", "f d f d",
+        "df jk df", "kj fd kj", "dk dk dk", "kd kd kd", "jk df jk",
+        "fd kj fd", "dfjk", "kjfd", "dkdk", "kdkd",
+        "d d k k j j f f", "f f d d k k j j", "jk jk df df", "df df jk jk", "kd kd jf jf",
+        "jf jf kd kd", "dk dk fj fj", "fj fj dk dk"
+    ],
     difficulty: 'easy',
     minWpm: 8,
     minAccuracy: 85
@@ -334,7 +351,19 @@ export const LEVELS: Level[] = [
     description: "S, L, A e Ç. A linha do meio completa!",
     newKeys: ['s', 'l', 'a', 'ç'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç'],
-    textSamples: ["ala", "asa", "fala", "sala", "fada", "lã", "sal"],
+    textSamples: [
+        "ala", "asa", "fala", "sala", "fada", "lã", "sal",
+        "lala", "sasa", "dada", "caca", "ja ja", "ka ka",
+        "laça", "assa", "faca", "jaca", "saca", "cala",
+        "dela", "falsa", "calça", "falta", "salsa", "alfa",
+        "alas", "asas", "fadas", "salas", "falas", "laços",
+        "a la a la", "sa sa sa", "da da da", "fa fa fa", "la la la",
+        "a sala", "a fada", "a faca", "a salsa", "a calça",
+        "fala dada", "dada fala", "sala lala", "lala sala", "sasa assa",
+        "assa sasa", "laça cala", "cala laça", "falsa fada", "fada falsa",
+        "alfa sal", "sal alfa", "falta sal", "sal falta", "dada cala",
+        "faca afiada", "laço de fita"
+    ],
     difficulty: 'medium',
     minWpm: 10,
     minAccuracy: 90
@@ -345,7 +374,16 @@ export const LEVELS: Level[] = [
     description: "E, I, O, T. Vamos para a fila de cima!",
     newKeys: ['e', 'i', 'o', 't'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'o', 't'],
-    textSamples: ["ele", "ela", "eles", "tia", "tio", "oito", "leite", "tosta", "festa", "teto", "leito"],
+    textSamples: [
+        "ele", "ela", "eles", "tia", "tio", "oito", "leite", "tosta", "festa", "teto", "leito",
+        "tolo", "loto", "foto", "fofa", "jota", "seda", "seta", "saloio", "teia",
+        "seita", "fita", "lote", "dote", "toca", "foca", "jato", "tato", "talia",
+        "fatia", "tostas", "festas", "leitos", "tolos", "lotos", "fotos", "fofas",
+        "jotas", "sedas", "setas", "teias", "seitas", "fitas", "lotes", "dotes",
+        "tocas", "focas", "jatos", "tatos", "o tio e a tia", "o gato da tia", "a festa na sala",
+        "o leite e a tosta", "a fita de seda", "o lote de tostas", "a foto da festa", "a teia no teto",
+        "o jato no ceu", "a fatia de bolo", "o tio tito", "a tia tita", "o leite quente"
+    ],
     difficulty: 'medium',
     minWpm: 12,
     minAccuracy: 90
@@ -357,8 +395,15 @@ export const LEVELS: Level[] = [
     newKeys: ['r', 'u', 'n', 'm', 'c', 'v'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'o', 't', 'r', 'u', 'n', 'm', 'c', 'v'],
     textSamples: [
-        "rua", "rio", "mar", "ver", "comer", "nuvem", "conta", "vento", "navio", "treino", 
-        "Cuito", "Cunene", "morro", "nu", "terra", "turma"
+        "rua", "rio", "mar", "ver", "comer", "nuvem", "conta", "vento", "navio", "treino",
+        "Cuito", "Cunene", "morro", "nu", "terra", "turma", "carro", "muro", "vaca", "faca",
+        "caca", "cama", "lama", "rama", "mana", "nora", "neto", "neve", "nove", "novo",
+        "uva", "um", "uma", "uns", "umas", "ovo", "ave", "avo", "avó", "amor",
+        "amar", "ator", "atriz", "arte", "arco", "arma", "alma", "alta", "alto", "ano",
+        "ana", "ama", "ame", "amo", "anta", "ante", "anti", "arco", "ares", "arte",
+        "o carro corre", "a nave voa", "o mar azul", "o rio calmo", "a neve branca",
+        "o vento forte", "a nuvem escura", "o navio grande", "a turma atenta", "o morro alto",
+        "a terra seca", "o muro de pedra", "a vaca no campo", "a faca afiada", "a cama macia"
     ],
     difficulty: 'hard',
     minWpm: 15,
@@ -371,8 +416,15 @@ export const LEVELS: Level[] = [
     newKeys: ['b', 'g', 'h', 'p', 'q', 'w', 'x', 'y', 'z', 'ShiftLeft', 'ShiftRight'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'o', 't', 'r', 'u', 'n', 'm', 'c', 'v', 'b', 'g', 'h', 'p', 'q', 'w', 'x', 'y', 'z', 'ShiftLeft', 'ShiftRight'],
     textSamples: [
-        "Kwanza", "Zola", "Benguela", "Huambo", "Imbondeiro", "Muxima", "Semba", 
-        "Ginguba", "Gato", "Hoje", "Queijo", "Xadrez", "Zebra", "Soba", "Njinga"
+        "Kwanza", "Zola", "Benguela", "Huambo", "Imbondeiro", "Muxima", "Semba", "Ginguba",
+        "Gato", "Hoje", "Queijo", "Xadrez", "Zebra", "Soba", "Njinga", "gato", "galo", "gola",
+        "gula", "haja", "hoje", "hora", "horta", "hotel", "pato", "pele", "pelo", "pela",
+        "pico", "pipa", "poço", "pulo", "puma", "quase", "queda", "quilo", "quota", "xale",
+        "xarope", "xote", "zebra", "zero", "zona", "bela", "bico", "bola", "bolo", "bota",
+        "bula", "kilo", "watt", "yoga", "zoom", "Ginguba de Angola", "O rio Kwanza",
+        "A cidade de Benguela", "O planalto do Huambo", "A planta Imbondeiro", "A nossa Muxima",
+        "Vamos dançar Semba", "O Soba da aldeia", "A Rainha Njinga", "O gato mia", "O galo canta",
+        "A hora passa", "O pato nada", "A pele macia", "O poço fundo", "O puma corre"
     ],
     difficulty: 'hard',
     minWpm: 12,
@@ -384,7 +436,16 @@ export const LEVELS: Level[] = [
     description: "Pontos e vírgulas para dar pausa.",
     newKeys: ['.', ',', ';'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'o', 't', 'r', 'u', 'n', 'm', 'c', 'v', 'b', 'g', 'h', 'p', 'q', 'w', 'x', 'y', 'z', 'ShiftLeft', 'ShiftRight', '.', ',', ';'],
-    textSamples: ["Luanda, Angola.", "Tejo, Douro.", "Dia de sol, dia de praia.", "Lubango, Huíla.", "Porto, Norte."],
+    textSamples: [
+        "Luanda, Angola.", "Tejo, Douro.", "Dia de sol, dia de praia.", "Lubango, Huíla.", "Porto, Norte.",
+        "Sim, claro.", "Não, obrigado.", "Hoje, amanhã, sempre.", "Um, dois, três.", "Azul, verde, vermelho.",
+        "Gato, cão, rato.", "Sol, lua, estrelas.", "Mar, rio, lago.", "Pão, queijo, fiambre.",
+        "Água, sumo, leite.", "Mãe, pai, filho.", "Avô, avó, neto.", "Tio, tia, primo.",
+        "Escola, casa, rua.", "Carro, autocarro, comboio.", "Lisboa, Porto, Faro.", "Coimbra, Braga, Aveiro.",
+        "Évora, Beja, Setúbal.", "Guarda, Viseu, Bragança.", "Viana, Vila Real, Leiria.", "Santarém, Portalegre, Castelo Branco.",
+        "Funchal, Ponta Delgada, Horta.", "Angra, Santa Cruz, Velas.", "Madalena, Lajes, Vila do Porto.", "Corvo, Flores, Graciosa.",
+        "São Jorge, Terceira, Faial.", "Pico, São Miguel, Santa Maria."
+    ],
     difficulty: 'hard',
     minWpm: 15,
     minAccuracy: 90
@@ -395,7 +456,15 @@ export const LEVELS: Level[] = [
     description: "Vamos contar até 5 com a mão esquerda!",
     newKeys: ['1', '2', '3', '4', '5'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'o', 't', 'r', 'u', 'n', 'm', 'c', 'v', 'b', 'g', 'h', 'p', 'q', 'w', 'x', 'y', 'z', 'ShiftLeft', 'ShiftRight', '.', ',', ';', '1', '2', '3', '4', '5'],
-    textSamples: ["1 2 3", "321", "12345", "1 2 1", "543"],
+    textSamples: [
+        "1 2 3", "321", "12345", "1 2 1", "543", "1 2 3 4 5", "5 4 3 2 1",
+        "11 22 33 44 55", "12 34 51", "13 52 41", "14 25 31", "15 24 32", "123",
+        "234", "345", "543", "432", "321", "12 12", "34 34", "55 11", "23 45",
+        "51 42", "35 24", "1 1 2 2", "3 3 4 4", "5 5 1 1", "2 2 3 3", "4 4 5 5",
+        "1, 2, 3.", "3, 2, 1.", "1; 2; 3.", "4, 5.", "5, 4.", "1 e 2.", "3 e 4.",
+        "2 e 3.", "4 e 5.", "1, 3, 5.", "2, 4.", "5, 3, 1.", "4, 2.", "1.2.3.", "3.4.5.",
+        "1,2,3,4,5", "5,4,3,2,1", "1 2 3, 4 5", "5 4 3, 2 1", "1 2, 3 4, 5"
+    ],
     difficulty: 'hard',
     minWpm: 10,
     minAccuracy: 85
@@ -406,7 +475,16 @@ export const LEVELS: Level[] = [
     description: "Completa a contagem com a mão direita.",
     newKeys: ['6', '7', '8', '9', '0'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'o', 't', 'r', 'u', 'n', 'm', 'c', 'v', 'b', 'g', 'h', 'p', 'q', 'w', 'x', 'y', 'z', 'ShiftLeft', 'ShiftRight', '.', ',', ';', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
-    textSamples: ["6 7 8", "9 0 9", "67890", "123 789", "10 20"],
+    textSamples: [
+        "6 7 8", "9 0 9", "67890", "123 789", "10 20", "6 7 8 9 0", "0 9 8 7 6",
+        "66 77 88 99 00", "67 89 06", "68 07 96", "69 70 86", "60 79 87", "678",
+        "789", "890", "098", "987", "876", "67 67", "89 89", "00 66", "78 90",
+        "06 97", "80 79", "6 6 7 7", "8 8 9 9", "0 0 6 6", "7 7 8 8", "9 9 0 0",
+        "6, 7, 8.", "8, 7, 6.", "6; 7; 8.", "9, 0.", "0, 9.", "6 e 7.", "8 e 9.",
+        "7 e 8.", "9 e 0.", "6, 8, 0.", "7, 9.", "0, 8, 6.", "9, 7.", "6.7.8.", "8.9.0.",
+        "1, 2, 3, 4, 5, 6, 7, 8, 9, 0", "0, 9, 8, 7, 6, 5, 4, 3, 2, 1",
+        "10, 20, 30, 40, 50, 60, 70, 80, 90, 100", "1999, 2000, 2024, 2025"
+    ],
     difficulty: 'hard',
     minWpm: 10,
     minAccuracy: 85
@@ -417,7 +495,20 @@ export const LEVELS: Level[] = [
     description: "Perguntas e emoções! ? ! -",
     newKeys: ['?', '!', '-'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'o', 't', 'r', 'u', 'n', 'm', 'c', 'v', 'b', 'g', 'h', 'p', 'q', 'w', 'x', 'y', 'z', 'ShiftLeft', 'ShiftRight', '.', ',', ';', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '?', '!', '-'],
-    textSamples: ["Olá!", "Tudo bem?", "Sim - disse ela.", "1-2-3!", "Fim?"],
+    textSamples: [
+        "Olá!", "Tudo bem?", "Sim - disse ela.", "1-2-3!", "Fim?", "Como estás?",
+        "Estou bem!", "Que horas são?", "São 10 horas!", "Vamos brincar?", "Sim, vamos!",
+        "Gostas de ler?", "Sim, muito!", "Qual o teu nome?", "O meu nome é Ana.",
+        "Onde moras?", "Moro em Lisboa.", "E tu?", "Moro em Luanda!",
+        "Um - dois - três!", "Quatro - cinco - seis!", "Sete - oito - nove!", "Dez!",
+        "Cuidado!", "Atenção!", "Perigo!", "Socorro!", "Ajuda!",
+        "Parabéns!", "Feliz aniversário!", "Bom dia!", "Boa tarde!", "Boa noite!",
+        "Até logo!", "Até amanhã!", "Adeus!", "Obrigado!", "De nada!",
+        "Desculpa!", "Com licença!", "Por favor!", "Verdade?", "Mentira!",
+        "Sério?", "Brincadeira!", "Que fixe!", "Que pena!", "Que bom!",
+        "Estás pronto?", "Vamos lá!", "Força!", "Coragem!", "Vence!",
+        "Perdeu!", "Empate!", "Jogo!", "Fim de jogo!", "Vitória!"
+    ],
     difficulty: 'hard',
     minWpm: 12,
     minAccuracy: 90
@@ -434,13 +525,30 @@ export const LEVELS: Level[] = [
         '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'
     ],
     textSamples: [
-        "A Ana vive em Luanda e gosta de ler.", 
-        "O Zola viu uma Palanca Negra gigante.", 
-        "Em Lisboa e Benguela o sol brilha muito.",
-        "O Rio Kwanza é muito bonito.",
-        "Vamos dançar Kizomba e Semba!",
-        "A Rainha Njinga foi muito forte.",
-        "O Galo de Barcelos canta de manhã."
+        "A Ana vive em Luanda e gosta de ler.", "O Zola viu uma Palanca Negra gigante.",
+        "Em Lisboa e Benguela o sol brilha muito.", "O Rio Kwanza é muito bonito.",
+        "Vamos dançar Kizomba e Semba!", "A Rainha Njinga foi muito forte.",
+        "O Galo de Barcelos canta de manhã.", "O fado ouve-se em Alfama.",
+        "A serra da Estrela tem neve.", "O deserto do Namibe é grande.",
+        "As quedas de Kalandula são lindas.", "O rio Douro atravessa o Porto.",
+        "A torre de Belém é antiga.", "O castelo de São Jorge é alto.",
+        "A ilha de Luanda tem praias.", "O Mussulo é um lugar calmo.",
+        "A comida angolana é saborosa.", "O pastel de nata é doce.",
+        "O bacalhau é um prato típico.", "A muamba de galinha é boa.",
+        "O funge com calulu é forte.", "A francesinha é do Porto.",
+        "O choco frito é de Setúbal.", "A ginguba torrada é boa.",
+        "O sumo de múcua é fresco.", "O vinho do Porto é famoso.",
+        "A azeitona de Elvas é boa.", "O queijo da serra é mole.",
+        "O pão de Mafra é estaladiço.", "O bolo do caco é da Madeira.",
+        "O ananás dos Açores é doce.", "A banana da Madeira é pequena.",
+        "O café de Angola é forte.", "O chá dos Açores é quente.",
+        "A água do Luso é pura.", "A cerveja Cuca é fresca.",
+        "O marisco da costa é fresco.", "O peixe grelhado é bom.",
+        "A cataplana de peixe é rica.", "O arroz de marisco é bom.",
+        "A feijoada à transmontana.", "O cozido à portuguesa.",
+        "A sopa da pedra é de Almeirim.", "O leitão da Bairrada.",
+        "O cabrito assado no forno.", "A vitela de Lafões.",
+        "O bife à café.", "O prego no pão.", "A bifana de Vendas Novas."
     ],
     difficulty: 'hard',
     minWpm: 15,
@@ -456,7 +564,17 @@ export const LEVELS: Level[] = [
         'ç', ' ', 'ShiftLeft', 'ShiftRight', '´', '`'
     ],
     textSamples: [
-        "chá", "pé", "avó", "baú", "olá", "sofá", "jacaré", "boné", "dominó", "às vezes", "fácil", "água"
+        "chá", "pé", "avó", "baú", "olá", "sofá", "jacaré", "boné", "dominó", "às vezes",
+        "fácil", "água", "rápido", "música", "próximo", "lógico", "química", "física",
+        "matemática", "história", "geografia", "biologia", "filosofia", "psicologia",
+        "sociologia", "economia", "política", "gramática", "ortografia", "sintaxe",
+        "análise", "síntese", "tese", "antítese", "hipótese", "teoria", "prática",
+        "método", "técnica", "ciência", "tecnologia", "indústria", "comércio",
+        "serviço", "público", "privado", "social", "cultural", "artístico", "literário",
+        "poético", "dramático", "cómico", "trágico", "épico", "lírico", "satírico",
+        "ironia", "humor", "amor", "ódio", "paixão", "emoção", "razão", "lógica",
+        "ética", "moral", "direito", "dever", "liberdade", "justiça", "verdade",
+        "beleza", "bondade", "felicidade", "paz", "guerra", "vida", "morte"
     ],
     difficulty: 'hard',
     minWpm: 10,
@@ -472,7 +590,16 @@ export const LEVELS: Level[] = [
         'ç', ' ', 'ShiftLeft', 'ShiftRight', '´', '`', '~', '^'
     ],
     textSamples: [
-        "mão", "pão", "cão", "avião", "não", "limão", "lã", "leão", "avô", "você", "puré", "bebê", "português", "lâmpada"
+        "mão", "pão", "cão", "avião", "não", "limão", "lã", "leão", "avô", "você", "puré",
+        "bebê", "português", "lâmpada", "câmera", "tênis", "ônibus", "mecânico", "dinâmico",
+        "orgânico", "botânico", "vulcânico", "oceânico", "atlântico", "pacífico", "indico",
+        "ártico", "antártico", "elétrico", "eletrônico", "atômico", "nuclear", "térmico",
+        "hídrico", "eólico", "solar", "lunar", "estelar", "planetário", "cósmico",
+        "galáctico", "universal", "mundial", "nacional", "regional", "local", "urbano",
+        "rural", "agrícola", "industrial", "comercial", "financeiro", "econômico",
+        "político", "social", "cultural", "educacional", "médico", "jurídico", "militar",
+        "religioso", "espiritual", "físico", "químico", "biológico", "geológico",
+        "astronômico", "meteorológico", "climático", "ambiental", "ecológico"
     ],
     difficulty: 'hard',
     minWpm: 10,

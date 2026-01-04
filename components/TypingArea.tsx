@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Level, SessionResult, GameMode, ErrorStats, Theme, KeyboardLayout } from '../types';
@@ -428,8 +429,11 @@ const TypingArea: React.FC<TypingAreaProps> = ({
           const isNext = actualIdx === currentIndex + 1;
           const isPast = actualIdx < currentIndex;
           
-          let className = "relative flex items-center justify-center rounded-2xl transition-all duration-200 ";
+          let className = "relative flex items-center justify-center rounded-2xl transition-all duration-300 ";
           let content = char === ' ' ? '␣' : char;
+
+          // Inline style for gradual fade effect on past characters
+          let style: React.CSSProperties = {};
 
           if (mode === GameMode.Dictation && !isPast && !isCurrent) {
               if (char === ' ') {
@@ -441,15 +445,20 @@ const TypingArea: React.FC<TypingAreaProps> = ({
               }
           } else {
               if (isCurrent) {
-                 className += `w-16 h-20 md:w-20 md:h-24 ${colors.bg} text-white shadow-xl ${colors.shadow} z-10 scale-110`;
+                 // Enhanced active character styling: Larger, brighter, prominent ring/shadow
+                 className += `w-16 h-20 md:w-20 md:h-24 ${colors.text} bg-white shadow-2xl ring-4 ${colors.border} z-20 scale-110 -translate-y-2`;
               } else {
                  className += "w-12 h-16 md:w-14 md:h-20 ";
                  if (isPast) {
-                    className += "text-emerald-400 opacity-50"; 
+                    className += "text-emerald-500 scale-95 "; 
+                    // Calculate opacity based on distance from current index
+                    const distance = currentIndex - actualIdx;
+                    style.opacity = Math.max(0.3, 1 - (distance * 0.15));
                  } else if (isNext) {
-                    className += "text-slate-600 bg-white border-2 border-slate-100";
+                    // Subtle highlight for the immediate next character
+                    className += "text-slate-500 bg-slate-50 border-b-4 border-slate-200 scale-100";
                  } else {
-                    className += "text-slate-300";
+                    className += "text-slate-300 scale-90";
                  }
               }
           }
@@ -460,6 +469,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                 layout
                 initial={false}
                 className={className}
+                style={style}
             >
               {content}
             </motion.span>
