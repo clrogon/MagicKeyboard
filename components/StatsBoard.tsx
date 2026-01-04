@@ -164,7 +164,6 @@ const StatsBoard: React.FC<StatsBoardProps> = ({ user, history, unlockedLevels, 
 
       // Seal Starburst Edge
       doc.setFillColor(218, 165, 32); // Gold
-      const spikes = 24;
       const outerRadius = 22;
       const innerRadius = 18;
       
