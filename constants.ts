@@ -1,5 +1,5 @@
 
-import { Finger, KeyConfig, Level, Achievement, Theme } from './types';
+import { Finger, KeyConfig, Level, Achievement, Theme, KeyboardLayout } from './types';
 
 /**
  * Theme Configuration Object.
@@ -68,11 +68,10 @@ export const FINGER_NAMES: Record<Finger, string> = {
 };
 
 /**
- * Physical Keyboard Layout Definition (QWERTY - PT-PT standard).
- * Mapped to rows for rendering the 3D Virtual Keyboard.
- * Updated to include Shift-characters for symbols and ACCENTS.
+ * Physical Keyboard Layout Definitions.
+ * Includes standard PT-PT (QWERTY) and French/Immigrant (AZERTY).
  */
-export const KEYBOARD_LAYOUT: KeyConfig[][] = [
+const QWERTY: KeyConfig[][] = [
   // Number Row (1234567890')
   [
     { char: '1', subLabel: '!', finger: Finger.LeftPinky, row: 0 },
@@ -131,6 +130,71 @@ export const KEYBOARD_LAYOUT: KeyConfig[][] = [
     { char: 'ShiftRight', label: 'Shift', finger: Finger.RightPinky, row: 3, width: 1.5 },
   ]
 ];
+
+const AZERTY: KeyConfig[][] = [
+  // Number Row (AZERTY uses Shift for numbers)
+  [
+    { char: '&', subLabel: '1', finger: Finger.LeftPinky, row: 0 },
+    { char: 'é', subLabel: '2', finger: Finger.LeftRing, row: 0 },
+    { char: '"', subLabel: '3', finger: Finger.LeftMiddle, row: 0 },
+    { char: "'", subLabel: '4', finger: Finger.LeftIndex, row: 0 },
+    { char: '(', subLabel: '5', finger: Finger.LeftIndex, row: 0 },
+    { char: '-', subLabel: '6', finger: Finger.RightIndex, row: 0 },
+    { char: 'è', subLabel: '7', finger: Finger.RightIndex, row: 0 },
+    { char: '_', subLabel: '8', finger: Finger.RightMiddle, row: 0 },
+    { char: 'ç', subLabel: '9', finger: Finger.RightRing, row: 0 },
+    { char: 'à', subLabel: '0', finger: Finger.RightPinky, row: 0 },
+    { char: ')', subLabel: '°', finger: Finger.RightPinky, row: 0 },
+  ],
+  // Top Row (AZERTY)
+  [
+    { char: 'a', finger: Finger.LeftPinky, row: 1 },
+    { char: 'z', finger: Finger.LeftRing, row: 1 },
+    { char: 'e', finger: Finger.LeftMiddle, row: 1 },
+    { char: 'r', finger: Finger.LeftIndex, row: 1 },
+    { char: 't', finger: Finger.LeftIndex, row: 1 },
+    { char: 'y', finger: Finger.RightIndex, row: 1 },
+    { char: 'u', finger: Finger.RightIndex, row: 1 },
+    { char: 'i', finger: Finger.RightMiddle, row: 1 },
+    { char: 'o', finger: Finger.RightRing, row: 1 },
+    { char: 'p', finger: Finger.RightPinky, row: 1 },
+    { char: '^', subLabel: '¨', finger: Finger.RightPinky, row: 1 },
+  ],
+  // Home Row (QSDFG...)
+  [
+    { char: 'q', finger: Finger.LeftPinky, row: 2 },
+    { char: 's', finger: Finger.LeftRing, row: 2 },
+    { char: 'd', finger: Finger.LeftMiddle, row: 2 },
+    { char: 'f', finger: Finger.LeftIndex, row: 2 },
+    { char: 'g', finger: Finger.LeftIndex, row: 2 },
+    { char: 'h', finger: Finger.RightIndex, row: 2 },
+    { char: 'j', finger: Finger.RightIndex, row: 2 },
+    { char: 'k', finger: Finger.RightMiddle, row: 2 },
+    { char: 'l', finger: Finger.RightRing, row: 2 },
+    { char: 'm', finger: Finger.RightPinky, row: 2 },
+    { char: 'ù', subLabel: '%', finger: Finger.RightPinky, row: 2 },
+  ],
+  // Bottom Row (WXCVBN...)
+  [
+    { char: 'ShiftLeft', label: 'Shift', finger: Finger.LeftPinky, row: 3, width: 1.5 },
+    { char: 'w', finger: Finger.LeftPinky, row: 3 },
+    { char: 'x', finger: Finger.LeftRing, row: 3 },
+    { char: 'c', finger: Finger.LeftMiddle, row: 3 },
+    { char: 'v', finger: Finger.LeftIndex, row: 3 },
+    { char: 'b', finger: Finger.LeftIndex, row: 3 },
+    { char: 'n', finger: Finger.RightIndex, row: 3 },
+    { char: ',', subLabel: '?', finger: Finger.RightIndex, row: 3 },
+    { char: ';', subLabel: '.', finger: Finger.RightMiddle, row: 3 },
+    { char: ':', subLabel: '/', finger: Finger.RightRing, row: 3 },
+    { char: '!', subLabel: '§', finger: Finger.RightPinky, row: 3 },
+    { char: 'ShiftRight', label: 'Shift', finger: Finger.RightPinky, row: 3, width: 1.5 },
+  ]
+];
+
+export const KEYBOARD_LAYOUTS: Record<KeyboardLayout, KeyConfig[][]> = {
+    qwerty: QWERTY,
+    azerty: AZERTY
+};
 
 /**
  * List of available Achievements.

@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
-import { KEYBOARD_LAYOUT, FINGER_NAMES, THEME_COLORS } from '../constants';
-import { KeyConfig, Finger, Theme } from '../types';
+import { KEYBOARD_LAYOUTS, FINGER_NAMES, THEME_COLORS } from '../constants';
+import { KeyConfig, Finger, Theme, KeyboardLayout } from '../types';
 import { HandsDisplay } from './HandsDisplay';
 
 interface VirtualKeyboardProps {
@@ -9,11 +10,14 @@ interface VirtualKeyboardProps {
   nextKey: string | null;
   theme?: Theme;
   showLabels?: boolean;
+  layout?: KeyboardLayout;
 }
 
-const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, theme = 'rose', showLabels = true }) => {
+const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, theme = 'rose', showLabels = true, layout = 'qwerty' }) => {
   
   const colors = THEME_COLORS[theme];
+  // Select the correct layout configuration
+  const currentLayout = KEYBOARD_LAYOUTS[layout] || KEYBOARD_LAYOUTS['qwerty'];
 
   const decomposeAccent = (char: string | null): [string | null, string | null, boolean] => {
       if (!char) return [null, null, false];
@@ -41,6 +45,11 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
          return 'ShiftLeft';
      }
      
+     // Special handling for AZERTY where numbers need shift
+     if (layout === 'azerty' && /[0-9]/.test(char)) {
+         return 'ShiftLeft'; // Or Right, generally doesn't matter much for numbers but standard is shift
+     }
+     
      if ("!\"#$%&/()=?*".includes(char)) {
          return 'ShiftRight'; 
      }
@@ -48,7 +57,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
      if (char === char.toLowerCase() && !'!@#$%&*()_+{}|:"<>?`^'.includes(char)) return null; 
      
      if (char !== char.toLowerCase()) {
-         const leftHandChars = "qwertasdfgzxcvbQWERTASDFGZXCVB";
+         const leftHandChars = layout === 'qwerty' ? "qwertasdfgzxcvbQWERTASDFGZXCVB" : "azertqsdfgwxcvbAZERTQSDFGWXCVB";
          return leftHandChars.includes(char) ? 'ShiftRight' : 'ShiftLeft';
      }
      return null;
@@ -60,17 +69,21 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
       if (!key) return null;
       if (key === ' ') return Finger.Thumb;
 
+      const flat = currentLayout.flat();
+
       if (requiredAccentKey) {
-          const flat = KEYBOARD_LAYOUT.flat();
           const accentKeyConfig = flat.find(k => k.char === requiredAccentKey);
           return accentKeyConfig ? accentKeyConfig.finger : null;
       }
       
-      const flat = KEYBOARD_LAYOUT.flat();
       let found = flat.find(k => k.char === key.toLowerCase());
       
       if (!found) {
           found = flat.find(k => k.subLabel === key);
+      }
+      // Fallback for AZERTY numbers which are subLabels usually but treated as main input
+      if (!found && layout === 'azerty') {
+           found = flat.find(k => k.subLabel === key);
       }
       
       return found ? found.finger : null;
@@ -169,6 +182,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
             </>
         )}
         
+        {/* Tactile Bumps for F/J (Qwerty) or F/J (Azerty) - They are actually same position roughly but let's strictly check char */}
         {(config.char === 'f' || config.char === 'j') && (
             <div className={`absolute bottom-2 w-4 h-1 rounded-full ${isActive ? 'bg-black/20' : 'bg-slate-200'}`}></div>
         )}
@@ -228,7 +242,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
             className="flex flex-col items-center select-none p-4 md:p-8 transform-style-3d rotate-x-12 origin-bottom transition-transform duration-500"
             style={{ transform: "rotateX(20deg)" }}
         >
-            {KEYBOARD_LAYOUT.map((row, rowIndex) => (
+            {currentLayout.map((row, rowIndex) => (
                 <div key={rowIndex} className="flex justify-center w-full">
                 {row.map(keyConfig => renderKey(keyConfig))}
                 </div>

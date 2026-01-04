@@ -24,6 +24,13 @@ export enum Finger {
 export type Theme = 'rose' | 'blue' | 'amber';
 
 /**
+ * Keyboard Layout Options.
+ * - QWERTY: Standard PT-PT
+ * - AZERTY: French/Luxembourg variation
+ */
+export type KeyboardLayout = 'qwerty' | 'azerty';
+
+/**
  * Configuration for a single key on the virtual keyboard.
  */
 export interface KeyConfig {
@@ -141,6 +148,7 @@ export interface UserProfile {
   dailyChallenge: DailyChallenge | null;
   theme: Theme;
   soundEnabled: boolean;
+  layout: KeyboardLayout; // Added in v1.5.0
 }
 
 /**

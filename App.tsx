@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
-import { AppState, UserProfile, AppScreen, Level, SessionResult, GameMode, ErrorStats, Theme, CustomLesson } from './types';
+import { AppState, UserProfile, AppScreen, Level, SessionResult, GameMode, ErrorStats, Theme, CustomLesson, KeyboardLayout } from './types';
 import { LEVELS, SUCCESS_MESSAGES, PLAYER_TITLES, AVATARS, THEME_COLORS, getXpForNextLevel } from './constants';
 import LevelSelector from './components/LevelSelector';
 import TypingArea from './components/TypingArea';
@@ -63,7 +63,8 @@ const App: React.FC = () => {
                 unlockedLevels: parsed.unlockedLevels || [1],
                 history: parsed.history || [],
                 errorStats: parsed.errorStats || {},
-                soundEnabled: true 
+                soundEnabled: true,
+                layout: parsed.layout || 'qwerty'
             };
             return {
                 users: { 'legacy': legacyUser },
@@ -71,8 +72,18 @@ const App: React.FC = () => {
                 customLessons: []
             };
         }
+        
+        // Ensure all users have layout property (Migration for v1.5.0)
+        const migratedUsers = { ...parsed.users };
+        Object.keys(migratedUsers).forEach(key => {
+            if (!migratedUsers[key].layout) {
+                migratedUsers[key].layout = 'qwerty';
+            }
+        });
+
         return {
             ...parsed,
+            users: migratedUsers,
             customLessons: parsed.customLessons || [] // Ensure customLessons exists (v1.4.0)
         };
       } catch (e) {
@@ -190,12 +201,13 @@ const App: React.FC = () => {
       }));
   };
 
-  const handleCreateUser = (name: string, avatar: string, theme: Theme) => {
+  const handleCreateUser = (name: string, avatar: string, theme: Theme, layout: KeyboardLayout) => {
       const newUser: UserProfile = {
           id: Date.now().toString(),
           name,
           currentAvatar: avatar,
           theme,
+          layout,
           xp: 0,
           playerLevel: 1,
           currentTitle: PLAYER_TITLES[1],
@@ -840,6 +852,7 @@ const App: React.FC = () => {
                 level={activeLevel}
                 mode={activeMode}
                 theme={currentUser.theme}
+                layout={currentUser.layout}
                 errorStats={currentUser.errorStats}
                 timeLimit={timeLimit}
                 difficultyModifier={difficultyModifier}

@@ -42,7 +42,15 @@ Project Start Date: **January 3, 2026**.
 - [x] **Generative Audio**: Web Audio API synth for "Thocky" keyboard sounds and success chimes.
 - [x] **Hand Guide**: Interactive modal showing proper finger placement.
 
-## 🚧 Phase 6: Future Horizons (v2.0+)
+## 🚀 Phase 6: Internationalization & Layouts (Current)
+**Status:** In Progress (v1.5.0)
+**Focus:** Supporting Portuguese communities abroad (France, Luxembourg).
+- [x] **Multi-Layout Support**: Engine support for switching between QWERTY and AZERTY layouts.
+- [x] **AZERTY Integration**: Full AZERTY visual keyboard mapping.
+- [ ] **Physical Layout Detection**: Heuristics to detect physical keyboard type.
+- [ ] **Ghost Mode**: Race against your previous best performance.
+
+## 🚧 Phase 7: Future Horizons (v2.0+)
 **Status:** Planned for Late 2026
 **Focus:** Classroom Dynamics & Social Play.
 
@@ -54,10 +62,7 @@ Project Start Date: **January 3, 2026**.
 
 ### ⚔️ Local Multiplayer (Corrida Mágica)
 - [ ] **P2P Racing**: Using WebRTC for local-network typing races between students.
-- [ ] **Ghost Mode**: Race against your own "ghost" from a previous best session.
 - [ ] **Team Challenges**: Cooperative typing where two students type different parts of the same story.
 
 ### ⌨️ Advanced Configurations
-- [ ] **Alternative Layouts**: Support for AZERTY (for Portuguese students in France/Luxembourg) and Dvorak.
-- [ ] **Physical Keyboard Detection**: Heuristics to detect if the user is using a specific physical layout.
 - [ ] **Voice Navigation**: Full menu navigation using voice commands for users with motor impairments.
