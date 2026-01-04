@@ -114,6 +114,9 @@ graph TD
     end
 ```
 
+### Nota Técnica: Input e Acentos (macOS/Linux)
+O motor de jogo implementa gestão de eventos `compositionstart` e `compositionend`. Isto é **crítico** para o suporte correto de caracteres acentuados (á, à, ã, ê) em sistemas macOS e Linux, onde a introdução de acentos cria um estado intermédio (buffer) antes de libertar o caractere final. Sem este tratamento, os "Dead Keys" (ex: Option+E) seriam registados como erros.
+
 ---
 
 ## 📦 Instalação e Desenvolvimento

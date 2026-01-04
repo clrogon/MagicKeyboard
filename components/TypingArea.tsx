@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Level, SessionResult, GameMode, ErrorStats, Theme, KeyboardLayout } from '../types';
@@ -262,9 +261,12 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     // Handle Backspace (Allow correction visual but game logic doesn't strictly require it in this engine)
     if (e.key === 'Backspace') return; 
 
-    // COMPOSITION GUARD:
-    // If the user is currently composing an accent (e.g. Option+E on Mac), 
-    // the browser fires KeyDown but we must wait for CompositionEnd to get the final char (é).
+    // COMPOSITION GUARD & MACOS ACCENTS:
+    // Critical for European Portuguese support (á, à, ã, ê, etc.).
+    // On macOS and some Linux setups, typing accents (e.g., Option+E or Dead Keys) initiates a "Composition Session".
+    // During this session, the browser fires 'KeyDown' events (often with 'Dead' key), but the character isn't final.
+    // We MUST ignore these intermediate events and rely on 'compositionend' to capture the final resolved character.
+    // Failure to handle this results in double-typing or error registration during accent composition.
     if (e.nativeEvent.isComposing || isComposing.current) {
         return;
     }
