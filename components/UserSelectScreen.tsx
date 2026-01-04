@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { UserProfile, Theme } from '../types';
+import { UserProfile, Theme, KeyboardLayout } from '../types';
 import { ClayButton } from './ClayButton';
 import { Plus, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,7 +9,7 @@ import { AVATARS, THEME_COLORS } from '../constants';
 interface UserSelectScreenProps {
   users: UserProfile[];
   onSelectUser: (userId: string) => void;
-  onCreateUser: (name: string, avatar: string, theme: Theme) => void;
+  onCreateUser: (name: string, avatar: string, theme: Theme, layout: KeyboardLayout) => void;
   onOpenParentDashboard: () => void;
 }
 
@@ -18,14 +18,16 @@ const UserSelectScreen: React.FC<UserSelectScreenProps> = ({ users, onSelectUser
   const [newName, setNewName] = useState("");
   const [newAvatar, setNewAvatar] = useState(AVATARS[0]);
   const [newTheme, setNewTheme] = useState<Theme>('rose');
+  const [newLayout, setNewLayout] = useState<KeyboardLayout>('qwerty');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (newName.trim()) {
-      onCreateUser(newName.trim(), newAvatar, newTheme);
+      onCreateUser(newName.trim(), newAvatar, newTheme, newLayout);
       setIsCreating(false);
       setNewName("");
       setNewAvatar(AVATARS[0]);
+      setNewLayout('qwerty');
     }
   };
 
@@ -62,7 +64,7 @@ const UserSelectScreen: React.FC<UserSelectScreenProps> = ({ users, onSelectUser
              <div className="mb-6">
                  <label className="block text-slate-400 font-bold text-sm uppercase tracking-wide mb-2">Avatar</label>
                  <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide">
-                    {AVATARS.slice(0, 8).map(avatar => (
+                    {AVATARS.slice(0, 8).map((avatar: string) => (
                         <button 
                           key={avatar}
                           type="button"
@@ -73,6 +75,26 @@ const UserSelectScreen: React.FC<UserSelectScreenProps> = ({ users, onSelectUser
                         </button>
                     ))}
                  </div>
+             </div>
+
+             <div className="mb-6">
+                <label className="block text-slate-400 font-bold text-sm uppercase tracking-wide mb-2">Teclado</label>
+                <div className="flex gap-2">
+                    <button
+                        type="button"
+                        onClick={() => setNewLayout('qwerty')}
+                        className={`flex-1 py-3 rounded-xl font-bold transition-all ${newLayout === 'qwerty' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-500'}`}
+                    >
+                        QWERTY (PT)
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setNewLayout('azerty')}
+                        className={`flex-1 py-3 rounded-xl font-bold transition-all ${newLayout === 'azerty' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-500'}`}
+                    >
+                        AZERTY (FR)
+                    </button>
+                </div>
              </div>
 
              <div className="mb-8">
