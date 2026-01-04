@@ -17,12 +17,17 @@ import { motion } from 'framer-motion';
 import { audioService } from './services/audioService';
 
 const App: React.FC = () => {
+  // GDPR COMPLIANCE NOTE:
+  // We use localStorage to persist state. This ensures strict "Data Sovereignty".
+  // The data never leaves the user's device (Client-Side Only).
+  // No databases, no external analytics, no user tracking.
   const [appState, setAppState] = useState<AppState>(() => {
     const saved = localStorage.getItem('keyboardHeroState');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
         if (!parsed.users) {
+            // Migration for older versions (single user to multi-user)
             const legacyUser: UserProfile = {
                 id: 'legacy',
                 name: 'Jogador',
@@ -85,6 +90,7 @@ const App: React.FC = () => {
   const colors = currentUser ? THEME_COLORS[currentUser.theme] : THEME_COLORS['rose'];
 
   useEffect(() => {
+    // Persist state to local device storage on every change
     localStorage.setItem('keyboardHeroState', JSON.stringify(appState));
   }, [appState]);
 

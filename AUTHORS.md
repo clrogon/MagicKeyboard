@@ -1,17 +1,24 @@
-# Authors
 
-This file lists all individuals having contributed content to the repository.
+# Autores & Créditos | Authors & Credits
 
-## Core Maintainers
+## Criador Principal | Lead Creator
 
-*   **[Your Name]** - *Initial work* - [YourGitHubProfile](https://github.com/yourusername)
+*   **Cláudio Roberto Gonçalves** - *Conceito, Design, e Desenvolvimento*
+    *   [GitHub](https://github.com/claudio-r-goncalves)
 
-## Contributors
+## Sobre o Projeto | About
 
-*   *No other contributors yet. Be the first!*
+Este projeto foi desenvolvido com um foco específico na **soberania de dados** e **educação cultural** para crianças na CPLP (Comunidade dos Países de Língua Portuguesa), especificamente Portugal e Angola.
 
-## Acknowledgments
+## Agradecimentos Especiais | Acknowledgments
 
-*   **Google Gemini API** for providing dynamic text generation capabilities.
-*   **React Community** for the incredible ecosystem.
-*   **Lucide** for the beautiful open-source icons.
+*   **Google Gemini API**: Pela capacidade de gerar textos contextuais e culturalmente relevantes (PT-PT/PT-AO) em tempo real.
+*   **Comunidade Open Source**:
+    *   `react` & `vite` pelo ecossistema robusto.
+    *   `lucide-react` pela iconografia acessível.
+    *   `canvas-confetti` pela celebração visual.
+
+## Direitos de Autor | Copyright
+
+© 2024-2025 Cláudio Roberto Gonçalves.
+Distribuído sob a licença MIT.

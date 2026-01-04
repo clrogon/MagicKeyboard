@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Level, SessionResult, GameMode, ErrorStats, Theme } from '../types';
 import { ClayButton } from './ClayButton';
 import VirtualKeyboard from './VirtualKeyboard';
-import { RotateCcw, Timer, X, Info, EyeOff, Sparkles, Flag } from 'lucide-react';
+import { RotateCcw, Timer, X, Info, EyeOff, Sparkles, Flag, Play } from 'lucide-react';
 import { generateSmartExercise } from '../services/geminiService';
 import { THEME_COLORS } from '../constants';
 import { audioService } from '../services/audioService';
@@ -56,7 +56,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
   // Initialize Level
   const initLevel = useCallback(async () => {
     setLoading(true);
-    setMotivationalMessage("A carregar magia...");
+    setMotivationalMessage("A preparar magia...");
     
     const safetyTimeout = setTimeout(() => {
         setLoading((currentLoading) => {
@@ -193,13 +193,15 @@ const TypingArea: React.FC<TypingAreaProps> = ({
       setCurrentIndex(nextIndex);
 
       // --- Progress Feedback (No Percentages) ---
+      // We use qualitative feedback instead of numbers for better child accessibility
       const progress = nextIndex / text.length;
-      // Granular feedback thresholds
-      if (progress >= 0.25 && progress < 0.3) setMotivationalMessage("Bom começo! 👍");
-      else if (progress >= 0.5 && progress < 0.55) setMotivationalMessage("Já passaste o meio! 🏃");
-      else if (progress >= 0.75 && progress < 0.8) setMotivationalMessage("Quase lá! Força! 💪");
-      else if (progress >= 0.9 && progress < 1.0) setMotivationalMessage("Só mais um bocadinho! 🏁");
-      else if (progress === 1) setMotivationalMessage("Conseguiste! 🎉");
+      
+      if (progress === 1) setMotivationalMessage("Conseguiste! 🎉");
+      else if (progress >= 0.9) setMotivationalMessage("Só mais um bocadinho! 🏁");
+      else if (progress >= 0.75) setMotivationalMessage("Quase lá! Força! 💪");
+      else if (progress >= 0.5) setMotivationalMessage("Já passaste o meio! 🏃");
+      else if (progress >= 0.25) setMotivationalMessage("Bom começo! 👍");
+      else setMotivationalMessage("Continua assim...");
 
       if (nextIndex >= text.length) {
         if (mode === GameMode.Timed) {
@@ -212,6 +214,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
       // Error
       if(soundEnabled) audioService.playError();
       setSessionErrors(prev => prev + 1);
+      // Gentle correction feedback
       setMotivationalMessage("Ups! Tenta outra vez. 🛡️"); 
       setSessionErrorMap(prev => ({
           ...prev,
@@ -260,36 +263,36 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     }, sessionErrorMap, sessionCorrectMap);
   };
 
-  // Briefing Modal with specific goals
+  // Briefing Modal with specific goals - ACCESSIBILITY UPDATE
   const renderBriefing = () => {
       let title = "";
       let description = "";
-      let goal = "";
+      let goalText = "";
       let keys = level.newKeys;
 
       switch(mode) {
           case GameMode.Timed:
               title = "Desafio do Relógio";
-              description = "O tempo vai contar! Escreve o máximo que conseguires.";
-              goal = "Ser rápido e não parar!";
+              description = "O relógio vai contar! Escreve o máximo que conseguires sem parar.";
+              goalText = "Escreve muito até o tempo acabar!";
               keys = [];
               break;
           case GameMode.ErrorDrill:
-              title = "Vamos Limpar Erros";
-              description = "Vamos praticar as letras que costumam ser mais difíceis para ti.";
-              goal = "Acertar nas letras difíceis.";
+              title = "Limpar Erros";
+              description = "O teu treinador pessoal preparou um treino especial com as letras que achas difíceis.";
+              goalText = "Acertar nas letras complicadas.";
               keys = [];
               break;
           case GameMode.Story:
               title = "Hora da História";
-              description = "Vais escrever uma pequena aventura.";
-              goal = "Chegar ao fim da história.";
+              description = "Vais escrever uma pequena aventura criada só para ti.";
+              goalText = "Chegar ao fim da história.";
               keys = [];
               break;
           default: 
               title = `Nível ${level.id}: ${level.title}`;
               description = level.description;
-              goal = `Chegar ao fim da linha usando as teclas certas!`;
+              goalText = `Chegar ao fim da linha e ganhar estrelas para passar ao próximo nível!`;
               break;
       }
 
@@ -308,12 +311,13 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                  <h2 className="text-3xl md:text-4xl font-bold text-slate-700 fun-font mb-4">{title}</h2>
                  <p className="text-lg text-slate-500 font-medium mb-6 leading-relaxed">{description}</p>
                  
+                 {/* Visual Key Indicators for Children */}
                  {keys.length > 0 && (
                      <div className="mb-6 bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                         <p className="text-xs uppercase font-bold text-slate-400 tracking-widest mb-4">Teclas Mágicas deste Nível</p>
+                         <p className="text-xs uppercase font-bold text-slate-400 tracking-widest mb-4">Novas Teclas Mágicas</p>
                          <div className="flex justify-center gap-3 flex-wrap">
                              {keys.map(k => (
-                                 <span key={k} className="bg-white text-slate-700 font-mono font-bold text-2xl px-4 py-3 rounded-xl shadow-sm border-b-4 border-slate-200 min-w-[3rem]">
+                                 <span key={k} className="bg-white text-slate-700 font-mono font-bold text-2xl px-4 py-3 rounded-xl shadow-sm border-b-4 border-slate-200 min-w-[3rem] animate-bounce-slow">
                                      {k === ' ' ? 'Espaço' : k.replace('Shift', '⇧')}
                                  </span>
                              ))}
@@ -324,8 +328,8 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                  <div className={`${colors.bgSoft} p-4 rounded-xl mb-8 border ${colors.border} flex items-start gap-3 text-left`}>
                      <Flag size={24} className={`${colors.text} shrink-0 mt-0.5`} />
                      <div>
-                        <p className={`${colors.text} font-bold text-sm uppercase mb-1`}>O Teu Objetivo</p>
-                        <p className="text-slate-600 font-bold leading-tight">{goal}</p>
+                        <p className={`${colors.text} font-bold text-sm uppercase mb-1`}>A Tua Missão</p>
+                        <p className="text-slate-600 font-bold leading-tight">{goalText}</p>
                      </div>
                  </div>
 
@@ -336,7 +340,8 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                     disabled={loading}
                     className="w-full py-4 text-xl shadow-xl hover:scale-[1.02] active:scale-95 transition-transform"
                  >
-                     {loading ? 'A preparar magia...' : 'Aceitar Missão!'}
+                     <Play size={24} className="mr-2 fill-white" />
+                     {loading ? 'A preparar magia...' : 'Começar Missão!'}
                  </ClayButton>
              </motion.div>
         </div>

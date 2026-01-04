@@ -54,11 +54,11 @@
 **Status:** ✓ Complete (v1.3.0)
 - **Goal:** Ensure the tool feels native to children in Angola and Portugal.
 - **Implementation:** 
-    - AI Prompts updated for "Luanda", "Kwanza", "Tejo", etc.
+    - AI Prompts updated for "Luanda", "Kwanza", "Tejo", "Ginguba", "Semba", etc.
     - Alphabet gaps filled in Levels 4-6.
     - Child-friendly terminology ("Teclas Invisíveis").
 
-## Phase 10: The "My Words" Update (Planned)
+## Phase 10: The "My Words" Update (Next Up)
 **Status:** 🚧 Planned (v1.4.0)
 - **Goal:** Empower parents and teachers while maintaining strict data privacy (No Cloud DB).
 - **Custom Lessons**: Allow parents/teachers to input specific word lists (stored strictly in LocalStorage) for spelling practice.

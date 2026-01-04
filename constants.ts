@@ -230,6 +230,10 @@ export const getXpForNextLevel = (level: number) => level * 250;
 /**
  * Progression Levels.
  * Designed for children learning PT (European/Angolan style).
+ * 
+ * FALLBACK SAMPLES NOTE:
+ * These samples are used if the AI is offline. 
+ * They include a mix of Portugal and Angola context.
  */
 export const LEVELS: Level[] = [
   {
@@ -265,7 +269,7 @@ export const LEVELS: Level[] = [
     description: "S, L, A e Ç. A linha do meio completa!",
     newKeys: ['s', 'l', 'a', 'ç'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç'],
-    textSamples: ["ala", "asa", "fala", "sala", "fada", "lã"],
+    textSamples: ["ala", "asa", "fala", "sala", "fada", "lã", "sal"],
     difficulty: 'medium',
     minWpm: 10,
     minAccuracy: 90
@@ -276,7 +280,7 @@ export const LEVELS: Level[] = [
     description: "E, I, O, T. Vamos para a fila de cima!",
     newKeys: ['e', 'i', 'o', 't'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'o', 't'],
-    textSamples: ["ele", "ela", "eles", "tia", "tio", "oito", "leite", "tosta", "festa"],
+    textSamples: ["ele", "ela", "eles", "tia", "tio", "oito", "leite", "tosta", "festa", "teto", "leito"],
     difficulty: 'medium',
     minWpm: 12,
     minAccuracy: 90
@@ -289,7 +293,7 @@ export const LEVELS: Level[] = [
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'o', 't', 'r', 'u', 'n', 'm', 'c', 'v'],
     textSamples: [
         "rua", "rio", "mar", "ver", "comer", "nuvem", "conta", "vento", "navio", "treino", 
-        "Cuito", "Cunene", "morro", "nu"
+        "Cuito", "Cunene", "morro", "nu", "terra", "turma"
     ],
     difficulty: 'hard',
     minWpm: 15,
@@ -302,7 +306,8 @@ export const LEVELS: Level[] = [
     newKeys: ['b', 'g', 'h', 'p', 'q', 'w', 'x', 'y', 'z', 'ShiftLeft', 'ShiftRight'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'o', 't', 'r', 'u', 'n', 'm', 'c', 'v', 'b', 'g', 'h', 'p', 'q', 'w', 'x', 'y', 'z', 'ShiftLeft', 'ShiftRight'],
     textSamples: [
-        "Kwanza", "Zola", "Benguela", "Huambo", "Imbondeiro", "Muxima", "Semba", "Ginguba", "Gato", "Hoje", "Queijo", "Xadrez", "Zebra"
+        "Kwanza", "Zola", "Benguela", "Huambo", "Imbondeiro", "Muxima", "Semba", 
+        "Ginguba", "Gato", "Hoje", "Queijo", "Xadrez", "Zebra", "Soba", "Njinga"
     ],
     difficulty: 'hard',
     minWpm: 12,
@@ -314,7 +319,7 @@ export const LEVELS: Level[] = [
     description: "Pontos e vírgulas para dar pausa.",
     newKeys: ['.', ',', ';'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'o', 't', 'r', 'u', 'n', 'm', 'c', 'v', 'b', 'g', 'h', 'p', 'q', 'w', 'x', 'y', 'z', 'ShiftLeft', 'ShiftRight', '.', ',', ';'],
-    textSamples: ["Luanda, Angola.", "Tejo, Douro.", "Dia de sol, dia de praia."],
+    textSamples: ["Luanda, Angola.", "Tejo, Douro.", "Dia de sol, dia de praia.", "Lubango, Huíla.", "Porto, Norte."],
     difficulty: 'hard',
     minWpm: 15,
     minAccuracy: 90
@@ -368,7 +373,9 @@ export const LEVELS: Level[] = [
         "O Zola viu uma Palanca Negra gigante.", 
         "Em Lisboa e Benguela o sol brilha muito.",
         "O Rio Kwanza é muito bonito.",
-        "Vamos dançar Kizomba e Semba!"
+        "Vamos dançar Kizomba e Semba!",
+        "A Rainha Njinga foi muito forte.",
+        "O Galo de Barcelos canta de manhã."
     ],
     difficulty: 'hard',
     minWpm: 15,

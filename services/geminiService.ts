@@ -12,6 +12,21 @@ declare global {
   }
 }
 
+/**
+ * PRIVACY & GDPR COMPLIANCE NOTICE:
+ * 
+ * This service implements a "Privacy by Design" architecture.
+ * 
+ * 1. No PII Transmission: The prompts sent to Google Gemini DO NOT contain 
+ *    user names, IDs, email addresses, or history. Only the *level configuration* 
+ *    (letters to practice) is sent.
+ * 
+ * 2. Stateless: This service does not retain state about the user between calls.
+ * 
+ * 3. Children's Data: By ensuring anonymity in the prompt, we prevent 
+ *    the AI model from processing data belonging to a specific child.
+ */
+
 let genAI: GoogleGenAI | null = null;
 
 // Initialize Gemini Client safely
@@ -67,7 +82,16 @@ export const generateSmartExercise = async (
         .toUpperCase();
     
     // Base Instruction: Ensure strict European Portuguese context with Angolan inclusiveness.
-    let systemInstruction = "You are a typing tutor for a child learning European Portuguese (pt-PT). STRICTLY AVOID Brazilian Portuguese terms (e.g., use 'a fazer' instead of 'fazendo'). Address the child as 'Tu'. Include cultural names, places, and context from both Portugal (e.g., Lisboa, Tejo, Serra da Estrela, Galo) and Angola (e.g., Luanda, Kwanza, Muxima, Imbondeiro, Palanca, Benguela, Huambo, Semba).";
+    let systemInstruction = `
+      You are a typing tutor for a child learning European Portuguese (pt-PT). 
+      
+      CRITICAL VOCABULARY RULES:
+      1. STRICTLY AVOID Brazilian Portuguese terms (e.g., use 'a fazer' instead of 'fazendo', 'autocarro' instead of 'ônibus', 'ecrã' instead of 'tela'). 
+      2. Address the child as 'Tu' (2nd person singular informal).
+      3. Include cultural names, places, and context from both:
+         - PORTUGAL: Lisboa, Tejo, Serra da Estrela, Galo de Barcelos, Sardinha, Azulejo, Elétrico.
+         - ANGOLA: Luanda, Rio Kwanza, Muxima, Imbondeiro (Baobab), Palanca Negra, Benguela, Huambo, Semba (Music), Ginguba (Peanut), Soba (Chief).
+    `;
     
     let prompt = "";
 
@@ -107,7 +131,7 @@ export const generateSmartExercise = async (
             It must be a complete narrative with a beginning, middle, and end.
             Use mostly the provided keys, but you can occasionally use simple words outside the list if strictly necessary for flow (but prioritize the list).
             Available keys: [${availableKeys}].
-            Themes: Animals (e.g., a Palanca Negra, o Lince Ibérico), Friends (e.g., Ana e Zola), Travel (e.g., de Lisboa a Luanda), Food (e.g. Cachupa, Muamba).
+            Themes: Animals (e.g., a Palanca Negra, o Lince Ibérico), Friends (e.g., Ana e Zola), Travel (e.g., de Lisboa a Luanda), Food (e.g. Cachupa, Muamba, Pastel de Nata, Ginguba).
             Tone: Whimsical and encouraging.
         `;
     } else {
@@ -124,7 +148,7 @@ export const generateSmartExercise = async (
             ${lengthInstruction}
             ${numberInstruction}
             Use ONLY these letters: [${availableKeys}].
-            ${level.newKeys.includes('ShiftLeft') ? "Include capitalized proper nouns (Names of people or cities like Rui, Ana, Luanda)." : "Keep it mostly lowercase."}
+            ${level.newKeys.includes('ShiftLeft') ? "Include capitalized proper nouns (Names of people or cities like Rui, Ana, Luanda, Zola)." : "Keep it mostly lowercase."}
             Do NOT use any punctuation unless it is in the list above.
             The text should be simple, real European Portuguese words.
             Keep it positive and kid-friendly.
