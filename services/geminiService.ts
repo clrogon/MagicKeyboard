@@ -90,7 +90,7 @@ export const generateSmartExercise = async (
       2. Address the child as 'Tu' (2nd person singular informal).
       3. Include cultural names, places, and context from both:
          - PORTUGAL: Lisboa, Tejo, Serra da Estrela, Galo de Barcelos, Sardinha, Azulejo, Elétrico.
-         - ANGOLA: Luanda, Rio Kwanza, Muxima, Imbondeiro (Baobab), Palanca Negra, Benguela, Huambo, Semba (Music), Ginguba (Peanut), Soba (Chief).
+         - ANGOLA: Luanda, Rio Kwanza, Muxima, Imbondeiro (Baobab), Palanca Negra, Benguela, Huambo, Semba (Music), Ginguba (Peanut), Soba (Chief), Fenda da Tundavala (Lubango), Welwitschia Mirabilis, Cabinda, Malanje.
     `;
     
     let prompt = "";

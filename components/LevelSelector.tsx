@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { Level, UserProfile, CustomLesson } from '../types';
 import { ClayButton } from './ClayButton';
-import { Lock, Play, Clock, AlertCircle, RefreshCw, Trophy, Shield, Crown, Eye, EyeOff, BookOpen, Volume2, VolumeX, Edit3 } from 'lucide-react';
+import { Lock, Play, Clock, AlertCircle, RefreshCw, Trophy, Shield, Crown, Eye, EyeOff, BookOpen, Volume2, VolumeX, Edit3, Mic } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getXpForNextLevel, THEME_COLORS } from '../constants';
 
@@ -15,6 +14,7 @@ interface LevelSelectorProps {
   onSelectTimedMode: (duration: number) => void;
   onSelectErrorMode: () => void;
   onSelectStoryMode: () => void;
+  onSelectDictationMode: () => void; // Added
   onSelectCustomLesson: (lesson: CustomLesson) => void;
   onViewStats: () => void;
   onChangeAvatar: () => void;
@@ -38,7 +38,7 @@ const itemVariants = {
 };
 
 const LevelSelector: React.FC<LevelSelectorProps> = ({ 
-    levels, unlockedLevels, customLessons, gameState, onSelectLevel, onSelectTimedMode, onSelectErrorMode, onSelectStoryMode, onSelectCustomLesson, onViewStats, onChangeAvatar, onShowHandGuide, onToggleBlindMode, onToggleSound, isBlindMode
+    levels, unlockedLevels, customLessons, gameState, onSelectLevel, onSelectTimedMode, onSelectErrorMode, onSelectStoryMode, onSelectDictationMode, onSelectCustomLesson, onViewStats, onChangeAvatar, onShowHandGuide, onToggleBlindMode, onToggleSound, isBlindMode
 }) => {
   const { xp, playerLevel, currentTitle, currentAvatar, dailyChallenge, theme, soundEnabled } = gameState;
   
@@ -179,6 +179,9 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                         </ClayButton>
                         <ClayButton variant="primary" theme="blue" onClick={onSelectStoryMode} className="w-full py-3 bg-gradient-to-r from-blue-400 to-indigo-500 shadow-blue-200">
                             <BookOpen size={18} className="mr-2" /> Contar Histórias
+                        </ClayButton>
+                        <ClayButton variant="primary" theme="rose" onClick={onSelectDictationMode} className="w-full py-3 bg-gradient-to-r from-purple-400 to-pink-500 shadow-purple-200">
+                            <Mic size={18} className="mr-2" /> Ditado Mágico
                         </ClayButton>
                     </div>
                 </div>

@@ -12,7 +12,7 @@ import PrivacyModal from './components/PrivacyModal';
 import CookieBanner from './components/CookieBanner';
 import HandGuideModal from './components/HandGuideModal';
 import { ClayButton } from './components/ClayButton';
-import { Shield, Zap, Star, LogOut, Heart, ArrowRight, Download, WifiOff } from 'lucide-react';
+import { Shield, Zap, Star, LogOut, Heart, ArrowRight, Download, WifiOff, Unlock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { audioService } from './services/audioService';
 
@@ -79,6 +79,7 @@ const App: React.FC = () => {
   
   const [lastResult, setLastResult] = useState<SessionResult | null>(null);
   const [levelUpData, setLevelUpData] = useState<{old: number, new: number} | null>(null);
+  const [levelUnlocked, setLevelUnlocked] = useState<number | null>(null);
 
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showHandGuide, setShowHandGuide] = useState(false);
@@ -356,6 +357,30 @@ const App: React.FC = () => {
       setCurrentScreen(AppScreen.Exercise);
   };
 
+  const handleStartDictationMode = () => {
+      if (!currentUser) return;
+      const maxUnlocked = Math.max(...currentUser.unlockedLevels);
+      const unlockedKeys = LEVELS.filter(l => l.id <= maxUnlocked).flatMap(l => l.newKeys);
+      const uniqueKeys = Array.from(new Set(unlockedKeys));
+
+      const dictationLevel: Level = {
+          id: -4,
+          title: "Ditado Mágico",
+          description: "Ouve e escreve!",
+          newKeys: [],
+          allKeys: uniqueKeys,
+          textSamples: ["A Ana gosta de ler e escrever.", "O sol brilha muito em Luanda.", "Vamos passear ao parque hoje."],
+          difficulty: 'medium',
+          minWpm: 0,
+          minAccuracy: 0
+      };
+      setActiveLevel(dictationLevel);
+      setActiveMode(GameMode.Dictation);
+      setDifficultyModifier('normal');
+      setTimeLimit(undefined);
+      setCurrentScreen(AppScreen.Exercise);
+  };
+
   const handleStartCustomLesson = (lesson: CustomLesson) => {
       // Map CustomLesson to Level structure
       const customLevel: Level = {
@@ -400,6 +425,7 @@ const App: React.FC = () => {
       if (result.accuracy === 100) xp += 20; 
       if (result.mode === GameMode.ErrorDrill) xp += 10; 
       if (result.mode === GameMode.Story) xp += 15; 
+      if (result.mode === GameMode.Dictation) xp += 20;
       return xp;
   };
 
@@ -408,8 +434,9 @@ const App: React.FC = () => {
     
     const isWin = result.stars >= 1; 
     setLevelUpData(null);
+    setLevelUnlocked(null);
 
-    if (isWin || result.mode === GameMode.Timed || result.mode === GameMode.Story || result.mode === GameMode.Custom) {
+    if (isWin || result.mode === GameMode.Timed || result.mode === GameMode.Story || result.mode === GameMode.Custom || result.mode === GameMode.Dictation) {
        if (currentUser.soundEnabled) audioService.playWin();
        
        const confettiColors = currentUser.theme === 'rose' 
@@ -436,6 +463,7 @@ const App: React.FC = () => {
         const nextLevelId = result.levelId + 1;
         if (LEVELS.find(l => l.id === nextLevelId) && !newUnlocked.includes(nextLevelId)) {
             newUnlocked.push(nextLevelId);
+            setLevelUnlocked(nextLevelId);
         }
     }
 
@@ -532,14 +560,24 @@ const App: React.FC = () => {
     if (!lastResult || !currentUser) return null;
     
     let message = "";
+    let goalStatus = "";
+    const isWin = lastResult.stars >= 1;
+
     if (lastResult.mode === GameMode.Timed) {
         message = `Escreveste ${Math.round(lastResult.wpm * (lastResult.duration || 1))} palavras!`;
+        goalStatus = "Corrida Terminada";
     } else if (lastResult.mode === GameMode.Story) {
         message = "História completada com sucesso!";
+        goalStatus = "Livro Fechado";
     } else if (lastResult.mode === GameMode.Custom) {
         message = "Lição completada!";
+        goalStatus = "Bom trabalho";
+    } else if (lastResult.mode === GameMode.Dictation) {
+        message = "Ditado completo!";
+        goalStatus = "Bom ouvido!";
     } else {
         message = lastResult.stars === 3 ? SUCCESS_MESSAGES[0] : lastResult.stars === 2 ? "Muito bem!" : "Bom esforço!";
+        goalStatus = isWin ? "Nível Completado!" : "Vamos tentar outra vez?";
     }
 
     const getAccuracyLabel = (val: number) => {
@@ -556,7 +594,7 @@ const App: React.FC = () => {
     };
 
     let nextLevel = null;
-    if (lastResult.mode === GameMode.Campaign && lastResult.stars >= 1) { 
+    if (lastResult.mode === GameMode.Campaign && isWin) { 
         const nextId = lastResult.levelId + 1;
         nextLevel = LEVELS.find(l => l.id === nextId);
     }
@@ -568,23 +606,54 @@ const App: React.FC = () => {
                 animate={{ scale: 1, opacity: 1 }}
                 className="bg-white rounded-[2.5rem] p-8 max-w-md w-full text-center shadow-2xl relative overflow-hidden border-4 border-white"
             >
+                {/* Level Up Overlay */}
                 {levelUpData && (
                     <motion.div 
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         className={`absolute inset-0 ${colors.bg} z-50 flex flex-col items-center justify-center text-white p-6`}
                     >
-                         <h2 className="text-4xl font-bold mb-4 font-fredoka">NÍVEL {levelUpData.new}!</h2>
-                         <ClayButton onClick={() => setLevelUpData(null)} variant="secondary" theme={currentUser.theme}>Continuar</ClayButton>
+                         <div className="bg-white/20 p-4 rounded-full mb-4 animate-bounce">
+                            <Star size={48} className="fill-white" />
+                         </div>
+                         <h2 className="text-4xl font-bold mb-4 font-fredoka">NÍVEL DE JOGADOR {levelUpData.new}!</h2>
+                         <ClayButton onClick={() => setLevelUpData(null)} variant="secondary" theme={currentUser.theme}>Uau!</ClayButton>
                     </motion.div>
                 )}
 
+                {/* Level Unlocked Overlay */}
+                {!levelUpData && levelUnlocked && (
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className={`absolute inset-0 bg-emerald-500 z-50 flex flex-col items-center justify-center text-white p-6`}
+                    >
+                         <div className="bg-white/20 p-4 rounded-full mb-4 animate-bounce">
+                            <Unlock size={48} className="fill-white" />
+                         </div>
+                         <h2 className="text-4xl font-bold mb-4 font-fredoka">NOVO DESAFIO!</h2>
+                         <p className="text-xl mb-6">Desbloqueaste o Nível {levelUnlocked}</p>
+                         <ClayButton onClick={() => setLevelUnlocked(null)} variant="secondary" theme={currentUser.theme}>Vamos lá!</ClayButton>
+                    </motion.div>
+                )}
+
+                <div className={`inline-block px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide mb-4 ${isWin ? 'bg-emerald-100 text-emerald-600' : 'bg-orange-100 text-orange-600'}`}>
+                    {goalStatus}
+                </div>
+
                 <h2 className="text-3xl font-bold text-slate-800 mb-2 fun-font">{message}</h2>
+                
                 <div className="flex justify-center gap-2 my-6">
                     {[1, 2, 3].map((star) => (
                         <Star key={star} size={48} fill={star <= lastResult.stars ? "#FBBF24" : "#E2E8F0"} className={star <= lastResult.stars ? "text-yellow-400" : "text-slate-200"} />
                     ))}
                 </div>
+
+                {lastResult.mode === GameMode.Campaign && (
+                    <div className="text-sm text-slate-400 font-bold mb-6">
+                        {isWin ? "Conseguiste pelo menos 1 Estrela! Podes avançar." : "Precisas de 1 Estrela para passar."}
+                    </div>
+                )}
 
                 <div className="grid grid-cols-3 gap-3 mb-6">
                     <div className="bg-blue-50 p-3 rounded-2xl">
@@ -623,7 +692,7 @@ const App: React.FC = () => {
                             theme={currentUser.theme}
                             onClick={() => handleStartLevel(activeLevel)}
                         >
-                            Tentar de Novo
+                            {isWin ? "Jogar Novamente" : "Tentar de Novo"}
                         </ClayButton>
                     )}
                     
@@ -714,6 +783,7 @@ const App: React.FC = () => {
                 onSelectTimedMode={handleStartTimedMode}
                 onSelectErrorMode={handleStartErrorMode}
                 onSelectStoryMode={handleStartStoryMode}
+                onSelectDictationMode={handleStartDictationMode}
                 onSelectCustomLesson={handleStartCustomLesson}
                 onViewStats={() => setCurrentScreen(AppScreen.Stats)} 
                 onChangeAvatar={handleChangeAvatar}

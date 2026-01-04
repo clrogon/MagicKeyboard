@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Level, SessionResult, GameMode, ErrorStats, Theme } from '../types';
 import { ClayButton } from './ClayButton';
 import VirtualKeyboard from './VirtualKeyboard';
-import { RotateCcw, Timer, X, Info, EyeOff, Sparkles, Flag, Play, Edit } from 'lucide-react';
+import { RotateCcw, Timer, X, Info, EyeOff, Sparkles, Flag, Play, Edit, Star, Trophy, ArrowRight, Target, Volume2, Mic } from 'lucide-react';
 import { generateSmartExercise } from '../services/geminiService';
 import { THEME_COLORS } from '../constants';
 import { audioService } from '../services/audioService';
@@ -34,6 +34,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
   const [sessionErrors, setSessionErrors] = useState(0); 
   const [sessionErrorMap, setSessionErrorMap] = useState<ErrorStats>({}); 
   const [sessionCorrectMap, setSessionCorrectMap] = useState<ErrorStats>({}); 
+  const [consecutiveErrors, setConsecutiveErrors] = useState(0); // Track errors on current char for help
   
   // Motivational Feedback System
   const [motivationalMessage, setMotivationalMessage] = useState<string>("Prepara-te...");
@@ -94,6 +95,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     setSessionErrors(0);
     setSessionErrorMap({});
     setSessionCorrectMap({});
+    setConsecutiveErrors(0);
     setKeystrokeIntervals([]);
     setLastKeystrokeTime(null);
     setTypedChars("");
@@ -144,6 +146,31 @@ const TypingArea: React.FC<TypingAreaProps> = ({
       }
   }, [timeLeft]);
 
+  // Dictation: Speak text when level starts (after briefing)
+  useEffect(() => {
+      if (!isBriefing && mode === GameMode.Dictation && text) {
+          speakText(text);
+      }
+  }, [isBriefing, mode, text]);
+
+  const speakText = (textToSpeak: string) => {
+      if (!window.speechSynthesis) return;
+      // Cancel previous speech to avoid queue buildup
+      window.speechSynthesis.cancel();
+      
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      utterance.lang = 'pt-PT'; // Prefer European Portuguese
+      utterance.rate = 0.8; // Slightly slower for children
+      utterance.pitch = 1.1; // Slightly friendlier pitch
+      
+      // Fallback if pt-PT not found (though browsers often handle 'pt' generic)
+      const voices = window.speechSynthesis.getVoices();
+      const ptVoice = voices.find(v => v.lang.includes('pt-PT')) || voices.find(v => v.lang.includes('pt'));
+      if (ptVoice) utterance.voice = ptVoice;
+
+      window.speechSynthesis.speak(utterance);
+  };
+
   const handleStartGame = () => {
       setIsBriefing(false);
       setMotivationalMessage("Começa a escrever!");
@@ -181,6 +208,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     if (char === targetChar) {
       // Correct
       setTypedChars(prev => prev + char);
+      setConsecutiveErrors(0); // Reset help counter
       
       if(soundEnabled) audioService.playClick();
       
@@ -222,6 +250,8 @@ const TypingArea: React.FC<TypingAreaProps> = ({
       // Error
       if(soundEnabled) audioService.playError();
       setSessionErrors(prev => prev + 1);
+      setConsecutiveErrors(prev => prev + 1);
+      
       // Gentle correction feedback
       setMotivationalMessage("Ups! Tenta outra vez. 🛡️"); 
       setSessionErrorMap(prev => ({
@@ -277,36 +307,48 @@ const TypingArea: React.FC<TypingAreaProps> = ({
       let description = "";
       let goalText = "";
       let keys = level.newKeys;
+      let GoalIcon = Star;
 
       switch(mode) {
           case GameMode.Timed:
               title = "Desafio do Relógio";
               description = "O relógio vai contar! Escreve o máximo que conseguires sem parar.";
               goalText = "Escreve muito até o tempo acabar!";
+              GoalIcon = Timer;
               keys = [];
               break;
           case GameMode.ErrorDrill:
               title = "Limpar Erros";
               description = "O teu treinador pessoal preparou um treino especial com as letras que achas difíceis.";
               goalText = "Acertar nas letras complicadas.";
+              GoalIcon = Target;
               keys = [];
               break;
           case GameMode.Story:
               title = "Hora da História";
               description = "Vais escrever uma pequena aventura criada só para ti.";
               goalText = "Chegar ao fim da história.";
+              GoalIcon = Trophy;
               keys = [];
               break;
           case GameMode.Custom:
               title = "A Minha Lição";
               description = level.description || "Uma lição especial criada pelo teu professor ou pais.";
-              goalText = "Completar a lição com atenção.";
+              goalText = "Chegar ao fim da linha!";
+              GoalIcon = Flag;
+              keys = [];
+              break;
+          case GameMode.Dictation:
+              title = "Ditado Mágico";
+              description = "Ouve com atenção! O computador vai falar e tu tens de escrever. As letras estão escondidas!";
+              goalText = "Ouvir e escrever corretamente.";
+              GoalIcon = Mic;
               keys = [];
               break;
           default: 
               title = `Nível ${level.id}: ${level.title}`;
               description = level.description;
-              goalText = `Chegar ao fim da linha e ganhar estrelas para passar ao próximo nível!`;
+              goalText = "Ganhar pelo menos 1 Estrela.";
               break;
       }
 
@@ -319,7 +361,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                 className="bg-white relative z-30 p-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border-4 border-white max-w-lg w-full text-center"
              >
                  <div className={`w-20 h-20 ${colors.bg} rounded-full flex items-center justify-center mx-auto mb-6 text-white shadow-lg`}>
-                     {mode === GameMode.Custom ? <Edit size={40} /> : <Info size={40} />}
+                     {mode === GameMode.Custom ? <Edit size={40} /> : mode === GameMode.Dictation ? <Mic size={40} /> : <Info size={40} />}
                  </div>
                  
                  <h2 className="text-3xl md:text-4xl font-bold text-slate-700 fun-font mb-4">{title}</h2>
@@ -339,11 +381,14 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                      </div>
                  )}
 
-                 <div className={`${colors.bgSoft} p-4 rounded-xl mb-8 border ${colors.border} flex items-start gap-3 text-left`}>
-                     <Flag size={24} className={`${colors.text} shrink-0 mt-0.5`} />
+                 {/* Visual Goal Card */}
+                 <div className={`${colors.bgSoft} p-4 rounded-xl mb-8 border ${colors.border} flex items-center gap-4 text-left`}>
+                     <div className={`bg-white p-3 rounded-full ${colors.text}`}>
+                        <GoalIcon size={28} />
+                     </div>
                      <div>
-                        <p className={`${colors.text} font-bold text-sm uppercase mb-1`}>A Tua Missão</p>
-                        <p className="text-slate-600 font-bold leading-tight">{goalText}</p>
+                        <p className={`${colors.text} font-bold text-xs uppercase mb-1`}>O Teu Objetivo</p>
+                        <p className="text-slate-600 font-bold text-lg leading-tight">{goalText}</p>
                      </div>
                  </div>
 
@@ -376,19 +421,32 @@ const TypingArea: React.FC<TypingAreaProps> = ({
           const isPast = actualIdx < currentIndex;
           
           let className = "relative flex items-center justify-center rounded-2xl transition-all duration-200 ";
-          
-          if (isCurrent) {
-             className += `w-16 h-20 md:w-20 md:h-24 ${colors.bg} text-white shadow-xl ${colors.shadow} z-10 scale-110`;
+          let content = char === ' ' ? '␣' : char;
+
+          // Dictation Masking Logic
+          if (mode === GameMode.Dictation && !isPast && !isCurrent) {
+              if (char === ' ') {
+                  // Spaces are visible gaps
+                  className += "w-12 h-16 md:w-14 md:h-20 text-slate-200 bg-transparent border-b-4 border-slate-100 ";
+                  content = '';
+              } else {
+                  // Letters are masked
+                  className += "w-12 h-16 md:w-14 md:h-20 text-slate-300 ";
+                  content = '•'; 
+              }
           } else {
-             className += "w-12 h-16 md:w-14 md:h-20 ";
-             
-             if (isPast) {
-                className += "text-emerald-400 opacity-50"; 
-             } else if (isNext) {
-                className += "text-slate-600 bg-white border-2 border-slate-100";
-             } else {
-                className += "text-slate-300";
-             }
+              if (isCurrent) {
+                 className += `w-16 h-20 md:w-20 md:h-24 ${colors.bg} text-white shadow-xl ${colors.shadow} z-10 scale-110`;
+              } else {
+                 className += "w-12 h-16 md:w-14 md:h-20 ";
+                 if (isPast) {
+                    className += "text-emerald-400 opacity-50"; 
+                 } else if (isNext) {
+                    className += "text-slate-600 bg-white border-2 border-slate-100";
+                 } else {
+                    className += "text-slate-300";
+                 }
+              }
           }
 
           return (
@@ -398,13 +456,19 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                 initial={false}
                 className={className}
             >
-              {char === ' ' ? '␣' : char}
+              {content}
             </motion.span>
           );
         })}
       </div>
     );
   };
+
+  // Logic to determine if we should show help on the keyboard
+  // In Dictation mode, we only show hint if the user is struggling (consecutive errors)
+  const keyboardActiveKey = mode === GameMode.Dictation 
+      ? (consecutiveErrors >= 3 ? text[currentIndex] : null) 
+      : (isBriefing ? null : text[currentIndex]);
 
   return (
     <div className="flex flex-col items-center justify-between min-h-screen pb-10 px-4 relative">
@@ -413,9 +477,18 @@ const TypingArea: React.FC<TypingAreaProps> = ({
         </AnimatePresence>
 
         <div className={`w-full max-w-5xl flex justify-between items-center py-6 transition-all duration-500 ${isBriefing ? 'blur-sm opacity-50' : ''}`}>
-            <ClayButton variant="secondary" onClick={onExit} className="px-4 py-2 text-sm">
-                <RotateCcw size={16} className="mr-2" /> Sair
-            </ClayButton>
+            <div className="flex items-center gap-2">
+                <ClayButton variant="secondary" onClick={onExit} className="px-4 py-2 text-sm">
+                    <RotateCcw size={16} className="mr-2" /> Sair
+                </ClayButton>
+                
+                {/* Dictation Replay Button */}
+                {mode === GameMode.Dictation && (
+                    <ClayButton variant="primary" theme={theme} onClick={() => speakText(text)} className="px-4 py-2 text-sm">
+                        <Volume2 size={18} className="mr-2" /> Ouvir de Novo
+                    </ClayButton>
+                )}
+            </div>
             
             {!isBriefing && (
                 <div className={`hidden md:flex bg-white/80 backdrop-blur-sm px-6 py-2 rounded-2xl border-2 ${colors.border} shadow-sm items-center gap-2 animate-bounce-slow`}>
@@ -447,7 +520,9 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                    <div className="w-px h-6 bg-slate-200"></div>
                    <div className="flex items-center gap-2 px-3">
                        <span className="text-xs font-bold text-slate-400 uppercase">Nível</span>
-                       <span className="text-lg font-bold text-slate-600">{mode === GameMode.Campaign ? level.id : 'Treino'}</span>
+                       <span className="text-lg font-bold text-slate-600">
+                           {mode === GameMode.Campaign ? level.id : mode === GameMode.Dictation ? 'Ditado' : 'Treino'}
+                       </span>
                    </div>
                 </div>
             </div>
@@ -461,13 +536,19 @@ const TypingArea: React.FC<TypingAreaProps> = ({
             >
                 <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-20 ${colors.bg} opacity-5 blur-3xl rounded-full pointer-events-none`}></div>
                 
+                {/* Enhanced Visual Progress Bar with Runner */}
                 {text.length > 0 && mode !== GameMode.Timed && (
-                    <div className="absolute top-0 left-0 right-0 h-2 bg-slate-100">
+                    <div className="absolute top-0 left-0 right-0 h-4 bg-slate-100 rounded-t-[2rem] overflow-hidden">
                         <motion.div 
-                            className={`h-full ${colors.bg}`}
+                            className={`h-full ${colors.bg} relative`}
                             initial={{ width: 0 }}
                             animate={{ width: `${(currentIndex / text.length) * 100}%` }}
-                        />
+                        >
+                            {/* Moving Runner Icon */}
+                            <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 bg-white rounded-full p-1 shadow-sm border border-slate-100">
+                                <Flag size={10} className={colors.text} fill="currentColor" />
+                            </div>
+                        </motion.div>
                     </div>
                 )}
                 
@@ -492,8 +573,8 @@ const TypingArea: React.FC<TypingAreaProps> = ({
 
         <div className={`w-full transition-all duration-500 ${isBriefing ? 'blur-sm opacity-50' : ''}`}>
             <VirtualKeyboard 
-                activeKey={isBriefing ? null : text[currentIndex]} 
-                nextKey={isBriefing ? null : text[currentIndex + 1]} 
+                activeKey={keyboardActiveKey} 
+                nextKey={mode === GameMode.Dictation ? null : (isBriefing ? null : text[currentIndex + 1])} 
                 theme={theme}
                 showLabels={!blindMode}
             />

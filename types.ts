@@ -69,7 +69,8 @@ export enum GameMode {
   Timed = 'TIMED',            // 60s speed challenge
   ErrorDrill = 'ERROR_DRILL', // AI-generated drill based on user weak keys
   Story = 'STORY',            // Coherent story generation
-  Custom = 'CUSTOM'           // User-defined text
+  Custom = 'CUSTOM',          // User-defined text
+  Dictation = 'DICTATION'     // Audio-based typing (Phase 11)
 }
 
 /**

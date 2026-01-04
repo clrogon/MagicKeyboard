@@ -60,12 +60,14 @@
 
 ## Phase 10: The "My Words" Update (Complete)
 **Status:** ✓ Complete (v1.4.0)
-- **Goal:** Empower parents and teachers while maintaining strict data privacy (No Cloud DB).
-- **Custom Lessons**: Allow parents/teachers to input specific word lists (stored strictly in LocalStorage) for spelling practice.
-- **GDPR-Friendly Backup**: Implement "Export to File" and "Import from File" (JSON). This allows data portability between devices without requiring a centralized server or user accounts.
-- **Certificates**: Generate downloadable PDF diplomas client-side when a user completes the Campaign Mode.
+- **Goal:** Empower parents and teachers while maintaining strict data privacy.
+- **Custom Lessons**: Allow parents/teachers to input specific word lists (stored strictly in LocalStorage).
+- **GDPR-Friendly Backup**: Implement "Export to File" and "Import from File" (JSON).
+- **Certificates**: Client-side PDF diploma generation.
+- **Accessibility**: Replaced numerical goals with visual cues (Mission Cards & Runner Track) for younger children.
 
-## Phase 11: Future Horizons (Planned)
-**Status:** 🚧 Planning
-- Voice Dictation Mode (Practicing writing what you hear)
-- Multiplayer "Race" Mode (Local P2P)
+## Phase 11: Future Horizons (In Progress)
+**Status:** 🚧 In Progress (v1.5.0)
+- **Voice Dictation Mode**: "Ditado Mágico" implemented. Uses Text-to-Speech to read phrases for the user to type.
+- Multiplayer "Race" Mode (Local P2P) - Planned
+- Classroom Mode (Import class list via CSV) - Planned

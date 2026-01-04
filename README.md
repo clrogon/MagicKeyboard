@@ -103,7 +103,7 @@ graph TD
     end
 
     App -->|Render| Logic
-    Logic -->|Generate Drills (No PII)| Gemini
+    Logic -->|"Generate Drills (No PII)"| Gemini
     Gemini -->|"Return Text (PT/AO)"| Logic
     Logic -->|Play Sounds| Audio
     Logic -->|Save Progress| Store
