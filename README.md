@@ -1,3 +1,4 @@
+
 # Teclado Mágico | Magic Keyboard
 
 > **EN**: A gamified, AI-powered typing trainer designed for children learning European Portuguese.
@@ -11,7 +12,7 @@
 
 ---
 
-## 📊 Current Status | Estado Actual (January 2025)
+## 📊 Current Status | Estado Actual (v1.2.0)
 
 | Module | Status EN | Estado PT |
 |--------|-----------|-----------|
@@ -21,8 +22,9 @@
 | **Progression (XP/Levels)**| ✅ Complete | ✅ Completo |
 | **Daily Challenges** | ✅ Complete | ✅ Completo |
 | **Hand Guide** | ✅ Complete | ✅ Completo |
-| **Data Privacy (GDPR)** | ✅ Complete | ✅ Completo |
-| **Teacher Dashboard** | 🔮 Planned | 🔮 Planeado |
+| **Multi-User Profiles** | ✅ Complete | ✅ Completo |
+| **Parent Dashboard** | ✅ Complete | ✅ Completo |
+| **Story Mode** | ✅ Complete | ✅ Completo |
 
 ---
 
@@ -38,27 +40,35 @@
 
 ## ✨ Core Features | Funcionalidades Principais
 
-### 1. Progressive Learning | Aprendizagem Progressiva
-- **EN**: 7 distinct levels starting from the Home Row (F & J) expanding outward. Includes a visual "Hand Guide" modal teaching correct finger placement.
-- **PT**: 7 níveis distintos começando pela Linha Base (F & J) e expandindo. Inclui um "Guia de Mãos" visual que ensina a posição correta dos dedos.
+### 1. Multi-User & Themes | Multi-Utilizador e Temas
+- **EN**: Create multiple profiles on a single device. Choose from **Rose**, **Blue**, or **Amber** interface themes.
+- **PT**: Cria vários perfis num único dispositivo. Escolhe entre os temas **Rosa**, **Azul** ou **Âmbar**.
 
-### 2. RPG Progression System | Sistema de Progressão RPG
+### 2. Story Mode & Blind Mode | Modo História e Modo Cego
+- **EN**: Generate creative short stories with AI to practice flow. Use **Blind Mode** to hide key labels and master touch typing.
+- **PT**: Gera pequenas histórias criativas com IA para treinar a fluidez. Usa o **Modo Cego** para esconder as letras e dominar a digitação tátil.
+
+### 3. Progressive Learning | Aprendizagem Progressiva
+- **EN**: 11 distinct levels starting from the Home Row (F & J) expanding to symbols and numbers. Includes a visual "Hand Guide".
+- **PT**: 11 níveis distintos começando pela Linha Base (F & J) e expandindo para símbolos e números. Inclui um "Guia de Mãos" visual.
+
+### 4. RPG Progression System | Sistema de Progressão RPG
 - **EN**: Earn **XP** for every key pressed. Level up to unlock cool **Titles** (e.g., "Keyboard Legend") and collect fun **Avatars**.
 - **PT**: Ganha **XP** por cada tecla. Sobe de nível para desbloquear **Títulos** fixes (ex: "Lenda do Teclado") e colecionar **Avatares** divertidos.
 
-### 3. Daily Challenges | Desafios Diários
-- **EN**: A new mission every day (e.g., "Reach 30 WPM", "Get 3 Stars") to keep engagement high, rewarding bonus XP.
-- **PT**: Uma nova missão todos os dias (ex: "Chegar às 30 PPM", "Conseguir 3 Estrelas") para manter o interesse, com bónus de XP.
+### 5. Parent Dashboard | Área de Pais
+- **EN**: A dedicated area for parents/teachers to view play time, sessions completed, and manage user profiles.
+- **PT**: Uma área dedicada para pais/professores verem o tempo de jogo, sessões completas e gerirem perfis.
 
-### 4. AI-Powered Drills | Exercícios com IA
+### 6. AI-Powered Drills | Exercícios com IA
 - **EN**: Google Gemini integration generates unique sentences every time • Context-aware vocabulary • Error-focused drill generation.
 - **PT**: Integração Google Gemini gera frases únicas a cada vez • Vocabulário consciente do contexto • Geração de exercícios focados nos erros.
 
-### 5. Gamification | Gamificação
+### 7. Gamification | Gamificação
 - **EN**: Star rating system • Confetti celebrations • Visual feedback • Time Attack modes • Achievements (Badges).
 - **PT**: Sistema de classificação por estrelas • Celebrações com confetes • Feedback visual • Modos Contra-Relógio • Conquistas (Medalhas).
 
-### 6. Privacy First | Privacidade Primeiro
+### 8. Privacy First | Privacidade Primeiro
 - **EN**: 100% LocalStorage based. No database, no tracking, no personal data collection. Includes GDPR-compliant Data Erasure.
 - **PT**: 100% baseado em LocalStorage. Sem base de dados, sem rastreamento, sem recolha de dados pessoais. Inclui eliminação de dados compatível com RGPD.
 
