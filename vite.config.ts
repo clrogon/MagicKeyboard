@@ -1,3 +1,4 @@
+
 /// <reference types="node" />
 
 import { defineConfig, loadEnv } from 'vite';
@@ -22,7 +23,7 @@ export default defineConfig(({ mode }) => {
         manifest: {
           name: 'Teclado Mágico',
           short_name: 'Teclado Mágico',
-          description: 'Aprende a teclar com magia! Um treinador de digitação para crianças.',
+          description: 'Aprende a teclar com magia! Um treinador de digitação para crianças em Portugal e Angola.',
           theme_color: '#F43F5E', // Rose-500 default theme color
           background_color: '#FDF6F0', // Cream background to match body
           display: 'standalone', // Feels like a native app

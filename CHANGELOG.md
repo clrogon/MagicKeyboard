@@ -7,6 +7,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-03-20 (A Atualização Internacional | The International Update)
+
+### Adicionado (Added)
+-   **Suporte AZERTY**: Adicionado suporte completo para teclados franceses/belgas, crucial para comunidades emigrantes.
+-   **Deteção Automática de Hardware**: O sistema deteta agora fisicamente o layout do teclado do utilizador (via `navigator.keyboard` API) e ajusta a interface automaticamente.
+-   **Seleção de Layout no Perfil**: Nova opção durante a criação de perfil para escolher explicitamente entre QWERTY (PT) e AZERTY (FR).
+
+### Alterado (Changed)
+-   **Melhorias na UI de Criação de Utilizador**: Formulário redesenhado para ser mais intuitivo.
+
 ## [1.4.0] - 2026-03-05 (A Atualização "As Minhas Palavras" | The "My Words" Update)
 
 ### Adicionado (Added)
@@ -14,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   **Diplomas em PDF**: Geração de certificados de conclusão diretamente no navegador (sem envio de dados para servidores) para celebrar conquistas de nível.
 -   **Backup e Restauro**: Funcionalidade de exportar/importar dados (ficheiro JSON) para permitir mover o progresso entre dispositivos mantendo a privacidade (GDPR).
 -   **Melhorias de Acessibilidade**: Substituição de metas puramente numéricas por pistas visuais e narrativa.
--   **Modo Ditado**: Novo modo de jogo utilizando síntese de voz.
+-   **Modo Ditado**: Novo modo de jogo utilizando síntese de voz (TTS).
 
 ### Alterado (Changed)
 -   **Privacidade Reforçada**: Documentação e comentários de código atualizados para explicitar o processamento de dados 100% local.

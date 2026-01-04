@@ -4,9 +4,9 @@
 ### *The Typing Trainer with a Lusophone Soul*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.4.0-rose)](package.json)
+[![Version](https://img.shields.io/badge/version-1.5.0-rose)](package.json)
 [![Status](https://img.shields.io/badge/Status-Production_Ready-green)](https://github.com/yourusername/teclado-magico)
-[![Tech Stack](https://img.shields.io/badge/Stack-React_18_%7C_Vite_%7C_Gemini_AI-8E75B2)](https://react.dev/)
+[![Tech Stack](https://img.shields.io/badge/Stack-React_19_%7C_Vite_%7C_Gemini_AI-8E75B2)](https://react.dev/)
 
 ---
 
@@ -35,6 +35,11 @@ A segurança das crianças é a nossa prioridade número um.
 *   **Anonimato na IA**: Quando pedimos frases à Google, enviamos pedidos anónimos (ex: "Gera uma frase com a letra J"). Nenhum dado da criança é enviado para a cloud.
 *   **GDPR/RGPD**: Totalmente compatível com as normas europeias de proteção de dados.
 
+### 🌍 Internacionalização (v1.5.0)
+Suporte para comunidades portuguesas no estrangeiro e escolas internacionais.
+*   **Deteção Automática de Teclado**: O sistema deteta se o teclado físico é QWERTY (PT) ou AZERTY (FR/BE) e ajusta as lições.
+*   **Teclado Visual Adaptável**: O guia visual no ecrã muda instantaneamente para corresponder ao hardware do aluno.
+
 ### 🎮 Gamificação RPG
 Aprender não tem de ser aborrecido. Transformámos a digitação num jogo.
 *   **Sistema de XP e Níveis**: Evolui de "Aprendiz" até "A Lenda do Teclado".
@@ -42,7 +47,7 @@ Aprender não tem de ser aborrecido. Transformámos a digitação num jogo.
 *   **Desafios Aleatórios**: Missões diárias (ex: "Atinge 98% de precisão") com recompensas extra.
 *   **Avatares e Temas**: Personalização visual com temas de alto contraste (Rosa, Azul, Âmbar).
 
-### 🎓 Ferramentas para Pais e Professores (v1.4.0)
+### 🎓 Ferramentas para Pais e Professores
 *   **Lições Personalizadas**: O professor pode criar um ditado específico ou lista de palavras para TPC.
 *   **Certificados Oficiais**: Geração de Diplomas em PDF diretamente no navegador para celebrar a conclusão de níveis.
 *   **Backup e Portabilidade**: Exporte o progresso do aluno para um ficheiro JSON e leve-o para outro computador.
@@ -56,16 +61,16 @@ Este projeto celebra a lusofonia. Os níveis avançados e o Modo História intro
 
 | Categoria | Portugal 🇵🇹 | Angola 🇦🇴 |
 |-----------|-------------|-----------|
-| **Geografia** | Tejo, Serra da Estrela, Algarve | Kwanza, Lubango, Cabinda |
-| **Cultura** | Fado, Galo de Barcelos, Azulejo | Semba, Kizomba, Pensador |
-| **Fauna/Flora**| Lince Ibérico, Sobreiro | Palanca Negra, Imbondeiro |
-| **Culinária** | Sardinha, Caldo Verde | Muamba, Funge, Ginguba |
+| **Geografia** | Tejo, Serra da Estrela, Algarve, Douro | Kwanza, Lubango, Cabinda, Huambo, Malanje |
+| **Cultura** | Fado, Galo de Barcelos, Azulejo | Semba, Kizomba, Pensador, Soba |
+| **Fauna/Flora**| Lince Ibérico, Sobreiro | Palanca Negra, Imbondeiro, Welwitschia |
+| **Culinária** | Sardinha, Caldo Verde, Pastel de Nata | Muamba, Funge, Ginguba, Mufete |
 
 ---
 
 ## 🔮 Roteiro de Desenvolvimento | Roadmap
 
-O projeto começou em **3 de Janeiro de 2026** e encontra-se na versão de produção v1.4.0.
+O projeto começou em **3 de Janeiro de 2026** e encontra-se na versão de produção v1.5.0.
 
 | Fase | Foco | Versão | Estado |
 | :--- | :--- | :--- | :--- |
@@ -74,7 +79,8 @@ O projeto começou em **3 de Janeiro de 2026** e encontra-se na versão de produ
 | **Fase 3** | **Motor Cultural** (Adaptação PT/AO) | v1.3.0 | ✅ Concluído |
 | **Fase 4** | **"As Minhas Palavras"** (Lições, Diplomas, Backup) | v1.4.0 | ✅ Concluído |
 | **Fase 5** | **Acessibilidade** (Modo Ditado/TTS, Guias Visuais) | v1.4.0 | ✅ Concluído |
-| **Fase 6** | **Sala de Aula** (Modo Multijogador, Turmas) | v2.0+ | 🚧 Planeado |
+| **Fase 6** | **Internacionalização** (AZERTY, Det. Layout) | v1.5.0 | ✅ Concluído |
+| **Fase 7** | **Sala de Aula** (Modo Multijogador, Turmas) | v2.0+ | 🚧 Planeado |
 
 *Para veres o roteiro detalhado, consulta o ficheiro [ROADMAP.md](ROADMAP.md).*
 
@@ -85,7 +91,7 @@ O projeto começou em **3 de Janeiro de 2026** e encontra-se na versão de produ
 O Teclado Mágico é uma **Progressive Web App (PWA)**, o que significa que pode ser instalada no computador/tablet e funciona **Offline**.
 
 ### Stack
-*   **Frontend**: React 18 + TypeScript (Performance e Tipagem estrita)
+*   **Frontend**: React 19 + TypeScript (Performance e Tipagem estrita)
 *   **Build Tool**: Vite (Carregamento instantâneo)
 *   **Styling**: Tailwind CSS (Design responsivo e acessível)
 *   **Audio**: Web Audio API (Sintetizador de som nativo, sem assets pesados)
@@ -102,6 +108,7 @@ graph TD
         Engine -->|Validação| Typist[Typing Logic]
         Engine -->|Sons| Audio[Web Audio Synth]
         Engine -->|Persistência| LocalStore[LocalStorage]
+        Engine -->|Layout| LayoutMgr[Keyboard Detector]
         
         UI -->|Gestão| ParentDash[Área de Pais]
         ParentDash -->|Export/Import| JSON[Ficheiro Backup]
@@ -109,13 +116,13 @@ graph TD
     end
     
     subgraph "Cloud (Stateless & Anonymous)"
-        Engine -->|Request: 'Gera frase com F e J'| Gemini[Google Gemini Flash API]
-        Gemini -->|Response: 'A fada fala já'| Engine
+        Engine -->|Request: 'Gera frase com F, J e Kwanza'| Gemini[Google Gemini API]
+        Gemini -->|Response: 'O Kwanza corre forte'| Engine
     end
 ```
 
 ### Nota Técnica: Input e Acentos (macOS/Linux)
-O motor de jogo implementa gestão de eventos `compositionstart` e `compositionend`. Isto é **crítico** para o suporte correto de caracteres acentuados (á, à, ã, ê) em sistemas macOS e Linux, onde a introdução de acentos cria um estado intermédio (buffer) antes de libertar o caractere final. Sem este tratamento, os "Dead Keys" (ex: Option+E) seriam registados como erros.
+O motor de jogo implementa gestão de eventos `compositionstart` e `compositionend`. Isto é **crítico** para o suporte correto de caracteres acentuados (á, à, ã, ê) em sistemas macOS e Linux, onde a introdução de acentos cria um estado intermédio (buffer) antes de libertar o caractere final.
 
 ---
 
@@ -147,26 +154,6 @@ O motor de jogo implementa gestão de eventos `compositionstart` e `compositione
     ```bash
     npm run dev
     ```
-
----
-
-## 📚 Roteiro de Conteúdos | Syllabus
-
-O curso está estruturado em 13 fases pedagógicas:
-
-1.  **A Linha Mágica**: F e J (Dedos indicadores)
-2.  **Vizinhos Amigos**: D e K
-3.  **Família Completa**: S, L, A, Ç (Home Row completa)
-4.  **A Subir**: E, I, O, T
-5.  **Exploradores**: R, U, N, M, C, V
-6.  **Mestre do Alfabeto**: B, G, H, P, Q, W, X, Y, Z + Shift
-7.  **Símbolos**: Pontuação básica
-8.  **Números**: Esquerda (1-5)
-9.  **Números**: Direita (6-0)
-10. **Pontuação Extra**: ! ? -
-11. **Histórias do Mundo**: Frases completas PT/AO
-12. **Acentos Agudos**: á, é, í, ó, ú, à
-13. **Ondas e Chapéus**: ã, õ, â, ê, ô
 
 ---
 

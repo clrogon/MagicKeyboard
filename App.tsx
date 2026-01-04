@@ -847,7 +847,7 @@ const App: React.FC = () => {
                     <span className="flex items-center gap-2">
                         Feito com <Heart size={14} className="text-red-400 fill-red-400" /> por Cláudio Roberto Gonçalves para a educação em Portugal e Angola 🇵🇹 🇦🇴
                     </span>
-                    <span className="text-xs opacity-50">© 2026 Cláudio Roberto Gonçalves. v1.4.0 (2026) | MIT License</span>
+                    <span className="text-xs opacity-50">© 2026 Cláudio Roberto Gonçalves. v1.5.0 (2026) | MIT License</span>
                 </div>
                 <button onClick={() => setShowPrivacyModal(true)} className="flex items-center gap-1 hover:text-slate-600 transition-colors">
                      <Shield size={14} /> Privacidade e Dados
