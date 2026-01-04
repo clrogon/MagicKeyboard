@@ -264,7 +264,7 @@ export const LEVELS: Level[] = [
     description: "S, L, A e Ç. A linha do meio completa!",
     newKeys: ['s', 'l', 'a', 'ç'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç'],
-    textSamples: ["ala", "asa", "fala", "sala", "fada"],
+    textSamples: ["ala", "asa", "fala", "sala", "fada", "lã"],
     difficulty: 'medium',
     minWpm: 10,
     minAccuracy: 90
@@ -272,10 +272,10 @@ export const LEVELS: Level[] = [
   {
     id: 4,
     title: "A Subir",
-    description: "Vamos subir! Usa o E e o I.",
-    newKeys: ['e', 'i'],
-    allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i'],
-    textSamples: ["ele", "ela", "eles", "elas", "esse"],
+    description: "E, I, O, T. Vamos para a fila de cima!",
+    newKeys: ['e', 'i', 'o', 't'],
+    allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'o', 't'],
+    textSamples: ["ele", "ela", "eles", "tia", "tio", "oito", "leite", "tosta", "festa"],
     difficulty: 'medium',
     minWpm: 12,
     minAccuracy: 90
@@ -283,21 +283,21 @@ export const LEVELS: Level[] = [
   {
     id: 5,
     title: "Exploradores",
-    description: "O R e o U juntam-se à festa!",
-    newKeys: ['r', 'u'],
-    allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'r', 'u'],
-    textSamples: ["rua", "riu", "rio", "reu", "rasa"],
+    description: "R, U, N, M, C, V. Palavras novas!",
+    newKeys: ['r', 'u', 'n', 'm', 'c', 'v'],
+    allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'o', 't', 'r', 'u', 'n', 'm', 'c', 'v'],
+    textSamples: ["rua", "rio", "mar", "ver", "comer", "nuvem", "conta", "vento", "navio", "treino"],
     difficulty: 'hard',
     minWpm: 15,
     minAccuracy: 90
   },
   {
     id: 6,
-    title: "O Gigante Shift",
-    description: "Usa o Shift para as maiúsculas!",
-    newKeys: ['ShiftLeft', 'ShiftRight'],
-    allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'r', 'u', 'ShiftLeft', 'ShiftRight'],
-    textSamples: ["Ana", "Rui", "Luis", "Sara", "Duarte"],
+    title: "Mestre do Alfabeto",
+    description: "Completa o alfabeto com B, G, H, P, Q, W, X, Y, Z.",
+    newKeys: ['b', 'g', 'h', 'p', 'q', 'w', 'x', 'y', 'z', 'ShiftLeft', 'ShiftRight'],
+    allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'o', 't', 'r', 'u', 'n', 'm', 'c', 'v', 'b', 'g', 'h', 'p', 'q', 'w', 'x', 'y', 'z', 'ShiftLeft', 'ShiftRight'],
+    textSamples: ["Kwanza", "Zola", "Benguela", "Huambo", "Gato", "Pato", "Hoje", "Queijo", "Xadrez", "Yoga", "Web", "Zebra"],
     difficulty: 'hard',
     minWpm: 12,
     minAccuracy: 85
@@ -307,8 +307,8 @@ export const LEVELS: Level[] = [
     title: "Símbolos",
     description: "Pontos e vírgulas para dar pausa.",
     newKeys: ['.', ',', ';'],
-    allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'r', 'u', 'ShiftLeft', 'ShiftRight', '.', ',', ';'],
-    textSamples: ["fale, ria.", "ele riu; ela riu.", "dia, sol, sal."],
+    allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'o', 't', 'r', 'u', 'n', 'm', 'c', 'v', 'b', 'g', 'h', 'p', 'q', 'w', 'x', 'y', 'z', 'ShiftLeft', 'ShiftRight', '.', ',', ';'],
+    textSamples: ["Luanda, Angola.", "Tejo, Douro.", "Dia de sol, dia de praia."],
     difficulty: 'hard',
     minWpm: 15,
     minAccuracy: 90
@@ -318,7 +318,7 @@ export const LEVELS: Level[] = [
     title: "Números (Esq.)",
     description: "Vamos contar até 5 com a mão esquerda!",
     newKeys: ['1', '2', '3', '4', '5'],
-    allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'r', 'u', 'ShiftLeft', 'ShiftRight', '.', ',', ';', '1', '2', '3', '4', '5'],
+    allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'o', 't', 'r', 'u', 'n', 'm', 'c', 'v', 'b', 'g', 'h', 'p', 'q', 'w', 'x', 'y', 'z', 'ShiftLeft', 'ShiftRight', '.', ',', ';', '1', '2', '3', '4', '5'],
     textSamples: ["1 2 3", "321", "12345", "1 2 1", "543"],
     difficulty: 'hard',
     minWpm: 10,
@@ -329,7 +329,7 @@ export const LEVELS: Level[] = [
     title: "Números (Dir.)",
     description: "Completa a contagem com a mão direita.",
     newKeys: ['6', '7', '8', '9', '0'],
-    allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'r', 'u', 'ShiftLeft', 'ShiftRight', '.', ',', ';', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
+    allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'o', 't', 'r', 'u', 'n', 'm', 'c', 'v', 'b', 'g', 'h', 'p', 'q', 'w', 'x', 'y', 'z', 'ShiftLeft', 'ShiftRight', '.', ',', ';', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
     textSamples: ["6 7 8", "9 0 9", "67890", "123 789", "10 20"],
     difficulty: 'hard',
     minWpm: 10,
@@ -340,7 +340,7 @@ export const LEVELS: Level[] = [
     title: "Pontuação Extra",
     description: "Perguntas e emoções! ? ! -",
     newKeys: ['?', '!', '-'],
-    allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'r', 'u', 'ShiftLeft', 'ShiftRight', '.', ',', ';', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '?', '!', '-'],
+    allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'o', 't', 'r', 'u', 'n', 'm', 'c', 'v', 'b', 'g', 'h', 'p', 'q', 'w', 'x', 'y', 'z', 'ShiftLeft', 'ShiftRight', '.', ',', ';', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '?', '!', '-'],
     textSamples: ["Olá!", "Tudo bem?", "Sim - disse ela.", "1-2-3!", "Fim?"],
     difficulty: 'hard',
     minWpm: 12,
@@ -348,8 +348,8 @@ export const LEVELS: Level[] = [
   },
   {
     id: 11,
-    title: "O Contador de Histórias",
-    description: "Escreve pequenas histórias completas.",
+    title: "Histórias do Mundo",
+    description: "Escreve histórias sobre Portugal e Angola.",
     newKeys: [], 
     // Implicitly unlock full keyboard for story mode to allow richer vocabulary
     allKeys: [
@@ -362,7 +362,8 @@ export const LEVELS: Level[] = [
         "A Ana vive em Luanda e gosta de ler.", 
         "O Zola viu uma Palanca Negra gigante.", 
         "Em Lisboa e Benguela o sol brilha muito.",
-        "Era uma vez um gato que sabia ler."
+        "O Rio Kwanza é muito bonito.",
+        "Vamos dançar Kizomba e Semba!"
     ],
     difficulty: 'hard',
     minWpm: 15,

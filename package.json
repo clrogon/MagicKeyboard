@@ -19,7 +19,7 @@
     "gemini",
     "pwa"
   ],
-  "author": "",
+  "author": "Cláudio Rogon",
   "license": "MIT",
   "dependencies": {
     "react": "^18.3.1",

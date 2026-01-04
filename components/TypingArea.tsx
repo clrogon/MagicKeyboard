@@ -289,12 +289,12 @@ const TypingArea: React.FC<TypingAreaProps> = ({
       let keys = level.newKeys;
 
       if (mode === GameMode.Timed) {
-          title = "Desafio de Tempo";
+          title = "Contra-Relógio";
           description = "Escreve o máximo que conseguires antes que o tempo acabe!";
           goal = "Mantém a velocidade e não pares!";
           keys = [];
       } else if (mode === GameMode.ErrorDrill) {
-          title = "Treino de Erros";
+          title = "Superar Dificuldades";
           description = "Vamos focar nas teclas onde tens mais dificuldade.";
           goal = "Atenção redobrada para eliminar erros!";
           keys = [];
@@ -417,7 +417,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                  {blindMode && (
                     <div className="bg-slate-800 text-white rounded-2xl px-4 py-2 flex items-center gap-2 shadow-sm animate-pulse">
                         <EyeOff size={18} />
-                        <span className="font-bold text-sm uppercase">Modo Cego</span>
+                        <span className="font-bold text-sm uppercase">Teclas Invisíveis</span>
                     </div>
                  )}
 
@@ -454,7 +454,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                 
                 {mode === GameMode.Timed && !isBriefing && (
                     <div className={`absolute top-4 left-0 right-0 text-center ${colors.textSoft} text-sm font-bold uppercase tracking-widest`}>
-                        Modo Rápido
+                        Contra-Relógio
                     </div>
                 )}
                 

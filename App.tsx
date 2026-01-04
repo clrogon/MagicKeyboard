@@ -14,7 +14,7 @@ import CookieBanner from './components/CookieBanner';
 import HandGuideModal from './components/HandGuideModal';
 import { ClayButton } from './components/ClayButton';
 import { Shield, Zap, Star, LogOut, Heart, ArrowRight, Download, WifiOff } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { audioService } from './services/audioService';
 
 /**
@@ -743,9 +743,12 @@ const App: React.FC = () => {
         {/* --- FOOTER with Angolan Reference --- */}
         {currentScreen !== AppScreen.Exercise && (
             <footer className="w-full max-w-7xl mx-auto p-6 text-center text-slate-400 text-sm font-bold flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
-                <span className="flex items-center gap-2">
-                    Feito com <Heart size={14} className="text-red-400 fill-red-400" /> para a educação em Portugal e Angola 🇵🇹 🇦🇴
-                </span>
+                <div className="flex flex-col items-center gap-2">
+                    <span className="flex items-center gap-2">
+                        Feito com <Heart size={14} className="text-red-400 fill-red-400" /> por Cláudio Rogon para a educação em Portugal e Angola 🇵🇹 🇦🇴
+                    </span>
+                    <span className="text-xs opacity-50">v1.3.0</span>
+                </div>
                 <button onClick={() => setShowPrivacyModal(true)} className="flex items-center gap-1 hover:text-slate-600 transition-colors">
                      <Shield size={14} /> Privacidade e Dados
                 </button>

@@ -129,28 +129,28 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                 className="w-full lg:w-80 flex flex-col gap-4 shrink-0"
             >
                 <div className="bg-white/60 backdrop-blur-md p-6 rounded-[2rem] border border-white/50">
-                    <h3 className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-4 ml-2">Ferramentas</h3>
+                    <h3 className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-4 ml-2">Ajudas</h3>
                     
                     <ClayButton variant="secondary" onClick={onShowHandGuide} className="w-full py-4 mb-3 text-left justify-start px-6">
                         <div className="bg-indigo-100 p-2 rounded-xl text-indigo-500 mr-3"><Shield size={20} /></div>
                         <div>
                             <div className="text-xs text-slate-400 font-bold uppercase">Tutorial</div>
-                            <div className="text-slate-700 font-bold">Guia de Mãos</div>
+                            <div className="text-slate-700 font-bold">Como Pôr as Mãos?</div>
                         </div>
                     </ClayButton>
 
                     <ClayButton variant="secondary" onClick={onViewStats} className="w-full py-4 text-left justify-start px-6">
                         <div className="bg-yellow-100 p-2 rounded-xl text-yellow-500 mr-3"><Trophy size={20} /></div>
                         <div>
-                            <div className="text-xs text-slate-400 font-bold uppercase">Perfil</div>
-                            <div className="text-slate-700 font-bold">Estatísticas</div>
+                            <div className="text-xs text-slate-400 font-bold uppercase">O Meu Diário</div>
+                            <div className="text-slate-700 font-bold">O Meu Progresso</div>
                         </div>
                     </ClayButton>
                 </div>
                 
                 {/* Advanced Options Block */}
                 <div className="bg-white/60 backdrop-blur-md p-6 rounded-[2rem] border border-white/50">
-                    <h3 className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-4 ml-2">Opções Avançadas</h3>
+                    <h3 className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-4 ml-2">Desafios Especiais</h3>
                     
                     <ClayButton 
                         variant={isBlindMode ? "primary" : "secondary"} 
@@ -162,8 +162,8 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                             {isBlindMode ? <EyeOff size={20} /> : <Eye size={20} />}
                         </div>
                         <div>
-                            <div className={`text-xs font-bold uppercase ${isBlindMode ? 'text-rose-200' : 'text-slate-400'}`}>Desafio</div>
-                            <div className={isBlindMode ? 'text-white' : 'text-slate-700'}>Modo Cego</div>
+                            <div className={`text-xs font-bold uppercase ${isBlindMode ? 'text-rose-200' : 'text-slate-400'}`}>Magia</div>
+                            <div className={isBlindMode ? 'text-white' : 'text-slate-700'}>Teclas Invisíveis</div>
                         </div>
                     </ClayButton>
 
@@ -177,23 +177,23 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                             {soundEnabled ? <Volume2 size={20} /> : <VolumeX size={20} />}
                         </div>
                         <div>
-                            <div className="text-xs font-bold text-slate-400 uppercase">Áudio</div>
+                            <div className="text-xs font-bold text-slate-400 uppercase">Barulhos</div>
                             <div className="text-slate-700 font-bold">{soundEnabled ? 'Sons Ligados' : 'Sons Desligados'}</div>
                         </div>
                     </ClayButton>
                 </div>
 
                 <div className="bg-white/60 backdrop-blur-md p-6 rounded-[2rem] border border-white/50">
-                    <h3 className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-4 ml-2">Modos Extra</h3>
+                    <h3 className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-4 ml-2">Mais Aventuras</h3>
                     <div className="space-y-3">
                         <ClayButton variant="primary" theme="amber" onClick={() => onSelectTimedMode(60)} className="w-full py-3 bg-gradient-to-r from-orange-400 to-orange-500 shadow-orange-200">
-                            <Clock size={18} className="mr-2" /> Desafio 60s
+                            <Clock size={18} className="mr-2" /> Contra-Relógio
                         </ClayButton>
                         <ClayButton variant="primary" theme="rose" onClick={onSelectErrorMode} className="w-full py-3 bg-gradient-to-r from-red-400 to-red-500 shadow-red-200">
-                            <AlertCircle size={18} className="mr-2" /> Treinar Erros
+                            <AlertCircle size={18} className="mr-2" /> Treinar Dificuldades
                         </ClayButton>
                         <ClayButton variant="primary" theme="blue" onClick={onSelectStoryMode} className="w-full py-3 bg-gradient-to-r from-blue-400 to-indigo-500 shadow-blue-200">
-                            <BookOpen size={18} className="mr-2" /> Modo História
+                            <BookOpen size={18} className="mr-2" /> Contar Histórias
                         </ClayButton>
                     </div>
                 </div>

@@ -1,4 +1,6 @@
 
+/// <reference types="node" />
+
 import { GoogleGenAI } from "@google/genai";
 import { Level, GameMode, ErrorStats } from '../types';
 
@@ -56,7 +58,7 @@ export const generateSmartExercise = async (
         .toUpperCase();
     
     // Base Instruction: Ensure strict European Portuguese context with Angolan inclusiveness
-    let systemInstruction = "You are a typing tutor for a child learning European Portuguese (pt-PT). STRICTLY AVOID Brazilian Portuguese terms (e.g., use 'a fazer' instead of 'fazendo'). Address the child as 'Tu'. Include cultural names, places, and context from both Portugal and Angola (e.g., Luanda, Kwanza, Njinga, Lisboa, Tejo).";
+    let systemInstruction = "You are a typing tutor for a child learning European Portuguese (pt-PT). STRICTLY AVOID Brazilian Portuguese terms (e.g., use 'a fazer' instead of 'fazendo'). Address the child as 'Tu'. Include cultural names, places, and context from both Portugal (e.g., Lisboa, Tejo, Serra da Estrela, Galo) and Angola (e.g., Luanda, Kwanza, Muxima, Imbondeiro, Palanca, Benguela, Huambo, Semba).";
     
     let prompt = "";
 
@@ -88,7 +90,7 @@ export const generateSmartExercise = async (
             Use ONLY these letters/symbols: [${availableKeys}].
             It can be a list of words or simple sentences.
             Do NOT use any punctuation/symbols unless listed above.
-            Make it fun and varied.
+            Make it fun and varied, mixing words from Portugal and Angola.
         `;
     } else if (mode === GameMode.Story) {
         // Story Mode Logic
@@ -98,7 +100,7 @@ export const generateSmartExercise = async (
             It must be a complete narrative with a beginning, middle, and end.
             Use mostly the provided keys, but you can occasionally use simple words outside the list if strictly necessary for flow (but prioritize the list).
             Available keys: [${availableKeys}].
-            Themes: Animals (e.g., Palanca Negra), Friends (e.g., Ana and Zola), or Adventure.
+            Themes: Animals (e.g., a Palanca Negra, o Lince Ibérico), Friends (e.g., Ana e Zola), Travel (e.g., de Lisboa a Luanda), Food (e.g. Cachupa, Muamba).
             Tone: Whimsical and encouraging.
         `;
     } else {
@@ -116,7 +118,7 @@ export const generateSmartExercise = async (
             ${lengthInstruction}
             ${numberInstruction}
             Use ONLY these letters: [${availableKeys}].
-            ${level.newKeys.includes('ShiftLeft') ? "Include capitalized proper nouns." : "Keep it mostly lowercase."}
+            ${level.newKeys.includes('ShiftLeft') ? "Include capitalized proper nouns (Names of people or cities like Rui, Ana, Luanda)." : "Keep it mostly lowercase."}
             Do NOT use any punctuation unless it is in the list above.
             The text should be simple, real European Portuguese words.
             Keep it positive and kid-friendly.

@@ -90,7 +90,7 @@ const StatsBoard: React.FC<StatsBoardProps> = ({ history, unlockedLevels, levels
                     <Zap size={32} className={`${colors.text} fill-current`} />
                 </div>
                 <span className="text-4xl font-bold text-slate-700">{maxWpm}</span>
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Velocidade Máx.</span>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Máxima Rapidez</span>
             </motion.div>
 
              <motion.div 
@@ -101,7 +101,7 @@ const StatsBoard: React.FC<StatsBoardProps> = ({ history, unlockedLevels, levels
                     <Target size={32} className="text-emerald-500 fill-emerald-500" />
                 </div>
                 <span className="text-4xl font-bold text-slate-700">{avgAccuracy}%</span>
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Precisão Média</span>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Acertos</span>
             </motion.div>
         </div>
 
