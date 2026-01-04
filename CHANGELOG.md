@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.4.0] - 2025-03-05 (A Atualização "As Minhas Palavras" | The "My Words" Update)
+## [1.4.0] - 2026-03-05 (A Atualização "As Minhas Palavras" | The "My Words" Update)
 
 ### Adicionado (Added)
 -   **Lições Personalizadas**: Pais e professores podem agora criar listas de palavras específicas para TPC ou treino focado, guardadas localmente.
@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Alterado (Changed)
 -   **Privacidade Reforçada**: Documentação e comentários de código atualizados para explicitar o processamento de dados 100% local.
 
-## [1.3.0] - 2025-02-26 (A Atualização Cultural | The Cultural Update)
+## [1.3.0] - 2026-02-26 (A Atualização Cultural | The Cultural Update)
 
 ### Adicionado (Added)
 -   **Integração Angola**: Os níveis e a IA agora geram vocabulário específico de Angola (ex: Kwanza, Muxima, Imbondeiro) juntamente com Português de Portugal.
@@ -33,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   "Ferramentas" renomeado para **"Ajudas"**.
 -   **Motor de IA**: O prompt do sistema foi atualizado para rejeitar estritamente termos do Português do Brasil (ex: gerúndio) e forçar referências geográficas locais.
 
-## [1.2.0] - 2025-01-29 (Atualização Família | Family Update)
+## [1.2.0] - 2026-01-29 (Atualização Família | Family Update)
 
 ### Adicionado (Added)
 -   **Suporte Multi-Utilizador**: Criação de múltiplos perfis no mesmo dispositivo.
@@ -45,7 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   **Progressão**: Requisito de nível facilitado (1 Estrela para passar).
 -   **Dados**: Migração da estrutura do `localStorage` para suportar múltiplos utilizadores.
 
-## [1.1.0] - 2025-01-27 (Atualização de Progressão)
+## [1.1.0] - 2026-01-27 (Atualização de Progressão)
 
 ### Adicionado
 -   Sistema de XP e Níveis de Jogador.
@@ -54,7 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Guia de Mãos Interativo.
 -   Sons e Animações (Confetti).
 
-## [1.0.0] - 2024-05-20
+## [1.0.0] - 2026-01-20
 ### Lançamento Inicial
 -   Motor de digitação básico.
 -   Teclado Virtual 3D.

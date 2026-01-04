@@ -20,5 +20,5 @@ Este projeto foi desenvolvido com um foco específico na **soberania de dados** 
 
 ## Direitos de Autor | Copyright
 
-© 2024-2025 Cláudio Roberto Gonçalves.
+© 2026 Cláudio Roberto Gonçalves.
 Distribuído sob a licença MIT.
