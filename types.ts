@@ -1,4 +1,8 @@
 
+/**
+ * Maps logical fingers to Tailwind CSS color classes.
+ * Used for visual feedback in the Virtual Keyboard and Hands Display.
+ */
 export enum Finger {
   LeftPinky = 'pink-500',
   LeftRing = 'blue-500',
@@ -11,48 +15,74 @@ export enum Finger {
   Thumb = 'gray-400'
 }
 
+/**
+ * Available color themes for the application.
+ * - Rose: Default/Girl
+ * - Blue: Boy
+ * - Amber: Neutral
+ */
 export type Theme = 'rose' | 'blue' | 'amber';
 
+/**
+ * Configuration for a single key on the virtual keyboard.
+ */
 export interface KeyConfig {
-  char: string;
-  finger: Finger;
-  row: number; // 0 = number, 1 = top, 2 = home, 3 = bottom
-  width?: number; // relative width, default 1
-  label?: string; // Display label if different from char
+  char: string;         // The character to display/match
+  finger: Finger;       // Which finger should press this key
+  row: number;          // Physical row index (0-3)
+  width?: number;       // Relative width (e.g., 1.5 for Shift)
+  label?: string;       // Optional label (e.g., "Shift" instead of "ShiftLeft")
 }
 
+/**
+ * Defines the structure of a Campaign Level.
+ */
 export interface Level {
   id: number;
   title: string;
   description: string;
-  newKeys: string[]; // Keys introduced in this level
-  allKeys: string[]; // All keys available up to this level
-  textSamples: string[]; // Hardcoded samples
+  newKeys: string[];    // Keys introduced in this specific level
+  allKeys: string[];    // Accumulative list of keys available
+  textSamples: string[]; // Fallback text if AI generation fails
   difficulty: 'easy' | 'medium' | 'hard';
-  minWpm: number;
-  minAccuracy: number;
+  minWpm: number;       // Requirement for 3 stars
+  minAccuracy: number;  // Requirement for 3 stars
 }
 
+/**
+ * Game Modes available in the application.
+ */
 export enum GameMode {
-  Campaign = 'CAMPAIGN',
-  Timed = 'TIMED',
-  ErrorDrill = 'ERROR_DRILL'
+  Campaign = 'CAMPAIGN',      // Progression-based levels
+  Timed = 'TIMED',            // 60s speed challenge
+  ErrorDrill = 'ERROR_DRILL'  // AI-generated drill based on user weak keys
 }
 
+/**
+ * Tracks the number of errors per character.
+ * Key: The character missed. Value: Number of times missed.
+ */
 export interface ErrorStats {
-  [targetChar: string]: number; // Count of misses for this character
+  [targetChar: string]: number;
 }
 
+/**
+ * Achievement badge definition.
+ */
 export interface Achievement {
   id: string;
   title: string;
   description: string;
-  icon: string; // Lucide icon name
+  icon: string; // Corresponds to Lucide React icon names
   color: string;
 }
 
+/**
+ * Daily Challenge logic.
+ * Reset daily based on local date.
+ */
 export interface DailyChallenge {
-  date: string; // YYYY-MM-DD
+  date: string; // ISO Date YYYY-MM-DD
   description: string;
   targetType: 'stars' | 'wpm' | 'accuracy' | 'matches';
   targetValue: number;
@@ -61,13 +91,16 @@ export interface DailyChallenge {
   rewardXp: number;
 }
 
+/**
+ * Global Game State persisted in LocalStorage.
+ */
 export interface GameState {
-  currentLevelId: number;
-  unlockedLevels: number[];
-  history: SessionResult[];
+  currentLevelId: number;      // Highest level reached
+  unlockedLevels: number[];    // Array of unlocked level IDs
+  history: SessionResult[];    // History of all completed sessions
   isPlaying: boolean;
-  errorStats: ErrorStats;
-  achievements: string[]; // IDs of unlocked achievements
+  errorStats: ErrorStats;      // Global error heatmap
+  achievements: string[];      // IDs of unlocked achievements
   
   // Progression System
   xp: number;
@@ -75,9 +108,12 @@ export interface GameState {
   currentTitle: string;
   currentAvatar: string;
   dailyChallenge: DailyChallenge | null;
-  theme: Theme; // New Theme property
+  theme: Theme;
 }
 
+/**
+ * Result of a single typing session.
+ */
 export interface SessionResult {
   levelId: number;
   mode: GameMode;
@@ -85,10 +121,13 @@ export interface SessionResult {
   accuracy: number;
   date: string;
   stars: 1 | 2 | 3;
-  duration?: number;
-  correctStats?: ErrorStats; // New: track correct presses for decay logic
+  duration?: number;           // In seconds
+  correctStats?: ErrorStats;   // Used to decay the global error stats
 }
 
+/**
+ * Enum for managing the active screen in the main App component.
+ */
 export enum AppScreen {
   Dashboard = 'DASHBOARD',
   Exercise = 'EXERCISE',

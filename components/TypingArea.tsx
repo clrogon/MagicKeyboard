@@ -12,21 +12,34 @@ interface TypingAreaProps {
   level: Level;
   mode: GameMode;
   errorStats?: ErrorStats;
-  timeLimit?: number; // seconds
+  timeLimit?: number; // seconds (for Timed mode)
   difficultyModifier?: 'normal' | 'hard';
   theme: Theme;
   onComplete: (result: SessionResult, errors: ErrorStats, corrects: ErrorStats) => void;
   onExit: () => void;
 }
 
+/**
+ * TypingArea Component
+ * 
+ * The core game loop component. Handles:
+ * 1. AI Text Generation via 'initLevel'
+ * 2. Input capture (using a hidden input field for mobile compatibility)
+ * 3. Real-time validation (Hit/Miss)
+ * 4. WPM and Accuracy calculation
+ * 5. Timer logic (for Timed mode)
+ */
 const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLimit, difficultyModifier = 'normal', theme, onComplete, onExit }) => {
   const [text, setText] = useState<string>("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [startTime, setStartTime] = useState<number | null>(null);
-  const [sessionErrors, setSessionErrors] = useState(0);
-  const [sessionErrorMap, setSessionErrorMap] = useState<ErrorStats>({});
-  const [sessionCorrectMap, setSessionCorrectMap] = useState<ErrorStats>({}); // Track correct keystrokes
-  const [typedChars, setTypedChars] = useState<string>("");
+  
+  // Session Stats
+  const [sessionErrors, setSessionErrors] = useState(0); // Total errors count
+  const [sessionErrorMap, setSessionErrorMap] = useState<ErrorStats>({}); // Detailed error breakdown
+  const [sessionCorrectMap, setSessionCorrectMap] = useState<ErrorStats>({}); // Track correct keystrokes for "healing" weak keys
+  
+  const [typedChars, setTypedChars] = useState<string>(""); // Visual echo (optional)
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState<number | null>(timeLimit || null);
 
@@ -35,7 +48,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
 
   const colors = THEME_COLORS[theme];
 
-  // Initialize Level
+  // Initialize Level: Calls AI service
   const initLevel = useCallback(async () => {
     setLoading(true);
     const newText = await generateSmartExercise(level, mode, errorStats, difficultyModifier as 'normal' | 'hard');
@@ -52,6 +65,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
         setTimeLeft(timeLimit);
     }
     
+    // Focus hack to ensure keyboard is ready
     setTimeout(() => inputRef.current?.focus(), 100);
   }, [level, mode, errorStats, timeLimit, difficultyModifier]);
 
@@ -62,7 +76,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
     }
   }, [initLevel]);
 
-  // Keep focus
+  // Maintain focus on hidden input to capture keystrokes
   useEffect(() => {
     const interval = setInterval(() => {
       if (!loading) inputRef.current?.focus();
@@ -70,7 +84,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
     return () => clearInterval(interval);
   }, [loading]);
 
-  // Timer Logic
+  // Timer Countdown Logic
   useEffect(() => {
     if (startTime && timeLimit && timeLeft !== null) {
         timerRef.current = window.setInterval(() => {
@@ -88,6 +102,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
     };
   }, [startTime, timeLimit]);
 
+  // Auto-finish when time runs out
   useEffect(() => {
       if (timeLeft === 0 && startTime) {
           finishLevel();
@@ -95,10 +110,16 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
   }, [timeLeft]);
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-     // Controlled input placeholder
+     // Controlled input handler is empty because we use onKeyDown for granular control 
+     // and to prevent default behavior for specific keys if needed.
   };
 
+  /**
+   * Main Input Handler
+   * Compares key press against target char.
+   */
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Ignore navigation keys
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
         e.preventDefault();
         return;
@@ -109,22 +130,25 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
     const char = e.key;
     const targetChar = text[currentIndex];
 
+    // Ignore modifier keys or multi-char events (except Backspace if we supported it)
     if (char.length > 1 && char !== 'Backspace' && !['Shift'].includes(char)) return; 
     if (char === 'Shift' || char === 'Alt' || char === 'Control' || char === 'CapsLock') return;
 
+    // Start timer on first keypress
     if (!startTime) {
       setStartTime(Date.now());
     }
 
+    // Disable Backspace (Pedagogical choice: forces forward momentum)
     if (char === 'Backspace') {
        return;
     }
 
     if (char === targetChar) { // Case sensitive match
-      // Correct
+      // -- CORRECT HIT --
       setTypedChars(prev => prev + char);
       
-      // Track correct stats for decay
+      // Track correct stats (Used to heal/decay the error history)
       setSessionCorrectMap(prev => ({
           ...prev,
           [targetChar]: (prev[targetChar] || 0) + 1
@@ -133,19 +157,20 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
       const nextIndex = currentIndex + 1;
       setCurrentIndex(nextIndex);
 
+      // Check Completion
       if (nextIndex >= text.length) {
         if (mode === GameMode.Timed) {
-            // In timed mode, append text to loop
+            // In timed mode, append text to loop infinitely until time runs out
             setText(prev => prev + " " + prev);
         } else {
             finishLevel();
         }
       }
     } else {
-      // Error
+      // -- ERROR --
       setSessionErrors(prev => prev + 1);
       
-      // Track specific error
+      // Track specific error for the "Error Drill" mode generation
       setSessionErrorMap(prev => ({
           ...prev,
           [targetChar]: (prev[targetChar] || 0) + 1
@@ -153,6 +178,9 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
     }
   };
 
+  /**
+   * Calculates final stats and triggers parent callback.
+   */
   const finishLevel = () => {
     const endTime = Date.now();
     let durationMin = 0;
@@ -163,11 +191,13 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
         durationMin = (endTime - (startTime || endTime)) / 60000;
     }
     
-    // Stats
+    // Stats Calculation
     const totalTyped = currentIndex;
+    // Standard WPM = (Characters / 5) / Minutes
     const grossWpm = Math.round((totalTyped / 5) / (durationMin || 0.001)); 
     const accuracy = totalTyped > 0 ? Math.round(((totalTyped - sessionErrors) / totalTyped) * 100) : 0;
     
+    // Star Rating Logic
     let stars: 1 | 2 | 3 = 1;
     if (grossWpm >= level.minWpm && accuracy >= level.minAccuracy) stars = 3;
     else if (accuracy >= level.minAccuracy) stars = 2;
@@ -184,8 +214,10 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
     }, sessionErrorMap, sessionCorrectMap);
   };
 
+  // Renders the scrolling text area
   const renderText = () => {
     // Sliding window logic optimized for focus
+    // Shows 8 characters behind and 16 ahead
     const visibleStart = Math.max(0, currentIndex - 8); 
     const visibleEnd = visibleStart + 16;
     const displayText = text.slice(visibleStart, visibleEnd);
@@ -201,17 +233,17 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
           let className = "relative flex items-center justify-center rounded-2xl transition-all duration-200 ";
           
           if (isCurrent) {
-             // Active Cursor Card
+             // Active Cursor Card (Scale up + Theme Color)
              className += `w-16 h-20 md:w-20 md:h-24 ${colors.bg} text-white shadow-xl ${colors.shadow} z-10 scale-110`;
           } else {
              className += "w-12 h-16 md:w-14 md:h-20 ";
              
              if (isPast) {
-                className += "text-emerald-400 opacity-50";
+                className += "text-emerald-400 opacity-50"; // Completed chars
              } else if (isNext) {
-                className += "text-slate-600 bg-white border-2 border-slate-100";
+                className += "text-slate-600 bg-white border-2 border-slate-100"; // Upcoming chars
              } else {
-                className += "text-slate-300";
+                className += "text-slate-300"; // Distant future chars
              }
           }
 
@@ -283,6 +315,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
                 {renderText()}
             </motion.div>
             
+            {/* Hidden input sink to capture keyboard events on mobile/desktop */}
             <input
                 ref={inputRef}
                 type="text"

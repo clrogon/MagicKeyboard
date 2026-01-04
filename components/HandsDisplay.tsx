@@ -1,12 +1,13 @@
 
 import React from 'react';
-import { Finger } from '../types';
+import { Finger, Theme } from '../types';
 
 interface HandsDisplayProps {
   activeFinger?: Finger | null;
-  mode?: 'guide' | 'active'; // 'guide' shows all colors, 'active' highlights only the active one
+  mode?: 'guide' | 'active'; // 'guide' shows all colors, 'active' highlights only the active finger
   className?: string;
   scale?: number;
+  theme?: Theme;
 }
 
 const FINGER_COLORS: Record<Finger, string> = {
@@ -21,20 +22,41 @@ const FINGER_COLORS: Record<Finger, string> = {
   [Finger.RightPinky]: '#f43f5e', // rose-500
 };
 
+const THEME_TINTS: Record<Theme, string> = {
+  rose: '#ffe4e6', // rose-100
+  blue: '#dbeafe', // blue-100
+  amber: '#fef3c7', // amber-100
+};
+
+/**
+ * HandsDisplay Component
+ * 
+ * Renders a vector-based representation of human hands (SVG).
+ * Used in two contexts:
+ * 1. "active": Shows above the keyboard, highlighting only the finger needed for the current key.
+ * 2. "guide": Shows in the tutorial modal, highlighting all fingers to explain the color coding.
+ * 
+ * Includes a static background layer ("tinted hands") to improve visual anchoring and follow the theme.
+ */
 export const HandsDisplay: React.FC<HandsDisplayProps> = ({ 
     activeFinger, 
     mode = 'active', 
     className = '',
-    scale = 1
+    scale = 1,
+    theme = 'rose'
 }) => {
 
+  const tintColor = THEME_TINTS[theme];
+
+  // Determine fill color based on state
   const getFingerColor = (finger: Finger) => {
       if (mode === 'guide') {
           // In guide mode, always show the color
           return FINGER_COLORS[finger];
       }
       // In active mode, only show color if it's the active finger
-      return activeFinger === finger ? FINGER_COLORS[finger] : '#e2e8f0'; // slate-200 for inactive
+      // Otherwise transparent to let the tinted background show through
+      return activeFinger === finger ? FINGER_COLORS[finger] : 'transparent';
   };
 
   const getStrokeColor = (finger: Finger) => {
@@ -43,11 +65,10 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
   };
 
   const getOpacity = (finger: Finger) => {
-      if (mode === 'guide') return 1;
-      return activeFinger === finger ? 1 : 0.5;
+      return 1;
   }
 
-  // Simplified SVG Paths for fingers
+  // Simplified SVG Paths for fingers (Bezier curves)
   // Left Hand
   const LeftPinky = "M20,80 C15,75 10,50 15,40 C18,35 25,35 28,40 L28,85";
   const LeftRing = "M32,85 L32,30 C32,22 42,22 42,30 L42,85";
@@ -75,6 +96,26 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
       />
   );
 
+  const renderBackgroundLayer = () => (
+      <g className="opacity-80">
+        {/* Left Hand Tint */}
+        <path d={LeftPalm} fill={tintColor} stroke="none" />
+        <path d={LeftPinky} fill={tintColor} stroke="none" />
+        <path d={LeftRing} fill={tintColor} stroke="none" />
+        <path d={LeftMiddle} fill={tintColor} stroke="none" />
+        <path d={LeftIndex} fill={tintColor} stroke="none" />
+        <path d={LeftThumb} fill={tintColor} stroke="none" />
+
+        {/* Right Hand Tint */}
+        <path d={RightPalm} fill={tintColor} stroke="none" />
+        <path d={RightPinky} fill={tintColor} stroke="none" />
+        <path d={RightRing} fill={tintColor} stroke="none" />
+        <path d={RightMiddle} fill={tintColor} stroke="none" />
+        <path d={RightIndex} fill={tintColor} stroke="none" />
+        <path d={RightThumb} fill={tintColor} stroke="none" />
+      </g>
+  );
+
   return (
     <div className={`flex justify-center items-center ${className}`}>
         <svg 
@@ -83,9 +124,13 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
             viewBox="0 0 200 160" 
             xmlns="http://www.w3.org/2000/svg"
         >
-            <g className="filter drop-shadow-lg">
+            {/* Background Hand Layer (Static Tinted Image) */}
+            {renderBackgroundLayer()}
+
+            {/* Foreground Layer (Active/Guide Fingers) */}
+            <g className="filter drop-shadow-sm">
                 {/* Left Hand */}
-                <path d={LeftPalm} fill="#f1f5f9" stroke="#e2e8f0" strokeWidth="2" />
+                <path d={LeftPalm} fill="transparent" stroke="#e2e8f0" strokeWidth="2" />
                 {renderFinger(LeftPinky, Finger.LeftPinky)}
                 {renderFinger(LeftRing, Finger.LeftRing)}
                 {renderFinger(LeftMiddle, Finger.LeftMiddle)}
@@ -93,7 +138,7 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
                 {renderFinger(LeftThumb, Finger.Thumb)}
 
                 {/* Right Hand */}
-                <path d={RightPalm} fill="#f1f5f9" stroke="#e2e8f0" strokeWidth="2" />
+                <path d={RightPalm} fill="transparent" stroke="#e2e8f0" strokeWidth="2" />
                 {renderFinger(RightPinky, Finger.RightPinky)}
                 {renderFinger(RightRing, Finger.RightRing)}
                 {renderFinger(RightMiddle, Finger.RightMiddle)}

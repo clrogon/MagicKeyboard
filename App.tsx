@@ -14,12 +14,20 @@ import { ClayButton } from './components/ClayButton';
 import { Shield, Zap, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+/**
+ * App Component
+ * 
+ * The root component of the application.
+ * Manages global Game State, Routing (simple state-based navigation), and High-level Logic.
+ */
 const App: React.FC = () => {
+  // Initialize State from LocalStorage or Default
   const [gameState, setGameState] = useState<GameState>(() => {
     // Load from localStorage if available
     const saved = localStorage.getItem('keyboardHeroState');
     if (saved) {
       const parsed = JSON.parse(saved);
+      // Migration logic for old saves to ensure new fields exist
       if (!parsed.achievements) parsed.achievements = [];
       if (parsed.xp === undefined) parsed.xp = 0;
       if (parsed.playerLevel === undefined) parsed.playerLevel = 1;
@@ -44,21 +52,29 @@ const App: React.FC = () => {
     };
   });
 
+  // UI State
   const [currentScreen, setCurrentScreen] = useState<AppScreen>(AppScreen.Dashboard);
   const [activeLevel, setActiveLevel] = useState<Level>(LEVELS[0]);
   const [activeMode, setActiveMode] = useState<GameMode>(GameMode.Campaign);
+  
+  // Game Configuration State
   const [difficultyModifier, setDifficultyModifier] = useState<'normal' | 'hard'>('normal');
   const [timeLimit, setTimeLimit] = useState<number | undefined>(undefined);
+  
+  // Session Result State
   const [lastResult, setLastResult] = useState<SessionResult | null>(null);
   const [justUnlockedAchievement, setJustUnlockedAchievement] = useState<string | null>(null);
-  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
-  const [showHandGuide, setShowHandGuide] = useState(false);
   const [levelUpData, setLevelUpData] = useState<{old: number, new: number} | null>(null);
   const [earnedXp, setEarnedXp] = useState<number>(0);
 
+  // Modals State
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [showHandGuide, setShowHandGuide] = useState(false);
+
   const colors = THEME_COLORS[gameState.theme];
 
-  // Daily Challenge Logic
+  // Effect: Daily Challenge Generator
+  // Checks if a daily challenge exists for 'today', otherwise generates a new one.
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0];
     setGameState(prev => {
@@ -67,7 +83,7 @@ const App: React.FC = () => {
             const type = types[Math.floor(Math.random() * types.length)];
             let target = 0;
             let desc = "";
-            const reward = 150 + (prev.playerLevel * 10);
+            const reward = 150 + (prev.playerLevel * 10); // Scale reward with level
 
             if (type === 'stars') {
                 target = 3;
@@ -100,16 +116,19 @@ const App: React.FC = () => {
     });
   }, []);
 
+  // Effect: Persist state to LocalStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('keyboardHeroState', JSON.stringify(gameState));
   }, [gameState]);
 
+  // Handler: Clear all data (GDPR)
   const handleClearData = () => {
     localStorage.removeItem('keyboardHeroState');
     localStorage.removeItem('cookieConsent');
     window.location.reload();
   };
   
+  // Handler: Cycle through Avatars
   const handleChangeAvatar = () => {
       setGameState(prev => {
           const currentIndex = AVATARS.indexOf(prev.currentAvatar);
@@ -122,6 +141,8 @@ const App: React.FC = () => {
       setGameState(prev => ({ ...prev, theme }));
   };
 
+  // --- GAME START HANDLERS ---
+
   const handleStartLevel = (level: Level, modifier: 'normal' | 'hard' = 'normal') => {
     setActiveLevel(level);
     setActiveMode(GameMode.Campaign);
@@ -132,8 +153,10 @@ const App: React.FC = () => {
 
   const handleStartTimedMode = (duration: number) => {
       const maxUnlocked = Math.max(...gameState.unlockedLevels);
+      // Collect all keys available to the user so far
       const unlockedKeys = LEVELS.filter(l => l.id <= maxUnlocked).flatMap(l => l.newKeys);
       const uniqueKeys = Array.from(new Set(unlockedKeys));
+      
       const timedLevel: Level = {
           id: -1,
           title: "Desafio de Tempo",
@@ -156,6 +179,7 @@ const App: React.FC = () => {
       const maxUnlocked = Math.max(...gameState.unlockedLevels);
       const unlockedKeys = LEVELS.filter(l => l.id <= maxUnlocked).flatMap(l => l.newKeys);
       const uniqueKeys = Array.from(new Set(unlockedKeys));
+      
       const errorLevel: Level = {
           id: -2,
           title: "Treino de Erros",
@@ -174,6 +198,9 @@ const App: React.FC = () => {
       setCurrentScreen(AppScreen.Exercise);
   }
 
+  // --- HELPER LOGIC ---
+
+  // Checks if the user has played 7 consecutive days
   const checkStreak = (history: SessionResult[]) => {
       const dates = [...new Set(history.map(h => h.date.split('T')[0]))].sort();
       if (dates.length < 7) return false;
@@ -190,7 +217,7 @@ const App: React.FC = () => {
   };
 
   const calculateSessionXp = (result: SessionResult): number => {
-      let xp = 20; 
+      let xp = 20; // Base XP
       xp += result.stars * 15;
       xp += Math.round(result.wpm);
       if (result.accuracy === 100) xp += 20;
@@ -198,11 +225,16 @@ const App: React.FC = () => {
       return xp;
   };
 
+  /**
+   * Main Completion Handler.
+   * Processes the result, updates stats, checks achievements, updates XP, and saves state.
+   */
   const handleLevelComplete = (result: SessionResult, sessionErrors: ErrorStats, sessionCorrects: ErrorStats) => {
     const isWin = result.stars > 1; 
     setJustUnlockedAchievement(null);
     setLevelUpData(null);
 
+    // Trigger Confetti on Win
     if (isWin || result.mode === GameMode.Timed) {
        const confettiColors = gameState.theme === 'rose' 
          ? ['#F43F5E', '#FB7185', '#FDA4AF', '#FFF1F2'] 
@@ -225,6 +257,7 @@ const App: React.FC = () => {
         let newUnlocked = [...prev.unlockedLevels];
         let newAchievements = [...prev.achievements];
         
+        // Unlock next level logic
         if (result.mode === GameMode.Campaign && isWin && result.levelId === Math.max(...prev.unlockedLevels)) {
             const nextLevelId = result.levelId + 1;
             if (LEVELS.find(l => l.id === nextLevelId) && !newUnlocked.includes(nextLevelId)) {
@@ -232,11 +265,12 @@ const App: React.FC = () => {
             }
         }
 
+        // Update Global Error Stats (Add errors, Decay logic for corrects)
         const newErrorStats = { ...prev.errorStats };
         Object.entries(sessionErrors).forEach(([char, count]) => {
             newErrorStats[char] = (newErrorStats[char] || 0) + count;
         });
-        const DECAY_RATE = 0.33; 
+        const DECAY_RATE = 0.33; // Errors "heal" by 1 for every 3 correct presses
         Object.entries(sessionCorrects).forEach(([char, count]) => {
             if (newErrorStats[char] && newErrorStats[char] > 0) {
                  const reduction = Math.floor(count * DECAY_RATE);
@@ -244,6 +278,7 @@ const App: React.FC = () => {
             }
         });
 
+        // Check Achievements
         const checkForAchievement = (id: string, condition: boolean) => {
             if (condition && !newAchievements.includes(id)) {
                 newAchievements.push(id);
@@ -262,8 +297,10 @@ const App: React.FC = () => {
         checkForAchievement('error_crusher', result.mode === GameMode.ErrorDrill && result.accuracy === 100 && result.levelId === -2);
         checkForAchievement('time_lord', result.mode === GameMode.Timed && (result.duration || 0) >= 1 && result.wpm >= 30);
 
+        // XP & Leveling Logic
         let sessionXp = calculateSessionXp(result);
         
+        // Daily Challenge Progress
         let daily = prev.dailyChallenge ? { ...prev.dailyChallenge } : null;
         if (daily && !daily.completed) {
             let increment = 0;
@@ -386,6 +423,7 @@ const App: React.FC = () => {
     );
   };
 
+  // Lava Lamp Background Colors based on theme
   const BlobColor1 = gameState.theme === 'rose' ? 'bg-purple-200' : gameState.theme === 'blue' ? 'bg-blue-200' : 'bg-yellow-200';
   const BlobColor2 = gameState.theme === 'rose' ? 'bg-yellow-100' : gameState.theme === 'blue' ? 'bg-cyan-100' : 'bg-orange-100';
   const BlobColor3 = gameState.theme === 'rose' ? 'bg-pink-100' : gameState.theme === 'blue' ? 'bg-indigo-100' : 'bg-amber-100';
@@ -393,7 +431,7 @@ const App: React.FC = () => {
   return (
     <div className="font-sans text-slate-800 min-h-screen flex flex-col relative overflow-hidden transition-colors duration-500">
       
-      {/* Lava Lamp Blobs */}
+      {/* Lava Lamp Blobs Background Effect */}
       <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
           <div className={`absolute top-[-10%] left-[-10%] w-[500px] h-[500px] ${BlobColor1} rounded-full mix-blend-multiply filter blur-[80px] opacity-40 animate-blob transition-colors duration-1000`}></div>
           <div className={`absolute top-[-10%] right-[-10%] w-[500px] h-[500px] ${BlobColor2} rounded-full mix-blend-multiply filter blur-[80px] opacity-40 animate-blob animation-delay-2000 transition-colors duration-1000`}></div>
@@ -423,6 +461,7 @@ const App: React.FC = () => {
              </div>
         </header>
 
+        {/* --- ROUTER VIEW --- */}
         {currentScreen === AppScreen.Dashboard && (
           <LevelSelector 
               levels={LEVELS} 
@@ -472,6 +511,7 @@ const App: React.FC = () => {
         )}
       </div>
 
+      {/* --- GLOBAL MODALS --- */}
       <CookieBanner onOpenPolicy={() => setShowPrivacyModal(true)} theme={gameState.theme} />
       <PrivacyModal 
         isOpen={showPrivacyModal} 

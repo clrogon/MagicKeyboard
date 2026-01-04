@@ -1,8 +1,10 @@
+
 import { GoogleGenAI } from "@google/genai";
 import { Level, GameMode, ErrorStats } from '../types';
 
 let genAI: GoogleGenAI | null = null;
 
+// Initialize Gemini Client safely
 try {
   if (process.env.API_KEY) {
     genAI = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -11,16 +13,25 @@ try {
   console.warn("Gemini API Key not found or invalid.");
 }
 
+/**
+ * Generates dynamic typing exercises using Google's Gemini AI.
+ * 
+ * @param level - The current level configuration (provides available keys).
+ * @param mode - The game mode (determines text length and structure).
+ * @param errorStats - Optional map of user's weak keys for targeted drills.
+ * @param difficultyModifier - 'hard' requests longer sentences/words.
+ * @returns A promise resolving to the generated text string, or a fallback string on error.
+ */
 export const generateSmartExercise = async (
     level: Level, 
     mode: GameMode = GameMode.Campaign,
     errorStats?: ErrorStats,
     difficultyModifier: 'normal' | 'hard' = 'normal'
 ): Promise<string> => {
+  // 1. Fallback Logic: If no API key or client, return hardcoded samples.
   if (!genAI) {
-    // Fallback logic
     if (mode === GameMode.Timed) {
-        // Concatenate random samples to make it long
+        // Concatenate random samples to make it long enough for a timer
         return Array(5).fill(null).map(() => level.textSamples[Math.floor(Math.random() * level.textSamples.length)]).join(' ');
     }
     return level.textSamples[Math.floor(Math.random() * level.textSamples.length)];
@@ -29,19 +40,20 @@ export const generateSmartExercise = async (
   try {
     const model = "gemini-3-flash-preview";
     
-    // Clean keys for prompt (remove pseudo keys like Shift)
+    // Clean keys for prompt (remove pseudo keys like Shift to avoid confusion in prompt)
     const availableKeys = level.allKeys
         .filter(k => !k.startsWith('Shift'))
         .join(', ')
         .toUpperCase();
     
-    // Strict European Portuguese instruction
+    // Base Instruction: Ensure strict European Portuguese context
     let systemInstruction = "You are a typing tutor for a child learning European Portuguese (pt-PT). STRICTLY AVOID Brazilian Portuguese terms, phrasing, or gerunds (e.g., use 'a fazer' instead of 'fazendo'). Address the child as 'Tu'.";
     
     let prompt = "";
 
+    // 2. Mode-Specific Prompt Engineering
     if (mode === GameMode.ErrorDrill && errorStats) {
-        // Find top 3 error keys
+        // Identify top 3 weak keys based on error count
         const weakKeys = Object.entries(errorStats)
             .sort(([,a], [,b]) => b - a)
             .slice(0, 3)
@@ -70,7 +82,7 @@ export const generateSmartExercise = async (
             Make it fun and varied.
         `;
     } else {
-        // Campaign Mode
+        // Campaign Mode (Standard)
         const lengthInstruction = difficultyModifier === 'hard' 
             ? "Generate a longer sentence (8-10 words) or a list of harder/longer words." 
             : "Generate a single line of text (about 4-6 words).";
@@ -87,6 +99,7 @@ export const generateSmartExercise = async (
         `;
     }
 
+    // 3. Call API
     const response = await genAI.models.generateContent({
       model,
       contents: prompt,
@@ -94,16 +107,19 @@ export const generateSmartExercise = async (
 
     const text = response.text?.trim();
     
+    // 4. Output validation and cleanup
     if (text) {
-        // Basic cleanup of quotes or markdown that might sneak in
+       // Remove markdown code blocks or quotes if the model adds them
        let cleanText = text.replace(/`/g, '').replace(/"/g, '');
        return cleanText;
     }
     
+    // Fallback if response was empty
     return level.textSamples[0];
 
   } catch (error) {
     console.error("Gemini generation failed", error);
+    // Silent fail to fallback
     return level.textSamples[Math.floor(Math.random() * level.textSamples.length)];
   }
 };

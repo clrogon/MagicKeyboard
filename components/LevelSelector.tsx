@@ -31,10 +31,22 @@ const itemVariants = {
     visible: { y: 0, opacity: 1 }
 };
 
+/**
+ * LevelSelector Component
+ * 
+ * The main dashboard for the application. Displays:
+ * 1. User Profile (Avatar, Level, XP Bar, Title).
+ * 2. Daily Challenge status.
+ * 3. Quick Actions (Hand Guide, Stats).
+ * 4. Extra Modes (Timed, Error Drill).
+ * 5. Campaign Level Grid (Locked vs Unlocked).
+ */
 const LevelSelector: React.FC<LevelSelectorProps> = ({ 
     levels, unlockedLevels, gameState, onSelectLevel, onSelectTimedMode, onSelectErrorMode, onViewStats, onChangeAvatar, onShowHandGuide
 }) => {
   const { xp, playerLevel, currentTitle, currentAvatar, dailyChallenge, theme } = gameState;
+  
+  // XP Logic
   const xpNeeded = getXpForNextLevel(playerLevel);
   const xpProgress = Math.min(100, (xp / xpNeeded) * 100);
   
@@ -66,6 +78,7 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                         <h2 className="text-2xl font-bold text-slate-800 fun-font">{currentTitle}</h2>
                     </div>
                     
+                    {/* XP Progress Bar */}
                     <div className="w-full md:w-64 h-4 bg-slate-100 rounded-full overflow-hidden relative shadow-inner">
                         <motion.div 
                             initial={{ width: 0 }}
@@ -187,7 +200,7 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                                 <p className="text-sm text-slate-400 font-bold">{level.description}</p>
                             </div>
 
-                            {/* Keys Indicator */}
+                            {/* Keys Indicator (Preview of what is learnt in this level) */}
                             <div className="absolute top-6 left-20 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                 {level.newKeys.map(k => (
                                     <span key={k} className="bg-slate-800 text-white text-[10px] px-1.5 py-0.5 rounded uppercase font-bold">

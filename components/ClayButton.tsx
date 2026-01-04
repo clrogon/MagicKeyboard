@@ -3,11 +3,17 @@ import React from 'react';
 import { Theme } from '../types';
 
 interface ClayButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  active?: boolean;
-  variant?: 'primary' | 'secondary' | 'neutral' | 'success';
-  theme?: Theme;
+  active?: boolean; // If true, renders in "pressed" state
+  variant?: 'primary' | 'secondary' | 'neutral' | 'success'; // Visual style style
+  theme?: Theme; // Color theme (rose, blue, amber) used for primary variants
 }
 
+/**
+ * ClayButton Component
+ * 
+ * A reusable button component with a "claymorphism" (soft 3D plastic) aesthetic.
+ * It supports dynamic theming and deep shadow states.
+ */
 export const ClayButton: React.FC<ClayButtonProps> = ({ 
     children, 
     active, 

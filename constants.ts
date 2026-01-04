@@ -1,7 +1,11 @@
 
 import { Finger, KeyConfig, Level, Achievement, Theme } from './types';
 
-// Theme Configuration for dynamic styling
+/**
+ * Theme Configuration Object.
+ * Maps the 'Theme' type to specific Tailwind CSS classes.
+ * This centralization prevents Tailwind JIT pruning issues and makes theming cleaner.
+ */
 export const THEME_COLORS: Record<Theme, {
     base: string;
     bg: string;
@@ -48,6 +52,9 @@ export const THEME_COLORS: Record<Theme, {
     }
 };
 
+/**
+ * localized names for fingers to display in the UI (PT-PT).
+ */
 export const FINGER_NAMES: Record<Finger, string> = {
   [Finger.LeftPinky]: 'Mindinho Esq.',
   [Finger.LeftRing]: 'Anelar Esq.',
@@ -60,7 +67,10 @@ export const FINGER_NAMES: Record<Finger, string> = {
   [Finger.Thumb]: 'Polegares'
 };
 
-// Standard Portuguese Layout mapping for visual keyboard
+/**
+ * Physical Keyboard Layout Definition (QWERTY - PT-PT standard).
+ * Mapped to rows for rendering the 3D Virtual Keyboard.
+ */
 export const KEYBOARD_LAYOUT: KeyConfig[][] = [
   // Top Row (QWERTY...)
   [
@@ -105,6 +115,9 @@ export const KEYBOARD_LAYOUT: KeyConfig[][] = [
   ]
 ];
 
+/**
+ * List of available Achievements.
+ */
 export const ACHIEVEMENTS: Achievement[] = [
   {
     id: 'first_3_stars',
@@ -178,6 +191,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   }
 ];
 
+// Progression Titles based on Player Level
 export const PLAYER_TITLES: Record<number, string> = {
     1: 'Aprendiz',
     2: 'Estudante',
@@ -190,12 +204,17 @@ export const PLAYER_TITLES: Record<number, string> = {
     30: 'O Escolhido'
 };
 
+// Available Avatars for the profile
 export const AVATARS = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🦄', '🐙', '🦖', '🚀', '👽', '🤖'];
 
 // Calculate XP needed for next level: 100 * Level
 export const getXpForNextLevel = (level: number) => level * 250;
 
-// Progressive Levels designed for Kids learning PT (European/Angolan style)
+/**
+ * Progression Levels.
+ * Designed for children learning PT (European/Angolan style).
+ * Starts with Home Row (F/J) and expands outwards.
+ */
 export const LEVELS: Level[] = [
   {
     id: 1,

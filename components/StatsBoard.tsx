@@ -17,16 +17,24 @@ interface StatsBoardProps {
   onViewAchievements: () => void;
 }
 
+/**
+ * StatsBoard Component
+ * 
+ * Displays the user's progress using Charts and KPI cards.
+ * Uses 'recharts' for data visualization.
+ */
 const StatsBoard: React.FC<StatsBoardProps> = ({ history, unlockedLevels, levels, achievements, theme, onBack, onViewAchievements }) => {
   const colors = THEME_COLORS[theme];
 
-  // Process data for charts
+  // Transform history data for the Line Chart
+  // Limits to last 15 sessions to prevent overcrowding
   const data = history.map((h, idx) => ({
     name: `Sessão ${idx + 1}`,
     wpm: h.wpm,
     accuracy: h.accuracy
-  })).slice(-15); // Last 15 sessions
+  })).slice(-15);
 
+  // Aggregate Stats
   const totalStars = history.reduce((acc, curr) => acc + curr.stars, 0);
   const maxWpm = history.reduce((acc, curr) => Math.max(acc, curr.wpm), 0);
   const avgAccuracy = Math.round(history.reduce((acc, curr) => acc + curr.accuracy, 0) / (history.length || 1));
@@ -48,7 +56,7 @@ const StatsBoard: React.FC<StatsBoardProps> = ({ history, unlockedLevels, levels
             </ClayButton>
         </div>
 
-        {/* Hero Stats */}
+        {/* Hero Stats KPIs */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <motion.div 
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
@@ -120,8 +128,9 @@ const StatsBoard: React.FC<StatsBoardProps> = ({ history, unlockedLevels, levels
             </ClayButton>
         </motion.div>
 
-        {/* Charts */}
+        {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            {/* WPM Chart */}
             <motion.div 
                 initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}
                 className="bg-white/80 backdrop-blur-sm p-6 rounded-[2rem] shadow-sm border border-white"
@@ -152,7 +161,8 @@ const StatsBoard: React.FC<StatsBoardProps> = ({ history, unlockedLevels, levels
                     </ResponsiveContainer>
                 </div>
             </motion.div>
-
+            
+            {/* Accuracy Chart */}
              <motion.div 
                 initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}
                 className="bg-white/80 backdrop-blur-sm p-6 rounded-[2rem] shadow-sm border border-white"

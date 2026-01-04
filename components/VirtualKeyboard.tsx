@@ -6,21 +6,33 @@ import { KeyConfig, Finger, Theme } from '../types';
 import { HandsDisplay } from './HandsDisplay';
 
 interface VirtualKeyboardProps {
-  activeKey: string | null;
-  nextKey: string | null;
+  activeKey: string | null; // The character the user needs to type next
+  nextKey: string | null;   // The character after the active key (for preview)
   theme?: Theme;
 }
 
+/**
+ * VirtualKeyboard Component
+ * 
+ * Renders a 3D-style keyboard that visualizes:
+ * 1. The key to be pressed (Active state)
+ * 2. The next key in queue (Next state)
+ * 3. The correct finger to use via the <HandsDisplay /> integration.
+ * 4. Shift key logic (highlighting Shift + Key simultaneously).
+ */
 const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, theme = 'rose' }) => {
   
   const colors = THEME_COLORS[theme];
 
-  // Helper to determine if a key requires Shift and which hand
+  // Logic: Determine if 'activeKey' is an uppercase letter or special symbol requiring Shift.
+  // Returns 'ShiftLeft' or 'ShiftRight' based on standard typing ergonomics (cross-hand shift).
   const getShiftRequirement = (char: string | null): 'ShiftLeft' | 'ShiftRight' | null => {
      if (!char) return null;
+     // If char is same as lowercase and not a special symbol, no shift needed
      if (char === char.toLowerCase() && !'!@#$%&*()_+{}|:"<>?'.includes(char)) return null; 
      
      if (char !== char.toLowerCase()) {
+         // Standard typing rule: Use opposite hand for Shift
          const leftHandChars = "qwertasdfgzxcvbQWERTASDFGZXCVB";
          return leftHandChars.includes(char) ? 'ShiftRight' : 'ShiftLeft';
      }
@@ -29,6 +41,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
 
   const reqShift = getShiftRequirement(activeKey);
 
+  // Map the active char to the correct Finger enum
   const getFinger = (key: string | null): Finger | null => {
       if (!key) return null;
       if (key === ' ') return Finger.Thumb;
@@ -42,16 +55,16 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
   const renderKey = (config: KeyConfig) => {
     let isActive = activeKey?.toLowerCase() === config.char.toLowerCase();
     
-    // Handle Special logic for Shift Visualization
+    // Handle Special logic for Shift Visualization (Highlight Shift if required)
     if (config.char === 'ShiftLeft' && reqShift === 'ShiftLeft') isActive = true;
     if (config.char === 'ShiftRight' && reqShift === 'ShiftRight') isActive = true;
-    if (activeKey === config.char) isActive = true; // For symbols
+    if (activeKey === config.char) isActive = true; // For symbols that match exactly
 
     const isNext = nextKey?.toLowerCase() === config.char.toLowerCase();
     
     const styleWidth = config.width ? { width: `${config.width * 3.5}rem` } : {}; 
 
-    // Base styling for 3D Key look
+    // Base styling for 3D Key look (Plastic/Clay style)
     const baseClasses = `
         relative flex items-center justify-center rounded-xl m-1
         h-12 md:h-14 lg:h-16
@@ -66,7 +79,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
     let animateProps = {};
     
     if (isActive) {
-        // Active: Theme Color, Pressed down
+        // Active: Theme Color, Pressed down (translate-y)
         visualClasses = `
             ${colors.bg} text-white 
             shadow-[inset_0px_2px_4px_rgba(0,0,0,0.2)] 
@@ -77,7 +90,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
             scale: 0.98,
         };
     } else if (isNext) {
-        // Next: Slight highlight
+        // Next: Slight highlight (Hint)
         visualClasses = `
             ${colors.bgSoft} ${colors.textSoft} 
             border-b-4 border-slate-100
@@ -108,7 +121,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
              {config.label || config.char}
         </span>
         
-        {/* Home Row bumps */}
+        {/* Tactile Bumps on F and J */}
         {(config.char === 'f' || config.char === 'j') && (
             <div className={`absolute bottom-2 w-4 h-1 rounded-full ${isActive ? 'bg-black/20' : 'bg-slate-200'}`}></div>
         )}
@@ -160,12 +173,12 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
                      <div className={`text-sm font-bold ${colors.text} uppercase`}>{activeFinger ? FINGER_NAMES[activeFinger] : '...'}</div>
                 </div>
                 <div className="scale-75 md:scale-100 origin-center -my-4">
-                    <HandsDisplay activeFinger={activeFinger} mode="active" />
+                    <HandsDisplay activeFinger={activeFinger} mode="active" theme={theme} />
                 </div>
              </div>
         </div>
 
-        {/* 3D Keyboard */}
+        {/* 3D Keyboard Container with Perspective Transform */}
         <div 
             className="flex flex-col items-center select-none p-4 md:p-8 transform-style-3d rotate-x-12 origin-bottom transition-transform duration-500"
             style={{ transform: "rotateX(20deg)" }}
@@ -179,7 +192,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
                 {renderSpaceBar()}
             </div>
             
-            {/* Floor Shadow */}
+            {/* Floor Shadow for 3D effect */}
             <div className="w-[90%] h-4 bg-black/10 blur-xl rounded-[50%] mt-4"></div>
         </div>
     </div>

@@ -73,7 +73,7 @@ const HandGuideModal: React.FC<HandGuideModalProps> = ({ isOpen, onClose, theme 
                 <div className="bg-white rounded-[3rem] p-8 shadow-[inset_0px_4px_20px_rgba(0,0,0,0.02)] border border-white flex flex-col items-center">
                     {/* The Hands Component */}
                     <div className="scale-125 md:scale-150 mb-10 mt-4">
-                        <HandsDisplay mode="guide" />
+                        <HandsDisplay mode="guide" theme={theme} />
                     </div>
 
                     {/* Legend Grid */}
