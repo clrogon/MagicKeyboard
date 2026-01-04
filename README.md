@@ -63,6 +63,23 @@ Este projeto celebra a lusofonia. Os níveis avançados e o Modo História intro
 
 ---
 
+## 🔮 Roteiro de Desenvolvimento | Roadmap
+
+O projeto começou em **3 de Janeiro de 2026** e encontra-se na versão de produção v1.4.0.
+
+| Fase | Foco | Versão | Estado |
+| :--- | :--- | :--- | :--- |
+| **Fase 1** | **Fundação Técnica** (PWA, Motor de Jogo) | v1.0.0 | ✅ Concluído |
+| **Fase 2** | **Inteligência** (IA, Treino de Erros, Gamificação) | v1.1.0 | ✅ Concluído |
+| **Fase 3** | **Motor Cultural** (Adaptação PT/AO) | v1.3.0 | ✅ Concluído |
+| **Fase 4** | **"As Minhas Palavras"** (Lições, Diplomas, Backup) | v1.4.0 | ✅ Concluído |
+| **Fase 5** | **Acessibilidade** (Modo Ditado/TTS, Guias Visuais) | v1.4.0 | ✅ Concluído |
+| **Fase 6** | **Sala de Aula** (Modo Multijogador, Turmas) | v2.0+ | 🚧 Planeado |
+
+*Para veres o roteiro detalhado, consulta o ficheiro [ROADMAP.md](ROADMAP.md).*
+
+---
+
 ## 🏗️ Arquitetura Técnica | Technical Architecture
 
 O Teclado Mágico é uma **Progressive Web App (PWA)**, o que significa que pode ser instalada no computador/tablet e funciona **Offline**.

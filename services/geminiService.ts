@@ -1,3 +1,4 @@
+
 /// <reference types="node" />
 
 import { GoogleGenAI } from "@google/genai";
@@ -25,6 +26,10 @@ declare global {
  * 
  * 3. Children's Data: By ensuring anonymity in the prompt, we prevent 
  *    the AI model from processing data belonging to a specific child.
+ * 
+ * 4. Bicultural Strategy: The prompts below are engineered to generate valid
+ *    European Portuguese (PT-PT) while explicitly including Angolan cultural
+ *    references (PT-AO) to serve the full CPLP scope of the project.
  */
 
 let genAI: GoogleGenAI | null = null;

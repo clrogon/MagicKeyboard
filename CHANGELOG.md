@@ -14,9 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   **Diplomas em PDF**: Geração de certificados de conclusão diretamente no navegador (sem envio de dados para servidores) para celebrar conquistas de nível.
 -   **Backup e Restauro**: Funcionalidade de exportar/importar dados (ficheiro JSON) para permitir mover o progresso entre dispositivos mantendo a privacidade (GDPR).
 -   **Melhorias de Acessibilidade**: Substituição de metas puramente numéricas por pistas visuais e narrativa.
+-   **Modo Ditado**: Novo modo de jogo utilizando síntese de voz.
 
 ### Alterado (Changed)
 -   **Privacidade Reforçada**: Documentação e comentários de código atualizados para explicitar o processamento de dados 100% local.
+-   **Rodapé**: Atualizado com Copyright © 2026 e versão.
 
 ## [1.3.0] - 2026-02-26 (A Atualização Cultural | The Cultural Update)
 
@@ -54,8 +56,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Guia de Mãos Interativo.
 -   Sons e Animações (Confetti).
 
-## [1.0.0] - 2026-01-20
-### Lançamento Inicial
+## [1.0.0] - 2026-01-20 (Lançamento Inicial)
+### Adicionado
 -   Motor de digitação básico.
 -   Teclado Virtual 3D.
 -   Integração Gemini AI.
+
+## [0.1.0] - 2026-01-03 (Início do Projeto)
+### Adicionado
+-   **Project Inception**: Início do desenvolvimento e definição da arquitetura PWA Local-First.

@@ -233,7 +233,8 @@ export const getXpForNextLevel = (level: number) => level * 250;
  * 
  * FALLBACK SAMPLES NOTE:
  * These samples are used if the AI is offline. 
- * They include a mix of Portugal and Angola context.
+ * They include a deliberate mix of Portugal (PT) and Angola (AO) context
+ * to ensure cultural representation even without the AI engine.
  */
 export const LEVELS: Level[] = [
   {

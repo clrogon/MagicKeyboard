@@ -6,7 +6,7 @@ import { Star, Trophy, Target, Zap, Medal, ArrowRight, RotateCcw, FileBadge } fr
 import { ACHIEVEMENTS, THEME_COLORS } from '../constants';
 import { ClayButton } from './ClayButton';
 import { motion } from 'framer-motion';
-// @ts-ignore - Importing from CDN
+// @ts-ignore - Importing from CDN defined in index.html importmap
 import { jsPDF } from 'jspdf';
 
 interface StatsBoardProps {
@@ -53,11 +53,7 @@ const StatsBoard: React.FC<StatsBoardProps> = ({ user, history, unlockedLevels, 
 
   /**
    * GENERATE PDF CERTIFICATE (Client-Side)
-   * 
-   * PRIVACY NOTE: 
-   * This uses jsPDF to generate the PDF file entirely within the user's browser.
-   * No user data is sent to a server to create this document.
-   * This ensures strict adherence to GDPR and data minimization principles.
+   * Premium Design Implementation
    */
   const handleDownloadDiploma = () => {
       const doc = new jsPDF({
@@ -66,50 +62,163 @@ const StatsBoard: React.FC<StatsBoardProps> = ({ user, history, unlockedLevels, 
           format: "a4"
       });
 
-      // Background Border
-      doc.setLineWidth(3);
-      doc.setDrawColor(244, 63, 94); // Rose-500
-      doc.rect(10, 10, 277, 190);
+      const width = 297;
+      const height = 210;
+      const centerX = width / 2;
+
+      // --- 1. Background Paper Texture (Cream) ---
+      doc.setFillColor(252, 250, 242); 
+      doc.rect(0, 0, width, height, 'F');
+
+      // --- 2. Ornate Border Simulation ---
+      // We simulate a guilloche pattern/complex frame using multiple nested strokes
       
+      // Outer dark grey line
+      doc.setDrawColor(80, 80, 80);
+      doc.setLineWidth(0.5);
+      doc.rect(8, 8, width - 16, height - 16);
+
+      // Thick patterned frame (simulated with light grey fill and stroke)
+      doc.setFillColor(230, 230, 230); // Light grey background for border
+      doc.setDrawColor(160, 160, 160); // Darker grey for edge
+      doc.setLineWidth(0.2);
+      
+      // Draw a "thick" frame by filling the space between two rectangles
+      // Note: jsPDF doesn't support even-odd fill easily, so we just draw the thick band
+      // Top Band
+      doc.rect(10, 10, width - 20, 15, 'F'); // Top
+      doc.rect(10, height - 25, width - 20, 15, 'F'); // Bottom
+      doc.rect(10, 10, 15, height - 20, 'F'); // Left
+      doc.rect(width - 25, 10, 15, height - 20, 'F'); // Right
+      
+      // Detailed inner lines to create "texture" in the border
+      doc.setDrawColor(180, 180, 180);
+      doc.setLineWidth(0.5);
+      doc.rect(12, 12, width - 24, height - 24);
+      doc.rect(14, 14, width - 28, height - 28);
+      
+      // Inner thin gold accent line
+      doc.setDrawColor(218, 165, 32); // Goldenrod
       doc.setLineWidth(1);
-      doc.setDrawColor(253, 164, 175); // Rose-300
-      doc.rect(15, 15, 267, 180);
+      doc.rect(20, 20, width - 40, height - 40);
 
-      // Header
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(40);
-      doc.setTextColor(51, 65, 85); // Slate-700
-      doc.text("DIPLOMA", 148.5, 50, { align: "center" });
-
-      doc.setFontSize(20);
-      doc.setTextColor(100, 116, 139); // Slate-500
-      doc.text("Certificamos que", 148.5, 70, { align: "center" });
-
-      // Name
-      doc.setFontSize(50);
-      doc.setTextColor(244, 63, 94); // Rose-500
-      doc.text(user.name, 148.5, 95, { align: "center" });
-
-      // Achievement
-      doc.setFontSize(16);
-      doc.setTextColor(51, 65, 85);
-      doc.text(`Completou o Nivel ${user.currentLevelId}`, 148.5, 120, { align: "center" });
-      doc.text(`Titulo: ${user.currentTitle}`, 148.5, 130, { align: "center" });
+      // --- 3. Header Typography ---
       
-      // Stats
-      doc.setFontSize(12);
-      doc.setTextColor(148, 163, 184);
-      doc.text(`Total de Estrelas: ${totalStars} | Melhor Rapidez: ${maxWpm} PPM`, 148.5, 145, { align: "center" });
+      // "DIPLOMA DE EXCELÊNCIA"
+      doc.setFont("times", "bold");
+      doc.setFontSize(36);
+      doc.setTextColor(40, 40, 40); // Dark Charcoal
+      doc.text("DIPLOMA DE MÉRITO", centerX, 55, { align: "center" });
 
-      // Footer
-      const today = new Date().toLocaleDateString('pt-PT');
+      // "Teclado Mágico" (Institution Name)
+      doc.setFont("times", "italic");
+      doc.setFontSize(20);
+      doc.setTextColor(80, 80, 80);
+      doc.text("Teclado Mágico", centerX, 68, { align: "center" });
+
+      // --- 4. Body Text ---
+      doc.setFont("times", "normal");
+      doc.setFontSize(14);
+      doc.setTextColor(100, 100, 100); // Slate Grey
+      doc.text("Certifica-se que", centerX, 85, { align: "center" });
+
+      // "has successfully completed..." text localized
+      doc.text("concluiu com sucesso e demonstrou excelente desempenho em", centerX, 92, { align: "center" });
+      doc.setFont("times", "italic");
+      doc.text("Digitação e Literacia Digital", centerX, 99, { align: "center" });
+
+      // --- 5. Student Name (Centerpiece) ---
+      // Simulating a script/handwritten font using Bold Italic Times
+      doc.setFont("times", "bold italic"); 
+      doc.setFontSize(48);
+      doc.setTextColor(20, 20, 20); // Almost Black
+      const name = user.name;
+      doc.text(name, centerX, 120, { align: "center" });
+
+      // Underline for name
+      doc.setLineWidth(0.5);
+      doc.setDrawColor(50, 50, 50);
+      const nameWidth = doc.getTextWidth(name);
+      // Make line at least 100mm wide, or name width + padding
+      const lineWidth = Math.max(100, nameWidth + 20);
+      doc.line(centerX - (lineWidth / 2), 123, centerX + (lineWidth / 2), 123);
+
+      // --- 6. Stats & Details ---
+      doc.setFont("times", "normal");
       doc.setFontSize(12);
-      doc.setTextColor(51, 65, 85);
-      doc.text(`Data: ${today}`, 50, 170, { align: "center" });
-      doc.text("Teclado Magico", 240, 170, { align: "center" });
+      doc.setTextColor(80, 80, 80);
+      const levelTitle = levels.find(l => l.id === user.currentLevelId)?.title || "Nível Avançado";
+      const statsText = `Nível ${user.currentLevelId}: ${levelTitle}  •  Velocidade Máx: ${maxWpm} PPM  •  Precisão: ${avgAccuracy}%`;
+      doc.text(statsText, centerX, 135, { align: "center" });
+
+      // --- 7. Gold Seal (Bottom Left) ---
+      const sealX = 60;
+      const sealY = 165;
+      
+      // Ribbons (Triangles)
+      doc.setFillColor(184, 134, 11); // Dark Goldenrod
+      // Left ribbon tail
+      doc.triangle(sealX - 10, sealY + 10, sealX - 20, sealY + 35, sealX, sealY + 25, 'F');
+      // Right ribbon tail
+      doc.triangle(sealX + 10, sealY + 10, sealX + 20, sealY + 35, sealX, sealY + 25, 'F');
+
+      // Seal Starburst Edge
+      doc.setFillColor(218, 165, 32); // Gold
+      const spikes = 24;
+      const outerRadius = 22;
+      const innerRadius = 18;
+      
+      // Draw jagged circle manually
+      // We can approximate visually with a filled circle for simplicity if path is too complex, 
+      // but let's try a simple circle with a border for robustness in client-side generation
+      doc.circle(sealX, sealY, outerRadius, 'F');
+      
+      // Inner Circle (Embossed look)
+      doc.setDrawColor(255, 255, 210); // Light Gold
+      doc.setLineWidth(0.5);
+      doc.circle(sealX, sealY, innerRadius, 'S');
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(7);
+      doc.setTextColor(255, 255, 255);
+      doc.text("TECLADO", sealX, sealY - 5, { align: "center" });
+      doc.text("MÁGICO", sealX, sealY, { align: "center" });
+      doc.setFontSize(6);
+      doc.text("CERTIFICADO", sealX, sealY + 6, { align: "center" });
+
+      // --- 8. Signatures & Date (Bottom Right & Center) ---
+      const today = new Date().toLocaleDateString('pt-PT');
+      const sigY = 175;
+      
+      // Date (Left-Center)
+      const dateX = centerX - 40;
+      doc.setDrawColor(50, 50, 50);
+      doc.setLineWidth(0.3);
+      doc.line(dateX - 25, sigY, dateX + 25, sigY);
+      doc.setFont("times", "normal");
+      doc.setFontSize(12);
+      doc.setTextColor(50, 50, 50);
+      doc.text(today, dateX, sigY - 2, { align: "center" });
+      doc.setFontSize(10);
+      doc.text("Data", dateX, sigY + 5, { align: "center" });
+
+      // Signature (Right)
+      const sigX = width - 70;
+      doc.line(sigX - 40, sigY, sigX + 40, sigY);
+      
+      // Simulated Signature using a different font style if possible, or just Italic
+      doc.setFont("times", "italic");
+      doc.setFontSize(16);
+      doc.setTextColor(20, 20, 80); // Dark Blue ink color
+      doc.text("Prof. Cláudio Gonçalves", sigX, sigY - 2, { align: "center" });
+      
+      doc.setFont("times", "normal");
+      doc.setFontSize(10);
+      doc.setTextColor(50, 50, 50);
+      doc.text("Assinatura Autorizada", sigX, sigY + 5, { align: "center" });
 
       // Save
-      doc.save(`Diploma_${user.name}.pdf`);
+      doc.save(`Diploma_${user.name.replace(/ /g, '_')}_Premium.pdf`);
   };
 
   return (
