@@ -194,8 +194,9 @@ const TypingArea: React.FC<TypingAreaProps> = ({
 
       // --- Progress Feedback (No Percentages) ---
       const progress = nextIndex / text.length;
-      if (progress >= 0.2 && progress < 0.25) setMotivationalMessage("Bom começo! 👍");
-      else if (progress >= 0.5 && progress < 0.55) setMotivationalMessage("Já vais a meio! 🏃");
+      // Granular feedback thresholds
+      if (progress >= 0.25 && progress < 0.3) setMotivationalMessage("Bom começo! 👍");
+      else if (progress >= 0.5 && progress < 0.55) setMotivationalMessage("Já passaste o meio! 🏃");
       else if (progress >= 0.75 && progress < 0.8) setMotivationalMessage("Quase lá! Força! 💪");
       else if (progress >= 0.9 && progress < 1.0) setMotivationalMessage("Só mais um bocadinho! 🏁");
       else if (progress === 1) setMotivationalMessage("Conseguiste! 🎉");
