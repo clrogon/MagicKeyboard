@@ -32,6 +32,7 @@ export interface KeyConfig {
   row: number;          // Physical row index (0-3)
   width?: number;       // Relative width (e.g., 1.5 for Shift)
   label?: string;       // Optional label (e.g., "Shift" instead of "ShiftLeft")
+  subLabel?: string;    // Label for the Shift-state (e.g. "!" for key "1")
 }
 
 /**
@@ -55,7 +56,8 @@ export interface Level {
 export enum GameMode {
   Campaign = 'CAMPAIGN',      // Progression-based levels
   Timed = 'TIMED',            // 60s speed challenge
-  ErrorDrill = 'ERROR_DRILL'  // AI-generated drill based on user weak keys
+  ErrorDrill = 'ERROR_DRILL', // AI-generated drill based on user weak keys
+  Story = 'STORY'             // Coherent story generation for flow practice
 }
 
 /**
@@ -92,13 +94,29 @@ export interface DailyChallenge {
 }
 
 /**
- * Global Game State persisted in LocalStorage.
+ * Result of a single typing session.
  */
-export interface GameState {
+export interface SessionResult {
+  levelId: number;
+  mode: GameMode;
+  wpm: number;
+  accuracy: number;
+  consistency?: number;        // Rhythm score (0-100), based on variance of keystroke latency
+  date: string;
+  stars: 1 | 2 | 3;
+  duration?: number;           // In seconds
+  correctStats?: ErrorStats;   // Used to decay the global error stats
+}
+
+/**
+ * Represents a single user profile.
+ */
+export interface UserProfile {
+  id: string;
+  name: string;
   currentLevelId: number;      // Highest level reached
   unlockedLevels: number[];    // Array of unlocked level IDs
   history: SessionResult[];    // History of all completed sessions
-  isPlaying: boolean;
   errorStats: ErrorStats;      // Global error heatmap
   achievements: string[];      // IDs of unlocked achievements
   
@@ -112,23 +130,20 @@ export interface GameState {
 }
 
 /**
- * Result of a single typing session.
+ * Global App State persisted in LocalStorage.
+ * Now supports multiple users.
  */
-export interface SessionResult {
-  levelId: number;
-  mode: GameMode;
-  wpm: number;
-  accuracy: number;
-  date: string;
-  stars: 1 | 2 | 3;
-  duration?: number;           // In seconds
-  correctStats?: ErrorStats;   // Used to decay the global error stats
+export interface AppState {
+  users: Record<string, UserProfile>; // Map of ID -> Profile
+  activeUserId: string | null;        // Currently logged in user
 }
 
 /**
  * Enum for managing the active screen in the main App component.
  */
 export enum AppScreen {
+  UserSelect = 'USER_SELECT', // New Screen
+  ParentDashboard = 'PARENT_DASHBOARD', // Phase 6.2: Parent Analytics
   Dashboard = 'DASHBOARD',
   Exercise = 'EXERCISE',
   Result = 'RESULT',

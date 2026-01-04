@@ -9,6 +9,7 @@ interface VirtualKeyboardProps {
   activeKey: string | null; // The character the user needs to type next
   nextKey: string | null;   // The character after the active key (for preview)
   theme?: Theme;
+  showLabels?: boolean;     // If false, hides the character labels (Blind Mode)
 }
 
 /**
@@ -20,7 +21,7 @@ interface VirtualKeyboardProps {
  * 3. The correct finger to use via the <HandsDisplay /> integration.
  * 4. Shift key logic (highlighting Shift + Key simultaneously).
  */
-const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, theme = 'rose' }) => {
+const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, theme = 'rose', showLabels = true }) => {
   
   const colors = THEME_COLORS[theme];
 
@@ -28,6 +29,13 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
   // Returns 'ShiftLeft' or 'ShiftRight' based on standard typing ergonomics (cross-hand shift).
   const getShiftRequirement = (char: string | null): 'ShiftLeft' | 'ShiftRight' | null => {
      if (!char) return null;
+     
+     // Symbol Handling (Manual Map based on PT-PT standard/constants)
+     if ("!\"#$%&/()=?".includes(char)) {
+         // Assuming these are Shift + Number keys (Left hand numbers need Right shift)
+         return 'ShiftRight'; // Simplified for now, typically opposite hand rule applies
+     }
+     
      // If char is same as lowercase and not a special symbol, no shift needed
      if (char === char.toLowerCase() && !'!@#$%&*()_+{}|:"<>?'.includes(char)) return null; 
      
@@ -42,31 +50,45 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
   const reqShift = getShiftRequirement(activeKey);
 
   // Map the active char to the correct Finger enum
+  // Enhanced to find Shift-symbols (like '!') by looking for subLabel matches
   const getFinger = (key: string | null): Finger | null => {
       if (!key) return null;
       if (key === ' ') return Finger.Thumb;
+      
       const flat = KEYBOARD_LAYOUT.flat();
-      const found = flat.find(k => k.char === key.toLowerCase());
+      
+      // Try direct char match (case insensitive)
+      let found = flat.find(k => k.char === key.toLowerCase());
+      
+      // If not found, try subLabel match (for ! " # etc)
+      if (!found) {
+          found = flat.find(k => k.subLabel === key);
+      }
+      
       return found ? found.finger : null;
   }
 
   const activeFinger = getFinger(activeKey);
 
   const renderKey = (config: KeyConfig) => {
-    let isActive = activeKey?.toLowerCase() === config.char.toLowerCase();
+    // Is this the primary key (e.g. 'a') OR the shift-symbol key (e.g. '1' when typing '!')?
+    let isActive = false;
+    if (activeKey) {
+        if (activeKey.toLowerCase() === config.char.toLowerCase()) isActive = true;
+        if (config.subLabel === activeKey) isActive = true;
+    }
     
     // Handle Special logic for Shift Visualization (Highlight Shift if required)
     if (config.char === 'ShiftLeft' && reqShift === 'ShiftLeft') isActive = true;
     if (config.char === 'ShiftRight' && reqShift === 'ShiftRight') isActive = true;
-    if (activeKey === config.char) isActive = true; // For symbols that match exactly
 
-    const isNext = nextKey?.toLowerCase() === config.char.toLowerCase();
+    const isNext = nextKey?.toLowerCase() === config.char.toLowerCase() || nextKey === config.subLabel;
     
     const styleWidth = config.width ? { width: `${config.width * 3.5}rem` } : {}; 
 
     // Base styling for 3D Key look (Plastic/Clay style)
     const baseClasses = `
-        relative flex items-center justify-center rounded-xl m-1
+        relative flex flex-col items-center justify-center rounded-xl m-1
         h-12 md:h-14 lg:h-16
         ${!config.width && 'w-10 md:w-14 lg:w-16'}
         font-bold text-xl uppercase
@@ -105,7 +127,10 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
         `;
         animateProps = { scale: 1, y: 0 };
     }
-        
+    
+    // Always show label for Shift, or if showLabels is true
+    const shouldShowLabel = showLabels || config.label === 'Shift';
+
     return (
       <motion.div
         key={config.char}
@@ -117,9 +142,20 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
         {/* Specular highlight for plastic feel */}
         {!isActive && <div className="absolute top-1 left-2 right-2 h-1/3 bg-gradient-to-b from-white/60 to-transparent rounded-t-lg pointer-events-none" />}
         
-        <span className={isActive ? 'drop-shadow-sm' : ''}>
-             {config.label || config.char}
-        </span>
+        {shouldShowLabel && (
+            <>
+                {/* SubLabel (Shift Character) - shown smaller at top right */}
+                {config.subLabel && (
+                    <span className={`absolute top-1 right-2 text-[10px] md:text-xs opacity-70 ${isActive ? 'text-white' : 'text-slate-400'}`}>
+                        {config.subLabel}
+                    </span>
+                )}
+                
+                <span className={isActive ? 'drop-shadow-sm' : ''}>
+                    {config.label || config.char}
+                </span>
+            </>
+        )}
         
         {/* Tactile Bumps on F and J */}
         {(config.char === 'f' || config.char === 'j') && (

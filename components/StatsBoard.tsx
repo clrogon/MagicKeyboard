@@ -31,7 +31,9 @@ const StatsBoard: React.FC<StatsBoardProps> = ({ history, unlockedLevels, levels
   const data = history.map((h, idx) => ({
     name: `Sessão ${idx + 1}`,
     wpm: h.wpm,
-    accuracy: h.accuracy
+    accuracy: h.accuracy,
+    // Add compatibility for old sessions where consistency might be undefined
+    consistency: h.consistency || 100 
   })).slice(-15);
 
   // Aggregate Stats

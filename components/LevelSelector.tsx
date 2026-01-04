@@ -1,21 +1,24 @@
 
-import React from 'react';
-import { Level, GameState } from '../types';
+import React, { useState } from 'react';
+import { Level, UserProfile } from '../types';
 import { ClayButton } from './ClayButton';
-import { Lock, Star, Play, Clock, AlertCircle, RefreshCw, Trophy, Zap, Shield, Crown } from 'lucide-react';
+import { Lock, Star, Play, Clock, AlertCircle, RefreshCw, Trophy, Zap, Shield, Crown, Eye, EyeOff, BookOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getXpForNextLevel, THEME_COLORS } from '../constants';
 
 interface LevelSelectorProps {
   levels: Level[];
   unlockedLevels: number[];
-  gameState: GameState;
+  gameState: UserProfile;
   onSelectLevel: (level: Level) => void;
   onSelectTimedMode: (duration: number) => void;
   onSelectErrorMode: () => void;
+  onSelectStoryMode: () => void;
   onViewStats: () => void;
   onChangeAvatar: () => void;
   onShowHandGuide: () => void;
+  onToggleBlindMode: (enabled: boolean) => void;
+  isBlindMode: boolean;
 }
 
 const containerVariants = {
@@ -42,7 +45,7 @@ const itemVariants = {
  * 5. Campaign Level Grid (Locked vs Unlocked).
  */
 const LevelSelector: React.FC<LevelSelectorProps> = ({ 
-    levels, unlockedLevels, gameState, onSelectLevel, onSelectTimedMode, onSelectErrorMode, onViewStats, onChangeAvatar, onShowHandGuide
+    levels, unlockedLevels, gameState, onSelectLevel, onSelectTimedMode, onSelectErrorMode, onSelectStoryMode, onViewStats, onChangeAvatar, onShowHandGuide, onToggleBlindMode, isBlindMode
 }) => {
   const { xp, playerLevel, currentTitle, currentAvatar, dailyChallenge, theme } = gameState;
   
@@ -143,6 +146,26 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                         </div>
                     </ClayButton>
                 </div>
+                
+                {/* Advanced Options Block */}
+                <div className="bg-white/60 backdrop-blur-md p-6 rounded-[2rem] border border-white/50">
+                    <h3 className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-4 ml-2">Opções Avançadas</h3>
+                    
+                    <ClayButton 
+                        variant={isBlindMode ? "primary" : "secondary"} 
+                        theme="rose"
+                        onClick={() => onToggleBlindMode(!isBlindMode)} 
+                        className="w-full py-4 text-left justify-start px-6"
+                    >
+                        <div className={`p-2 rounded-xl mr-3 ${isBlindMode ? 'bg-rose-200 text-rose-600' : 'bg-slate-200 text-slate-500'}`}>
+                            {isBlindMode ? <EyeOff size={20} /> : <Eye size={20} />}
+                        </div>
+                        <div>
+                            <div className={`text-xs font-bold uppercase ${isBlindMode ? 'text-rose-200' : 'text-slate-400'}`}>Desafio</div>
+                            <div className={isBlindMode ? 'text-white' : 'text-slate-700'}>Modo Cego</div>
+                        </div>
+                    </ClayButton>
+                </div>
 
                 <div className="bg-white/60 backdrop-blur-md p-6 rounded-[2rem] border border-white/50">
                     <h3 className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-4 ml-2">Modos Extra</h3>
@@ -152,6 +175,10 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                         </ClayButton>
                         <ClayButton variant="primary" theme="rose" onClick={onSelectErrorMode} className="w-full py-3 bg-gradient-to-r from-red-400 to-red-500 shadow-red-200">
                             <AlertCircle size={18} className="mr-2" /> Treinar Erros
+                        </ClayButton>
+                        {/* New Story Mode Button */}
+                        <ClayButton variant="primary" theme="blue" onClick={onSelectStoryMode} className="w-full py-3 bg-gradient-to-r from-blue-400 to-indigo-500 shadow-blue-200">
+                            <BookOpen size={18} className="mr-2" /> Modo História
                         </ClayButton>
                     </div>
                 </div>
@@ -202,11 +229,12 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
 
                             {/* Keys Indicator (Preview of what is learnt in this level) */}
                             <div className="absolute top-6 left-20 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                {level.newKeys.map(k => (
+                                {level.newKeys.slice(0, 5).map(k => (
                                     <span key={k} className="bg-slate-800 text-white text-[10px] px-1.5 py-0.5 rounded uppercase font-bold">
                                         {k === ' ' ? '␣' : k.replace('Shift', '⇧')}
                                     </span>
                                 ))}
+                                {level.newKeys.length > 5 && <span className="text-[10px] text-slate-400 font-bold">...</span>}
                             </div>
                         </motion.button>
                     );

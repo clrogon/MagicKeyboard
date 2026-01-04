@@ -81,15 +81,31 @@ export const generateSmartExercise = async (
             Do NOT use any punctuation/symbols unless listed above.
             Make it fun and varied.
         `;
+    } else if (mode === GameMode.Story) {
+        // Story Mode Logic
+        prompt = `
+            ${systemInstruction}
+            Generate a creative, coherent SHORT STORY (3-4 sentences, about 30-40 words).
+            It must be a complete narrative with a beginning, middle, and end.
+            Use mostly the provided keys, but you can occasionally use simple words outside the list if strictly necessary for flow (but prioritize the list).
+            Available keys: [${availableKeys}].
+            Theme: Fantasy, Animals, or Space.
+            Tone: Whimsical and encouraging.
+        `;
     } else {
         // Campaign Mode (Standard)
         const lengthInstruction = difficultyModifier === 'hard' 
             ? "Generate a longer sentence (8-10 words) or a list of harder/longer words." 
             : "Generate a single line of text (about 4-6 words).";
+        
+        // Special logic for number levels
+        const hasNumbers = level.newKeys.some(k => '0123456789'.includes(k));
+        const numberInstruction = hasNumbers ? "Include numbers in the generated text (e.g., dates, quantities, years)." : "";
 
         prompt = `
             ${systemInstruction}
             ${lengthInstruction}
+            ${numberInstruction}
             Use ONLY these letters: [${availableKeys}].
             ${level.newKeys.includes('ShiftLeft') ? "Include capitalized proper nouns." : "Keep it mostly lowercase."}
             Do NOT use any punctuation unless it is in the list above.

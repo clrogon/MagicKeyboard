@@ -70,8 +70,23 @@ export const FINGER_NAMES: Record<Finger, string> = {
 /**
  * Physical Keyboard Layout Definition (QWERTY - PT-PT standard).
  * Mapped to rows for rendering the 3D Virtual Keyboard.
+ * Updated to include Shift-characters for symbols (Level 10).
  */
 export const KEYBOARD_LAYOUT: KeyConfig[][] = [
+  // Number Row (1234567890')
+  [
+    { char: '1', subLabel: '!', finger: Finger.LeftPinky, row: 0 },
+    { char: '2', subLabel: '"', finger: Finger.LeftRing, row: 0 },
+    { char: '3', subLabel: '#', finger: Finger.LeftMiddle, row: 0 },
+    { char: '4', subLabel: '$', finger: Finger.LeftIndex, row: 0 },
+    { char: '5', subLabel: '%', finger: Finger.LeftIndex, row: 0 },
+    { char: '6', subLabel: '&', finger: Finger.RightIndex, row: 0 },
+    { char: '7', subLabel: '/', finger: Finger.RightIndex, row: 0 },
+    { char: '8', subLabel: '(', finger: Finger.RightMiddle, row: 0 },
+    { char: '9', subLabel: ')', finger: Finger.RightRing, row: 0 },
+    { char: '0', subLabel: '=', finger: Finger.RightPinky, row: 0 },
+    { char: "'", subLabel: '?', finger: Finger.RightPinky, row: 0 }, // The '?' key
+  ],
   // Top Row (QWERTY...)
   [
     { char: 'q', finger: Finger.LeftPinky, row: 1 },
@@ -109,8 +124,8 @@ export const KEYBOARD_LAYOUT: KeyConfig[][] = [
     { char: 'n', finger: Finger.RightIndex, row: 3 },
     { char: 'm', finger: Finger.RightIndex, row: 3 },
     { char: ',', finger: Finger.RightMiddle, row: 3 },
-    { char: '.', finger: Finger.RightRing, row: 3 },
-    { char: ';', finger: Finger.RightPinky, row: 3 },
+    { char: '.', finger: Finger.RightRing, row: 3 }, // In PT-PT, - is often near here or Shift+Slash, but standard varies.
+    { char: '-', subLabel: '_', finger: Finger.RightPinky, row: 3 }, // Explicit - key (generic position)
     { char: 'ShiftRight', label: 'Shift', finger: Finger.RightPinky, row: 3, width: 1.5 },
   ]
 ];
@@ -297,6 +312,50 @@ export const LEVELS: Level[] = [
     difficulty: 'hard',
     minWpm: 15,
     minAccuracy: 90
+  },
+  {
+    id: 8,
+    title: "Números (Esq.)",
+    description: "Vamos contar até 5 com a mão esquerda!",
+    newKeys: ['1', '2', '3', '4', '5'],
+    allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'r', 'u', 'ShiftLeft', 'ShiftRight', '.', ',', ';', '1', '2', '3', '4', '5'],
+    textSamples: ["1 2 3", "321", "12345", "1 2 1", "543"],
+    difficulty: 'hard',
+    minWpm: 10,
+    minAccuracy: 85
+  },
+  {
+    id: 9,
+    title: "Números (Dir.)",
+    description: "Completa a contagem com a mão direita.",
+    newKeys: ['6', '7', '8', '9', '0'],
+    allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'r', 'u', 'ShiftLeft', 'ShiftRight', '.', ',', ';', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
+    textSamples: ["6 7 8", "9 0 9", "67890", "123 789", "10 20"],
+    difficulty: 'hard',
+    minWpm: 10,
+    minAccuracy: 85
+  },
+  {
+    id: 10,
+    title: "Pontuação Extra",
+    description: "Perguntas e emoções! ? ! -",
+    newKeys: ['?', '!', '-'],
+    allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'r', 'u', 'ShiftLeft', 'ShiftRight', '.', ',', ';', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '?', '!', '-'],
+    textSamples: ["Olá!", "Tudo bem?", "Sim - disse ela.", "1-2-3!", "Fim?"],
+    difficulty: 'hard',
+    minWpm: 12,
+    minAccuracy: 90
+  },
+  {
+    id: 11,
+    title: "O Contador de Histórias",
+    description: "Escreve pequenas histórias completas.",
+    newKeys: [], // No new keys, just integration
+    allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'r', 'u', 'ShiftLeft', 'ShiftRight', '.', ',', ';', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '?', '!', '-'],
+    textSamples: ["Era uma vez um gato que sabia ler.", "O sol brilha no céu azul de Lisboa.", "A Ana foi à praia com o seu cão."],
+    difficulty: 'hard',
+    minWpm: 15,
+    minAccuracy: 92
   }
 ];
 

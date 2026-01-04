@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Level, SessionResult, GameMode, ErrorStats, Theme } from '../types';
 import { ClayButton } from './ClayButton';
 import VirtualKeyboard from './VirtualKeyboard';
-import { RotateCcw, Timer, X, Check } from 'lucide-react';
+import { RotateCcw, Timer, X, Check, EyeOff } from 'lucide-react';
 import { generateSmartExercise } from '../services/geminiService';
 import { THEME_COLORS } from '../constants';
 
@@ -14,6 +14,7 @@ interface TypingAreaProps {
   errorStats?: ErrorStats;
   timeLimit?: number; // seconds (for Timed mode)
   difficultyModifier?: 'normal' | 'hard';
+  blindMode?: boolean; // New Phase 4 Feature: Hide key labels
   theme: Theme;
   onComplete: (result: SessionResult, errors: ErrorStats, corrects: ErrorStats) => void;
   onExit: () => void;
@@ -26,20 +27,26 @@ interface TypingAreaProps {
  * 1. AI Text Generation via 'initLevel'
  * 2. Input capture (using a hidden input field for mobile compatibility)
  * 3. Real-time validation (Hit/Miss)
- * 4. WPM and Accuracy calculation
+ * 4. WPM, Accuracy AND Consistency calculation (Phase 4)
  * 5. Timer logic (for Timed mode)
  */
-const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLimit, difficultyModifier = 'normal', theme, onComplete, onExit }) => {
+const TypingArea: React.FC<TypingAreaProps> = ({ 
+    level, mode, errorStats, timeLimit, difficultyModifier = 'normal', blindMode = false, theme, onComplete, onExit 
+}) => {
   const [text, setText] = useState<string>("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [startTime, setStartTime] = useState<number | null>(null);
   
   // Session Stats
-  const [sessionErrors, setSessionErrors] = useState(0); // Total errors count
-  const [sessionErrorMap, setSessionErrorMap] = useState<ErrorStats>({}); // Detailed error breakdown
-  const [sessionCorrectMap, setSessionCorrectMap] = useState<ErrorStats>({}); // Track correct keystrokes for "healing" weak keys
+  const [sessionErrors, setSessionErrors] = useState(0); 
+  const [sessionErrorMap, setSessionErrorMap] = useState<ErrorStats>({}); 
+  const [sessionCorrectMap, setSessionCorrectMap] = useState<ErrorStats>({}); 
   
-  const [typedChars, setTypedChars] = useState<string>(""); // Visual echo (optional)
+  // Rhythm/Consistency Tracking (Phase 4)
+  const [lastKeystrokeTime, setLastKeystrokeTime] = useState<number | null>(null);
+  const [keystrokeIntervals, setKeystrokeIntervals] = useState<number[]>([]);
+
+  const [typedChars, setTypedChars] = useState<string>(""); 
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState<number | null>(timeLimit || null);
 
@@ -57,6 +64,8 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
     setSessionErrors(0);
     setSessionErrorMap({});
     setSessionCorrectMap({});
+    setKeystrokeIntervals([]);
+    setLastKeystrokeTime(null);
     setTypedChars("");
     setStartTime(null);
     setLoading(false);
@@ -111,7 +120,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
      // Controlled input handler is empty because we use onKeyDown for granular control 
-     // and to prevent default behavior for specific keys if needed.
   };
 
   /**
@@ -134,9 +142,12 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
     if (char.length > 1 && char !== 'Backspace' && !['Shift'].includes(char)) return; 
     if (char === 'Shift' || char === 'Alt' || char === 'Control' || char === 'CapsLock') return;
 
+    const now = Date.now();
+
     // Start timer on first keypress
     if (!startTime) {
-      setStartTime(Date.now());
+      setStartTime(now);
+      setLastKeystrokeTime(now);
     }
 
     // Disable Backspace (Pedagogical choice: forces forward momentum)
@@ -148,6 +159,16 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
       // -- CORRECT HIT --
       setTypedChars(prev => prev + char);
       
+      // Phase 4: Rhythm Tracking
+      if (lastKeystrokeTime) {
+          const interval = now - lastKeystrokeTime;
+          // Filter out unnaturally long pauses (e.g., getting water) for calculating pure rhythm
+          if (interval < 2000) { 
+              setKeystrokeIntervals(prev => [...prev, interval]);
+          }
+      }
+      setLastKeystrokeTime(now);
+
       // Track correct stats (Used to heal/decay the error history)
       setSessionCorrectMap(prev => ({
           ...prev,
@@ -193,10 +214,23 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
     
     // Stats Calculation
     const totalTyped = currentIndex;
-    // Standard WPM = (Characters / 5) / Minutes
     const grossWpm = Math.round((totalTyped / 5) / (durationMin || 0.001)); 
     const accuracy = totalTyped > 0 ? Math.round(((totalTyped - sessionErrors) / totalTyped) * 100) : 0;
     
+    // Phase 4: Consistency Calculation (CV based)
+    let consistency = 100;
+    if (keystrokeIntervals.length > 2) {
+        const mean = keystrokeIntervals.reduce((a, b) => a + b, 0) / keystrokeIntervals.length;
+        const variance = keystrokeIntervals.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / keystrokeIntervals.length;
+        const stdDev = Math.sqrt(variance);
+        // CV = Coefficient of Variation. Lower is better.
+        // CV of 0.1 is amazing. CV of 0.5 is choppy.
+        const cv = stdDev / (mean || 1); 
+        // Map CV to 0-100 score. 
+        // Logic: 0 CV = 100 score. 0.5 CV = 50 score. >1 CV = 0 score.
+        consistency = Math.max(0, Math.round(100 - (cv * 100)));
+    }
+
     // Star Rating Logic
     let stars: 1 | 2 | 3 = 1;
     if (grossWpm >= level.minWpm && accuracy >= level.minAccuracy) stars = 3;
@@ -207,6 +241,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
       mode: mode,
       wpm: grossWpm,
       accuracy: Math.max(0, accuracy),
+      consistency: consistency,
       date: new Date().toISOString(),
       stars,
       duration: durationMin * 60,
@@ -216,8 +251,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
 
   // Renders the scrolling text area
   const renderText = () => {
-    // Sliding window logic optimized for focus
-    // Shows 8 characters behind and 16 ahead
     const visibleStart = Math.max(0, currentIndex - 8); 
     const visibleEnd = visibleStart + 16;
     const displayText = text.slice(visibleStart, visibleEnd);
@@ -275,6 +308,14 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
             </ClayButton>
             
             <div className="flex gap-4">
+                 {/* Blind Mode Indicator */}
+                 {blindMode && (
+                    <div className="bg-slate-800 text-white rounded-2xl px-4 py-2 flex items-center gap-2 shadow-sm animate-pulse">
+                        <EyeOff size={18} />
+                        <span className="font-bold text-sm uppercase">Modo Cego</span>
+                    </div>
+                 )}
+
                  {mode === GameMode.Timed && (
                     <div className={`bg-white rounded-2xl px-4 py-2 flex items-center gap-2 shadow-sm ${colors.text}`}>
                         <Timer size={20} />
@@ -334,6 +375,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ level, mode, errorStats, timeLi
                 activeKey={text[currentIndex]} 
                 nextKey={text[currentIndex + 1]} 
                 theme={theme}
+                showLabels={!blindMode} // Pass Blind Mode toggle
             />
         </div>
         
