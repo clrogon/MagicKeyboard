@@ -1,18 +1,21 @@
+
 import React from 'react';
-import { Level, UserProfile } from '../types';
+import { Level, UserProfile, CustomLesson } from '../types';
 import { ClayButton } from './ClayButton';
-import { Lock, Play, Clock, AlertCircle, RefreshCw, Trophy, Shield, Crown, Eye, EyeOff, BookOpen, Volume2, VolumeX } from 'lucide-react';
+import { Lock, Play, Clock, AlertCircle, RefreshCw, Trophy, Shield, Crown, Eye, EyeOff, BookOpen, Volume2, VolumeX, Edit3 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getXpForNextLevel, THEME_COLORS } from '../constants';
 
 interface LevelSelectorProps {
   levels: Level[];
   unlockedLevels: number[];
+  customLessons: CustomLesson[];
   gameState: UserProfile;
   onSelectLevel: (level: Level) => void;
   onSelectTimedMode: (duration: number) => void;
   onSelectErrorMode: () => void;
   onSelectStoryMode: () => void;
+  onSelectCustomLesson: (lesson: CustomLesson) => void;
   onViewStats: () => void;
   onChangeAvatar: () => void;
   onShowHandGuide: () => void;
@@ -35,7 +38,7 @@ const itemVariants = {
 };
 
 const LevelSelector: React.FC<LevelSelectorProps> = ({ 
-    levels, unlockedLevels, gameState, onSelectLevel, onSelectTimedMode, onSelectErrorMode, onSelectStoryMode, onViewStats, onChangeAvatar, onShowHandGuide, onToggleBlindMode, onToggleSound, isBlindMode
+    levels, unlockedLevels, customLessons, gameState, onSelectLevel, onSelectTimedMode, onSelectErrorMode, onSelectStoryMode, onSelectCustomLesson, onViewStats, onChangeAvatar, onShowHandGuide, onToggleBlindMode, onToggleSound, isBlindMode
 }) => {
   const { xp, playerLevel, currentTitle, currentAvatar, dailyChallenge, theme, soundEnabled } = gameState;
   
@@ -179,6 +182,25 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                         </ClayButton>
                     </div>
                 </div>
+
+                 {customLessons.length > 0 && (
+                    <div className="bg-white/60 backdrop-blur-md p-6 rounded-[2rem] border border-white/50">
+                        <h3 className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-4 ml-2">Lições Personalizadas</h3>
+                        <div className="space-y-3">
+                            {customLessons.map(lesson => (
+                                <ClayButton 
+                                    key={lesson.id}
+                                    variant="secondary" 
+                                    onClick={() => onSelectCustomLesson(lesson)} 
+                                    className="w-full py-3 text-left justify-start px-4"
+                                >
+                                    <Edit3 size={16} className="mr-2 text-indigo-500" />
+                                    <span className="truncate">{lesson.title}</span>
+                                </ClayButton>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </motion.div>
 
             <motion.div 

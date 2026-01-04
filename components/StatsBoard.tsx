@@ -1,13 +1,16 @@
 
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { SessionResult, Level, Theme } from '../types';
-import { Star, Trophy, Target, Zap, Medal, ArrowRight, RotateCcw } from 'lucide-react';
+import { SessionResult, Level, Theme, UserProfile } from '../types';
+import { Star, Trophy, Target, Zap, Medal, ArrowRight, RotateCcw, FileBadge } from 'lucide-react';
 import { ACHIEVEMENTS, THEME_COLORS } from '../constants';
 import { ClayButton } from './ClayButton';
 import { motion } from 'framer-motion';
+// @ts-ignore - Importing from CDN
+import { jsPDF } from 'jspdf';
 
 interface StatsBoardProps {
+  user: UserProfile;
   history: SessionResult[];
   unlockedLevels: number[];
   levels: Level[];
@@ -23,7 +26,7 @@ interface StatsBoardProps {
  * Displays the user's progress using Charts and KPI cards.
  * Uses 'recharts' for data visualization.
  */
-const StatsBoard: React.FC<StatsBoardProps> = ({ history, unlockedLevels, levels, achievements, theme, onBack, onViewAchievements }) => {
+const StatsBoard: React.FC<StatsBoardProps> = ({ user, history, unlockedLevels, levels, achievements, theme, onBack, onViewAchievements }) => {
   const colors = THEME_COLORS[theme];
 
   // Transform history data for the Line Chart
@@ -47,6 +50,60 @@ const StatsBoard: React.FC<StatsBoardProps> = ({ history, unlockedLevels, levels
 
   // Chart line color depends on theme
   const mainLineColor = theme === 'blue' ? '#3b82f6' : theme === 'amber' ? '#f59e0b' : '#f43f5e';
+
+  // GENERATE PDF CERTIFICATE (Client-Side)
+  const handleDownloadDiploma = () => {
+      const doc = new jsPDF({
+          orientation: "landscape",
+          unit: "mm",
+          format: "a4"
+      });
+
+      // Background Border
+      doc.setLineWidth(3);
+      doc.setDrawColor(244, 63, 94); // Rose-500
+      doc.rect(10, 10, 277, 190);
+      
+      doc.setLineWidth(1);
+      doc.setDrawColor(253, 164, 175); // Rose-300
+      doc.rect(15, 15, 267, 180);
+
+      // Header
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(40);
+      doc.setTextColor(51, 65, 85); // Slate-700
+      doc.text("DIPLOMA", 148.5, 50, { align: "center" });
+
+      doc.setFontSize(20);
+      doc.setTextColor(100, 116, 139); // Slate-500
+      doc.text("Certificamos que", 148.5, 70, { align: "center" });
+
+      // Name
+      doc.setFontSize(50);
+      doc.setTextColor(244, 63, 94); // Rose-500
+      doc.text(user.name, 148.5, 95, { align: "center" });
+
+      // Achievement
+      doc.setFontSize(16);
+      doc.setTextColor(51, 65, 85);
+      doc.text(`Completou o Nivel ${user.currentLevelId}`, 148.5, 120, { align: "center" });
+      doc.text(`Titulo: ${user.currentTitle}`, 148.5, 130, { align: "center" });
+      
+      // Stats
+      doc.setFontSize(12);
+      doc.setTextColor(148, 163, 184);
+      doc.text(`Total de Estrelas: ${totalStars} | Melhor Rapidez: ${maxWpm} PPM`, 148.5, 145, { align: "center" });
+
+      // Footer
+      const today = new Date().toLocaleDateString('pt-PT');
+      doc.setFontSize(12);
+      doc.setTextColor(51, 65, 85);
+      doc.text(`Data: ${today}`, 50, 170, { align: "center" });
+      doc.text("Teclado Magico", 240, 170, { align: "center" });
+
+      // Save
+      doc.save(`Diploma_${user.name}.pdf`);
+  };
 
   return (
     <div className="min-h-screen p-4 md:p-8 relative z-10 overflow-y-auto">
@@ -125,9 +182,14 @@ const StatsBoard: React.FC<StatsBoardProps> = ({ history, unlockedLevels, levels
                 </div>
             </div>
             
-            <ClayButton variant="secondary" onClick={onViewAchievements} className="px-8 py-4 shrink-0 relative z-10 shadow-lg">
-                Ver Coleção <ArrowRight size={20} className="ml-2" />
-            </ClayButton>
+            <div className="flex gap-4 shrink-0 relative z-10">
+                <ClayButton variant="secondary" onClick={handleDownloadDiploma} className="px-6 py-4 shadow-lg">
+                    <FileBadge size={20} className="mr-2" /> Diploma
+                </ClayButton>
+                <ClayButton variant="secondary" onClick={onViewAchievements} className="px-6 py-4 shadow-lg">
+                    Ver Coleção <ArrowRight size={20} className="ml-2" />
+                </ClayButton>
+            </div>
         </motion.div>
 
         {/* Charts Section */}

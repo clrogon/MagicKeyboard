@@ -58,9 +58,14 @@
     - Alphabet gaps filled in Levels 4-6.
     - Child-friendly terminology ("Teclas Invisíveis").
 
-## Phase 10: The "My Words" Update (Next Up)
-**Status:** 🚧 Planned (v1.4.0)
+## Phase 10: The "My Words" Update (Complete)
+**Status:** ✓ Complete (v1.4.0)
 - **Goal:** Empower parents and teachers while maintaining strict data privacy (No Cloud DB).
 - **Custom Lessons**: Allow parents/teachers to input specific word lists (stored strictly in LocalStorage) for spelling practice.
 - **GDPR-Friendly Backup**: Implement "Export to File" and "Import from File" (JSON). This allows data portability between devices without requiring a centralized server or user accounts.
 - **Certificates**: Generate downloadable PDF diplomas client-side when a user completes the Campaign Mode.
+
+## Phase 11: Future Horizons (Planned)
+**Status:** 🚧 Planning
+- Voice Dictation Mode (Practicing writing what you hear)
+- Multiplayer "Race" Mode (Local P2P)

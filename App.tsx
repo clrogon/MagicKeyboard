@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
-import { AppState, UserProfile, AppScreen, Level, SessionResult, GameMode, ErrorStats, Theme } from './types';
+import { AppState, UserProfile, AppScreen, Level, SessionResult, GameMode, ErrorStats, Theme, CustomLesson } from './types';
 import { LEVELS, SUCCESS_MESSAGES, PLAYER_TITLES, AVATARS, THEME_COLORS, getXpForNextLevel } from './constants';
 import LevelSelector from './components/LevelSelector';
 import TypingArea from './components/TypingArea';
@@ -26,8 +26,8 @@ const App: React.FC = () => {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
+        // Migration logic for older versions
         if (!parsed.users) {
-            // Migration for older versions (single user to multi-user)
             const legacyUser: UserProfile = {
                 id: 'legacy',
                 name: 'Jogador',
@@ -45,23 +45,22 @@ const App: React.FC = () => {
             };
             return {
                 users: { 'legacy': legacyUser },
-                activeUserId: null
+                activeUserId: null,
+                customLessons: []
             };
         }
-        if (parsed.users) {
-           Object.keys(parsed.users).forEach(key => {
-               const user = parsed.users[key];
-               if (user.soundEnabled === undefined) user.soundEnabled = true;
-           });
-        }
-        return parsed;
+        return {
+            ...parsed,
+            customLessons: parsed.customLessons || [] // Ensure customLessons exists
+        };
       } catch (e) {
           console.error("Save migration failed", e);
       }
     }
     return {
       users: {},
-      activeUserId: null
+      activeUserId: null,
+      customLessons: []
     };
   });
 
@@ -221,6 +220,30 @@ const App: React.FC = () => {
       });
   };
 
+  // Add a Custom Lesson to the Global State
+  const handleAddCustomLesson = (lesson: CustomLesson) => {
+      setAppState(prev => ({
+          ...prev,
+          customLessons: [...prev.customLessons, lesson]
+      }));
+  };
+
+  // Remove a Custom Lesson
+  const handleDeleteCustomLesson = (lessonId: string) => {
+      if (!window.confirm("Apagar esta lição?")) return;
+      setAppState(prev => ({
+          ...prev,
+          customLessons: prev.customLessons.filter(l => l.id !== lessonId)
+      }));
+  };
+
+  // Import external Data (GDPR)
+  const handleImportData = (newState: AppState) => {
+      setAppState(newState);
+      alert("Dados importados com sucesso! A página vai recarregar.");
+      window.location.reload();
+  };
+
   const handleLogout = () => {
       setAppState(prev => ({ ...prev, activeUserId: null }));
       setCurrentScreen(AppScreen.UserSelect);
@@ -333,6 +356,27 @@ const App: React.FC = () => {
       setCurrentScreen(AppScreen.Exercise);
   };
 
+  const handleStartCustomLesson = (lesson: CustomLesson) => {
+      // Map CustomLesson to Level structure
+      const customLevel: Level = {
+          id: -100, // ID for custom lessons
+          title: lesson.title,
+          description: lesson.description,
+          newKeys: [],
+          allKeys: [], // Custom lessons assume all keys usually
+          textSamples: [lesson.content], // Use the custom content as the "sample"
+          difficulty: 'medium',
+          minWpm: 0,
+          minAccuracy: 0
+      };
+      
+      setActiveLevel(customLevel);
+      setActiveMode(GameMode.Custom);
+      setDifficultyModifier('normal');
+      setTimeLimit(undefined);
+      setCurrentScreen(AppScreen.Exercise);
+  };
+
   const checkStreak = (history: SessionResult[]) => {
       const dates = [...new Set(history.map(h => h.date.split('T')[0]))].sort();
       if (dates.length < 7) return false;
@@ -365,7 +409,7 @@ const App: React.FC = () => {
     const isWin = result.stars >= 1; 
     setLevelUpData(null);
 
-    if (isWin || result.mode === GameMode.Timed || result.mode === GameMode.Story) {
+    if (isWin || result.mode === GameMode.Timed || result.mode === GameMode.Story || result.mode === GameMode.Custom) {
        if (currentUser.soundEnabled) audioService.playWin();
        
        const confettiColors = currentUser.theme === 'rose' 
@@ -492,6 +536,8 @@ const App: React.FC = () => {
         message = `Escreveste ${Math.round(lastResult.wpm * (lastResult.duration || 1))} palavras!`;
     } else if (lastResult.mode === GameMode.Story) {
         message = "História completada com sucesso!";
+    } else if (lastResult.mode === GameMode.Custom) {
+        message = "Lição completada!";
     } else {
         message = lastResult.stars === 3 ? SUCCESS_MESSAGES[0] : lastResult.stars === 2 ? "Muito bem!" : "Bom esforço!";
     }
@@ -595,8 +641,12 @@ const App: React.FC = () => {
           return (
              <ParentDashboard 
                 users={Object.values(appState.users)} 
+                appState={appState}
                 onBack={() => setCurrentScreen(AppScreen.UserSelect)}
                 onDeleteUser={handleDeleteUser}
+                onAddCustomLesson={handleAddCustomLesson}
+                onDeleteCustomLesson={handleDeleteCustomLesson}
+                onImportData={handleImportData}
              />
           )
       }
@@ -658,11 +708,13 @@ const App: React.FC = () => {
             <LevelSelector 
                 levels={LEVELS} 
                 unlockedLevels={currentUser.unlockedLevels}
+                customLessons={appState.customLessons}
                 gameState={currentUser as any} 
                 onSelectLevel={(l) => handleStartLevel(l)}
                 onSelectTimedMode={handleStartTimedMode}
                 onSelectErrorMode={handleStartErrorMode}
                 onSelectStoryMode={handleStartStoryMode}
+                onSelectCustomLesson={handleStartCustomLesson}
                 onViewStats={() => setCurrentScreen(AppScreen.Stats)} 
                 onChangeAvatar={handleChangeAvatar}
                 onShowHandGuide={() => setShowHandGuide(true)}
@@ -691,6 +743,7 @@ const App: React.FC = () => {
 
             {currentScreen === AppScreen.Stats && (
                 <StatsBoard 
+                user={currentUser}
                 history={currentUser.history} 
                 unlockedLevels={currentUser.unlockedLevels}
                 levels={LEVELS}
@@ -715,7 +768,7 @@ const App: React.FC = () => {
                     <span className="flex items-center gap-2">
                         Feito com <Heart size={14} className="text-red-400 fill-red-400" /> por Cláudio Roberto Gonçalves para a educação em Portugal e Angola 🇵🇹 🇦🇴
                     </span>
-                    <span className="text-xs opacity-50">v1.3.0</span>
+                    <span className="text-xs opacity-50">v1.4.0</span>
                 </div>
                 <button onClick={() => setShowPrivacyModal(true)} className="flex items-center gap-1 hover:text-slate-600 transition-colors">
                      <Shield size={14} /> Privacidade e Dados

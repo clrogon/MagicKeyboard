@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Level, SessionResult, GameMode, ErrorStats, Theme } from '../types';
 import { ClayButton } from './ClayButton';
 import VirtualKeyboard from './VirtualKeyboard';
-import { RotateCcw, Timer, X, Info, EyeOff, Sparkles, Flag, Play } from 'lucide-react';
+import { RotateCcw, Timer, X, Info, EyeOff, Sparkles, Flag, Play, Edit } from 'lucide-react';
 import { generateSmartExercise } from '../services/geminiService';
 import { THEME_COLORS } from '../constants';
 import { audioService } from '../services/audioService';
@@ -58,6 +58,14 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     setLoading(true);
     setMotivationalMessage("A preparar magia...");
     
+    // IF CUSTOM MODE: Bypass AI generation
+    if (mode === GameMode.Custom) {
+        setText(level.textSamples[0]);
+        setLoading(false);
+        setMotivationalMessage("Vamos começar!");
+        return;
+    }
+
     const safetyTimeout = setTimeout(() => {
         setLoading((currentLoading) => {
             if (currentLoading) {
@@ -289,6 +297,12 @@ const TypingArea: React.FC<TypingAreaProps> = ({
               goalText = "Chegar ao fim da história.";
               keys = [];
               break;
+          case GameMode.Custom:
+              title = "A Minha Lição";
+              description = level.description || "Uma lição especial criada pelo teu professor ou pais.";
+              goalText = "Completar a lição com atenção.";
+              keys = [];
+              break;
           default: 
               title = `Nível ${level.id}: ${level.title}`;
               description = level.description;
@@ -305,7 +319,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                 className="bg-white relative z-30 p-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border-4 border-white max-w-lg w-full text-center"
              >
                  <div className={`w-20 h-20 ${colors.bg} rounded-full flex items-center justify-center mx-auto mb-6 text-white shadow-lg`}>
-                     <Info size={40} />
+                     {mode === GameMode.Custom ? <Edit size={40} /> : <Info size={40} />}
                  </div>
                  
                  <h2 className="text-3xl md:text-4xl font-bold text-slate-700 fun-font mb-4">{title}</h2>

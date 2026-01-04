@@ -51,13 +51,25 @@ export interface Level {
 }
 
 /**
+ * Defines a Custom Lesson created by a parent/teacher.
+ */
+export interface CustomLesson {
+  id: string; // Unique ID (UUID-like)
+  title: string;
+  description: string;
+  content: string; // The full text to type
+  createdAt: string;
+}
+
+/**
  * Game Modes available in the application.
  */
 export enum GameMode {
   Campaign = 'CAMPAIGN',      // Progression-based levels
   Timed = 'TIMED',            // 60s speed challenge
   ErrorDrill = 'ERROR_DRILL', // AI-generated drill based on user weak keys
-  Story = 'STORY'             // Coherent story generation for flow practice
+  Story = 'STORY',            // Coherent story generation
+  Custom = 'CUSTOM'           // User-defined text
 }
 
 /**
@@ -101,7 +113,7 @@ export interface SessionResult {
   mode: GameMode;
   wpm: number;
   accuracy: number;
-  consistency?: number;        // Rhythm score (0-100), based on variance of keystroke latency
+  consistency?: number;        // Rhythm score (0-100)
   date: string;
   stars: 1 | 2 | 3;
   duration?: number;           // In seconds
@@ -127,24 +139,25 @@ export interface UserProfile {
   currentAvatar: string;
   dailyChallenge: DailyChallenge | null;
   theme: Theme;
-  soundEnabled: boolean; // New Phase 8 Feature
+  soundEnabled: boolean;
 }
 
 /**
  * Global App State persisted in LocalStorage.
- * Now supports multiple users.
+ * Now supports multiple users and custom lessons.
  */
 export interface AppState {
   users: Record<string, UserProfile>; // Map of ID -> Profile
   activeUserId: string | null;        // Currently logged in user
+  customLessons: CustomLesson[];      // Global list of custom lessons
 }
 
 /**
  * Enum for managing the active screen in the main App component.
  */
 export enum AppScreen {
-  UserSelect = 'USER_SELECT', // New Screen
-  ParentDashboard = 'PARENT_DASHBOARD', // Phase 6.2: Parent Analytics
+  UserSelect = 'USER_SELECT',
+  ParentDashboard = 'PARENT_DASHBOARD',
   Dashboard = 'DASHBOARD',
   Exercise = 'EXERCISE',
   Result = 'RESULT',
