@@ -23,7 +23,25 @@
 | **Desafios Diários** | ✅ Completo | ✅ Complete |
 | **Guia de Mãos** | ✅ Completo | ✅ Complete |
 | **Modo História** | ✅ Completo | ✅ Complete |
-| **Teclas Invisíveis** | ✅ Completo | ✅ Complete |
+| **Inclusão Cultural** | ✅ Completo | ✅ Complete |
+
+---
+
+## 🔒 Privacidade e Segurança (GDPR) | Privacy & Safety
+
+Este projeto foi desenhado com o princípio de **"Privacy by Design"** para garantir a segurança das crianças online.
+
+### 1. Sem Base de Dados (No Database)
+*   **PT**: Não temos servidores. Todos os dados (nome do jogador, progresso, estrelas) são guardados **exclusivamente no dispositivo** (LocalStorage). Nós não temos acesso a essa informação.
+*   **EN**: We have no servers. All data (player name, progress, stars) is stored **exclusively on the device** (LocalStorage). We do not have access to this information.
+
+### 2. Uso de IA (AI Usage)
+*   **PT**: Quando usamos a IA (Google Gemini) para gerar textos, enviamos apenas prompts anónimos (ex: "Cria uma frase com a letra A"). **Nenhum dado do perfil da criança é enviado para a Google.**
+*   **EN**: When using AI (Google Gemini) to generate text, we only send anonymous prompts (e.g., "Create a sentence with letter A"). **No child profile data is sent to Google.**
+
+### 3. Sem Rastreamento (No Tracking)
+*   **PT**: Não utilizamos Google Analytics, Facebook Pixels ou cookies de terceiros para publicidade.
+*   **EN**: We do not use Google Analytics, Facebook Pixels, or third-party advertising cookies.
 
 ---
 
@@ -73,19 +91,19 @@
 graph TD
     User([Utilizador / User]) -->|Inputs Keyboard| App
     
-    subgraph "Teclado Mágico App"
+    subgraph "Teclado Mágico App (Client-Side)"
         App["React + Vite PWA"]
         Logic["Game Engine & Validation"]
         Audio["Web Audio API"]
-        Store[("LocalStorage")]
+        Store[("LocalStorage (Encrypted)")]
     end
     
-    subgraph "Google Cloud"
+    subgraph "Google Cloud (Anonymous)"
         Gemini["Gemini 3 Flash API"]
     end
 
     App -->|Render| Logic
-    Logic -->|Generate Drills| Gemini
+    Logic -->|Generate Drills (No PII)| Gemini
     Gemini -->|"Return Text (PT/AO)"| Logic
     Logic -->|Play Sounds| Audio
     Logic -->|Save Progress| Store
