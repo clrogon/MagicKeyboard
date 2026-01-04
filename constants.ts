@@ -295,7 +295,10 @@ export const LEVELS: Level[] = [
     description: "R, U, N, M, C, V. Palavras novas!",
     newKeys: ['r', 'u', 'n', 'm', 'c', 'v'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'o', 't', 'r', 'u', 'n', 'm', 'c', 'v'],
-    textSamples: ["rua", "rio", "mar", "ver", "comer", "nuvem", "conta", "vento", "navio", "treino"],
+    textSamples: [
+        "rua", "rio", "mar", "ver", "comer", "nuvem", "conta", "vento", "navio", "treino", 
+        "Cuito", "Cunene", "morro", "nu"
+    ],
     difficulty: 'hard',
     minWpm: 15,
     minAccuracy: 90
@@ -306,7 +309,10 @@ export const LEVELS: Level[] = [
     description: "Completa o alfabeto com B, G, H, P, Q, W, X, Y, Z.",
     newKeys: ['b', 'g', 'h', 'p', 'q', 'w', 'x', 'y', 'z', 'ShiftLeft', 'ShiftRight'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'o', 't', 'r', 'u', 'n', 'm', 'c', 'v', 'b', 'g', 'h', 'p', 'q', 'w', 'x', 'y', 'z', 'ShiftLeft', 'ShiftRight'],
-    textSamples: ["Kwanza", "Zola", "Benguela", "Huambo", "Gato", "Pato", "Hoje", "Queijo", "Xadrez", "Yoga", "Web", "Zebra"],
+    textSamples: [
+        "Kwanza", "Zola", "Benguela", "Huambo", "Gato", "Pato", "Hoje", "Queijo", "Xadrez", "Yoga", "Web", "Zebra",
+        "Muxima", "Semba", "Ginguba"
+    ],
     difficulty: 'hard',
     minWpm: 12,
     minAccuracy: 85
