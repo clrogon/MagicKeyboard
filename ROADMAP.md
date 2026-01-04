@@ -142,6 +142,25 @@
 
 ---
 
+## Phase 7: PWA & Offline Capability (New)
+**Duration:** 1-2 weeks
+**Priority:** MEDIUM
+**Status:** 🚧 In Progress
+
+### Milestone 7.1: Service Worker Integration
+**Goal:** Cache assets for offline play.
+**Implementation:** `vite-plugin-pwa` integration.
+
+### Milestone 7.2: Installation
+**Goal:** Allow users to install app to homescreen.
+**Implementation:** `beforeinstallprompt` handling and UI integration.
+
+### Milestone 7.3: Offline Handling
+**Goal:** Detect network status and provide fallback content when AI is unreachable.
+**Implementation:** Network event listeners and fallback static drills.
+
+---
+
 ## Resource Requirements & Metrics
 
 (See original roadmap for detailed metrics per phase)

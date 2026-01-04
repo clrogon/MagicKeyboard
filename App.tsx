@@ -13,7 +13,7 @@ import PrivacyModal from './components/PrivacyModal';
 import CookieBanner from './components/CookieBanner';
 import HandGuideModal from './components/HandGuideModal';
 import { ClayButton } from './components/ClayButton';
-import { Shield, Zap, Star, LogOut, Heart, ArrowRight } from 'lucide-react';
+import { Shield, Zap, Star, LogOut, Heart, ArrowRight, Download, WifiOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 /**
@@ -87,6 +87,10 @@ const App: React.FC = () => {
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showHandGuide, setShowHandGuide] = useState(false);
 
+  // PWA & Network State
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [installPrompt, setInstallPrompt] = useState<any>(null);
+
   // Determine current theme colors
   const colors = currentUser ? THEME_COLORS[currentUser.theme] : THEME_COLORS['rose'];
 
@@ -94,6 +98,36 @@ const App: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('keyboardHeroState', JSON.stringify(appState));
   }, [appState]);
+
+  // Effect: Handle Network Status & PWA Install
+  useEffect(() => {
+      const handleOnline = () => setIsOffline(false);
+      const handleOffline = () => setIsOffline(true);
+      const handleInstallPrompt = (e: Event) => {
+          e.preventDefault();
+          setInstallPrompt(e);
+      };
+
+      window.addEventListener('online', handleOnline);
+      window.addEventListener('offline', handleOffline);
+      window.addEventListener('beforeinstallprompt', handleInstallPrompt);
+
+      return () => {
+          window.removeEventListener('online', handleOnline);
+          window.removeEventListener('offline', handleOffline);
+          window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
+      };
+  }, []);
+
+  const handleInstallClick = () => {
+      if (!installPrompt) return;
+      installPrompt.prompt();
+      installPrompt.userChoice.then((choiceResult: { outcome: string }) => {
+          if (choiceResult.outcome === 'accepted') {
+              setInstallPrompt(null);
+          }
+      });
+  };
 
   // Effect: Generate Daily Challenge for Active User
   useEffect(() => {
@@ -601,6 +635,14 @@ const App: React.FC = () => {
                     <Zap size={24} fill="currentColor" />
                  </div>
                  <h1 className="text-2xl font-bold text-slate-700 fun-font hidden md:block">Teclado Mágico</h1>
+                 
+                 {/* Network Status Indicator */}
+                 {isOffline && (
+                    <div className="flex items-center gap-2 bg-red-100 text-red-500 px-3 py-1 rounded-full text-xs font-bold animate-pulse">
+                        <WifiOff size={14} />
+                        <span className="hidden sm:inline">Sem Internet</span>
+                    </div>
+                 )}
              </div>
              
              <div className="flex items-center gap-4">
@@ -682,6 +724,16 @@ const App: React.FC = () => {
                 <button onClick={() => setShowPrivacyModal(true)} className="flex items-center gap-1 hover:text-slate-600 transition-colors">
                      <Shield size={14} /> Privacidade e Dados
                 </button>
+                
+                {/* PWA Install Button (Only visible if prompt is captured) */}
+                {installPrompt && (
+                    <button 
+                        onClick={handleInstallClick} 
+                        className="flex items-center gap-1 text-emerald-500 hover:text-emerald-700 transition-colors bg-emerald-50 px-3 py-1 rounded-full animate-bounce"
+                    >
+                        <Download size={14} /> Instalar Aplicação
+                    </button>
+                )}
             </footer>
         )}
       </div>

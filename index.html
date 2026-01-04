@@ -3,7 +3,10 @@
 <html lang="pt-PT">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#F43F5E" />
+    <meta name="description" content="Um treinador de digitação gamificado e impulsionado por IA, desenhado para crianças a aprender Português Europeu.">
+    <link rel="apple-touch-icon" href="/pwa-192x192.png">
     <title>Teclado Mágico</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -14,6 +17,7 @@
         color: #1e293b; /* Slate 800 */
         min-height: 100vh;
         overflow-x: hidden;
+        overscroll-behavior-y: none; /* Prevent pull-to-refresh on mobile */
       }
       h1, h2, h3, .fun-font {
         font-family: 'Fredoka', sans-serif;
@@ -54,7 +58,8 @@
     "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
-    "framer-motion": "https://esm.sh/framer-motion@^12.23.26"
+    "framer-motion": "https://esm.sh/framer-motion@^12.23.26",
+    "vite-plugin-pwa": "https://esm.sh/vite-plugin-pwa@^1.2.0"
   }
 }
 </script>

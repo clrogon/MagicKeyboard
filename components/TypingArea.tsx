@@ -291,8 +291,10 @@ const TypingArea: React.FC<TypingAreaProps> = ({
           keys = [];
       } else if (mode === GameMode.Story) {
           title = "Hora do Conto";
-          description = "Escreve uma pequena história.";
+          description = "Escreve uma pequena história completa.";
           goal = "Lê e escreve ao mesmo tempo. Diverte-te!";
+          // Story mode implicitly uses almost all keys, so no specific 'newKeys' needed in briefing
+          keys = []; 
       }
 
       return (
