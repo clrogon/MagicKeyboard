@@ -52,7 +52,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({
   // Refs
   const inputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<number | null>(null);
-  const isComposing = useRef(false); // Track IME composition state (macOS accents)
 
   const colors = THEME_COLORS[theme];
 
@@ -102,7 +101,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     setLastKeystrokeTime(null);
     setTypedChars("");
     setStartTime(null);
-    isComposing.current = false;
     
     if (timeLimit) {
         setTimeLeft(timeLimit);
@@ -182,117 +180,95 @@ const TypingArea: React.FC<TypingAreaProps> = ({
       setTimeout(() => inputRef.current?.focus(), 100);
   };
 
-  /**
-   * Core Game Logic for validating a single character input.
-   * Extracted to support both KeyDown (standard) and CompositionEnd (accents).
-   */
-  const validateInput = (char: string) => {
-      if (loading || isBriefing || (timeLeft === 0)) return;
-      
-      const targetChar = text[currentIndex];
-      const now = Date.now();
-  
-      if (!startTime) {
-        setStartTime(now);
-        setLastKeystrokeTime(now);
-      }
-  
-      if (char === targetChar) {
-        // Correct
-        setTypedChars(prev => prev + char);
-        setConsecutiveErrors(0); // Reset help counter
-        
-        if(soundEnabled) audioService.playClick();
-        
-        if (lastKeystrokeTime) {
-            const interval = now - lastKeystrokeTime;
-            if (interval < 2000) { 
-                setKeystrokeIntervals(prev => [...prev, interval]);
-            }
-        }
-        setLastKeystrokeTime(now);
-  
-        setSessionCorrectMap(prev => ({
-            ...prev,
-            [targetChar]: (prev[targetChar] || 0) + 1
-        }));
-  
-        const nextIndex = currentIndex + 1;
-        setCurrentIndex(nextIndex);
-  
-        // Feedback Logic
-        const progress = nextIndex / text.length;
-        if (progress === 1) setMotivationalMessage("Conseguiste! 🎉");
-        else if (progress >= 0.9) setMotivationalMessage("Só mais um bocadinho! 🏁");
-        else if (progress >= 0.75) setMotivationalMessage("Quase lá! Força! 💪");
-        else if (progress >= 0.5) setMotivationalMessage("Já passaste o meio! 🏃");
-        else if (progress >= 0.25) setMotivationalMessage("Bom começo! 👍");
-        else setMotivationalMessage("Continua assim...");
-  
-        if (nextIndex >= text.length) {
-          if (mode === GameMode.Timed) {
-              setText(prev => prev + " " + prev);
-          } else {
-              finishLevel();
-          }
-        }
-      } else {
-        // Error
-        if(soundEnabled) audioService.playError();
-        setSessionErrors(prev => prev + 1);
-        setConsecutiveErrors(prev => prev + 1);
-        
-        setMotivationalMessage("Ups! Tenta outra vez. 🛡️"); 
-        setSessionErrorMap(prev => ({
-            ...prev,
-            [targetChar]: (prev[targetChar] || 0) + 1
-        }));
-      }
+  const handleInput = () => {
+     // Controlled input handler logic
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Basic Filters
+    if (loading || isBriefing || (timeLeft === 0)) return;
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
         e.preventDefault();
         return;
     }
-    if (e.key === 'Shift' || e.key === 'Alt' || e.key === 'Control' || e.key === 'CapsLock') return;
 
-    // Handle Backspace (Allow correction visual but game logic doesn't strictly require it in this engine)
-    if (e.key === 'Backspace') return; 
+    const char = e.key;
+    const targetChar = text[currentIndex];
 
-    // COMPOSITION GUARD:
-    // If the user is currently composing an accent (e.g. Option+E on Mac), 
-    // the browser fires KeyDown but we must wait for CompositionEnd to get the final char (é).
-    if (e.nativeEvent.isComposing || isComposing.current) {
+    // FIX FOR MACOS/ACCENTS:
+    // On macOS and some Linux setups, dead keys (accents) might be sent as the character itself (e.g. '´') 
+    // instead of 'Dead', or as 'Dead'.
+    // If the user types an accent to compose a character (e.g., '´' + 'a' = 'á'), 
+    // we must ignore the initial accent keypress if it doesn't match the target.
+    if (char === 'Dead' || (['´', '`', '~', '^', '¨'].includes(char) && char !== targetChar)) {
         return;
     }
 
-    // Explicitly ignore 'Dead' keys (redundant with composition check but safe)
-    if (e.key === 'Dead') return;
+    if (char.length > 1 && char !== 'Backspace' && !['Shift'].includes(char)) return; 
+    if (char === 'Shift' || char === 'Alt' || char === 'Control' || char === 'CapsLock') return;
 
-    // Normal input
-    if (e.key.length === 1) {
-        validateInput(e.key);
+    const now = Date.now();
+
+    if (!startTime) {
+      setStartTime(now);
+      setLastKeystrokeTime(now);
     }
-  };
 
-  const handleCompositionStart = () => {
-    isComposing.current = true;
-  };
+    if (char === 'Backspace') return;
 
-  const handleCompositionEnd = (e: React.CompositionEvent<HTMLInputElement>) => {
-    isComposing.current = false;
-    // The data attribute holds the finalized character(s)
-    if (e.data) {
-        // Handle cases where multiple chars might be committed (rare in typing game, but possible)
-        const chars = e.data.split('');
-        chars.forEach(char => validateInput(char));
+    if (char === targetChar) {
+      // Correct
+      setTypedChars(prev => prev + char);
+      setConsecutiveErrors(0); // Reset help counter
+      
+      if(soundEnabled) audioService.playClick();
+      
+      if (lastKeystrokeTime) {
+          const interval = now - lastKeystrokeTime;
+          if (interval < 2000) { 
+              setKeystrokeIntervals(prev => [...prev, interval]);
+          }
+      }
+      setLastKeystrokeTime(now);
+
+      setSessionCorrectMap(prev => ({
+          ...prev,
+          [targetChar]: (prev[targetChar] || 0) + 1
+      }));
+
+      const nextIndex = currentIndex + 1;
+      setCurrentIndex(nextIndex);
+
+      // --- Progress Feedback (No Percentages) ---
+      // We use qualitative feedback instead of numbers for better child accessibility
+      const progress = nextIndex / text.length;
+      
+      if (progress === 1) setMotivationalMessage("Conseguiste! 🎉");
+      else if (progress >= 0.9) setMotivationalMessage("Só mais um bocadinho! 🏁");
+      else if (progress >= 0.75) setMotivationalMessage("Quase lá! Força! 💪");
+      else if (progress >= 0.5) setMotivationalMessage("Já passaste o meio! 🏃");
+      else if (progress >= 0.25) setMotivationalMessage("Bom começo! 👍");
+      else setMotivationalMessage("Continua assim...");
+
+      if (nextIndex >= text.length) {
+        if (mode === GameMode.Timed) {
+            setText(prev => prev + " " + prev);
+        } else {
+            finishLevel();
+        }
+      }
+    } else {
+      // Error
+      if(soundEnabled) audioService.playError();
+      setSessionErrors(prev => prev + 1);
+      setConsecutiveErrors(prev => prev + 1);
+      
+      // Gentle correction feedback
+      setMotivationalMessage("Ups! Tenta outra vez. 🛡️"); 
+      setSessionErrorMap(prev => ({
+          ...prev,
+          [targetChar]: (prev[targetChar] || 0) + 1
+      }));
     }
-  };
-
-  const handleInput = () => {
-     // Controlled input via state, logic handled in KeyDown/CompositionEnd
   };
 
   const finishLevel = () => {
@@ -601,8 +577,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                 value={typedChars}
                 onChange={handleInput}
                 onKeyDown={handleKeyDown}
-                onCompositionStart={handleCompositionStart}
-                onCompositionEnd={handleCompositionEnd}
                 onBlur={() => setTimeout(() => !isBriefing && inputRef.current?.focus(), 10)}
             />
         </div>
