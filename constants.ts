@@ -310,8 +310,7 @@ export const LEVELS: Level[] = [
     newKeys: ['b', 'g', 'h', 'p', 'q', 'w', 'x', 'y', 'z', 'ShiftLeft', 'ShiftRight'],
     allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'o', 't', 'r', 'u', 'n', 'm', 'c', 'v', 'b', 'g', 'h', 'p', 'q', 'w', 'x', 'y', 'z', 'ShiftLeft', 'ShiftRight'],
     textSamples: [
-        "Kwanza", "Zola", "Benguela", "Huambo", "Gato", "Pato", "Hoje", "Queijo", "Xadrez", "Yoga", "Web", "Zebra",
-        "Muxima", "Semba", "Ginguba"
+        "Kwanza", "Zola", "Benguela", "Huambo", "Imbondeiro", "Muxima", "Semba", "Ginguba", "Gato", "Hoje", "Queijo", "Xadrez", "Zebra"
     ],
     difficulty: 'hard',
     minWpm: 12,

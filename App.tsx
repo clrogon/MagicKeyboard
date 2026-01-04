@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { AppState, UserProfile, AppScreen, Level, SessionResult, GameMode, ErrorStats, Theme } from './types';
@@ -14,7 +13,7 @@ import CookieBanner from './components/CookieBanner';
 import HandGuideModal from './components/HandGuideModal';
 import { ClayButton } from './components/ClayButton';
 import { Shield, Zap, Star, LogOut, Heart, ArrowRight, Download, WifiOff } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { audioService } from './services/audioService';
 
 /**

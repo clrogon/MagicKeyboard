@@ -40,7 +40,7 @@
 ## ✨ Funcionalidades Principais | Core Features
 
 ### 1. Inclusão Cultural (Portugal & Angola)
-- **PT**: Exercícios que incluem nomes, cidades e referências culturais de ambos os países (Luanda, Lisboa, Benguela, Algarve).
+- **PT**: Exercícios que incluem nomes, cidades e referências culturais de ambos os países (Luanda, Lisboa, Benguela, Algarve, Imbondeiro).
 - **EN**: Drills that include names, cities, and cultural references from both countries.
 
 ### 2. Teclas Invisíveis (Blind Mode)
