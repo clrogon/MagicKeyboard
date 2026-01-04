@@ -1,8 +1,7 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserProfile, Theme, KeyboardLayout } from '../types';
 import { ClayButton } from './ClayButton';
-import { Plus, Settings } from 'lucide-react';
+import { Plus, Settings, Keyboard as KeyboardIcon, Wand2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AVATARS, THEME_COLORS } from '../constants';
 
@@ -19,6 +18,37 @@ const UserSelectScreen: React.FC<UserSelectScreenProps> = ({ users, onSelectUser
   const [newAvatar, setNewAvatar] = useState(AVATARS[0]);
   const [newTheme, setNewTheme] = useState<Theme>('rose');
   const [newLayout, setNewLayout] = useState<KeyboardLayout>('qwerty');
+  const [detectedLayout, setDetectedLayout] = useState<boolean>(false);
+
+  // Auto-detect keyboard layout when entering creation mode
+  useEffect(() => {
+    if (isCreating) {
+        const detectLayout = async () => {
+            if ('keyboard' in navigator && (navigator as any).keyboard) {
+                try {
+                    const layoutMap = await (navigator as any).keyboard.getLayoutMap();
+                    // Check what the physical 'KeyQ' maps to.
+                    // On QWERTY, KeyQ -> 'q'
+                    // On AZERTY, KeyQ -> 'a'
+                    const qValue = layoutMap.get('KeyQ');
+                    
+                    if (qValue === 'a') {
+                        setNewLayout('azerty');
+                        setDetectedLayout(true);
+                    } else if (qValue === 'q') {
+                        setNewLayout('qwerty');
+                        setDetectedLayout(true);
+                    }
+                } catch (e) {
+                    console.log("Keyboard layout detection not supported or denied.");
+                }
+            }
+        };
+        detectLayout();
+    } else {
+        setDetectedLayout(false);
+    }
+  }, [isCreating]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +58,7 @@ const UserSelectScreen: React.FC<UserSelectScreenProps> = ({ users, onSelectUser
       setNewName("");
       setNewAvatar(AVATARS[0]);
       setNewLayout('qwerty');
+      setDetectedLayout(false);
     }
   };
 
@@ -78,21 +109,28 @@ const UserSelectScreen: React.FC<UserSelectScreenProps> = ({ users, onSelectUser
              </div>
 
              <div className="mb-6">
-                <label className="block text-slate-400 font-bold text-sm uppercase tracking-wide mb-2">Teclado</label>
+                <div className="flex justify-between items-end mb-2">
+                    <label className="block text-slate-400 font-bold text-sm uppercase tracking-wide">Teclado</label>
+                    {detectedLayout && (
+                        <span className="text-xs font-bold text-emerald-500 flex items-center gap-1 animate-pulse">
+                            <Wand2 size={12} /> Detetado Automaticamente
+                        </span>
+                    )}
+                </div>
                 <div className="flex gap-2">
                     <button
                         type="button"
                         onClick={() => setNewLayout('qwerty')}
-                        className={`flex-1 py-3 rounded-xl font-bold transition-all ${newLayout === 'qwerty' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-500'}`}
+                        className={`flex-1 py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${newLayout === 'qwerty' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-500'}`}
                     >
-                        QWERTY (PT)
+                        <KeyboardIcon size={16} /> QWERTY (PT)
                     </button>
                     <button
                         type="button"
                         onClick={() => setNewLayout('azerty')}
-                        className={`flex-1 py-3 rounded-xl font-bold transition-all ${newLayout === 'azerty' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-500'}`}
+                        className={`flex-1 py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${newLayout === 'azerty' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-500'}`}
                     >
-                        AZERTY (FR)
+                        <KeyboardIcon size={16} /> AZERTY (FR)
                     </button>
                 </div>
              </div>

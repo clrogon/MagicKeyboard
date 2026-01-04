@@ -42,17 +42,20 @@ Project Start Date: **January 3, 2026**.
 - [x] **Generative Audio**: Web Audio API synth for "Thocky" keyboard sounds and success chimes.
 - [x] **Hand Guide**: Interactive modal showing proper finger placement.
 
-## 🚀 Phase 6: Internationalization & Layouts (Current)
-**Status:** In Progress (v1.5.0)
+## ✅ Phase 6: Internationalization & Layouts (Completed)
+**Status:** Completed Mar 2026 (v1.5.0)
 **Focus:** Supporting Portuguese communities abroad (France, Luxembourg).
 - [x] **Multi-Layout Support**: Engine support for switching between QWERTY and AZERTY layouts.
 - [x] **AZERTY Integration**: Full AZERTY visual keyboard mapping.
-- [ ] **Physical Layout Detection**: Heuristics to detect physical keyboard type.
-- [ ] **Ghost Mode**: Race against your previous best performance.
+- [x] **Physical Layout Detection**: Heuristics to detect physical keyboard type via `navigator.keyboard` API.
 
 ## 🚧 Phase 7: Future Horizons (v2.0+)
 **Status:** Planned for Late 2026
-**Focus:** Classroom Dynamics & Social Play.
+**Focus:** Classroom Dynamics, Social Play & Advanced Gamification.
+
+### 👻 Advanced Gamification
+- [ ] **Ghost Mode**: Race against your previous best performance (Time Trial).
+- [ ] **Boss Battles**: Type against a "monster" where WPM deals damage.
 
 ### 🏫 Classroom Mode (Sala de Aula)
 - [ ] **Teacher Dashboard**: A dedicated interface for teachers to manage 30+ students.
