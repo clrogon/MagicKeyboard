@@ -7,6 +7,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2025-03-05 (A Atualização "As Minhas Palavras" | The "My Words" Update)
+
+### Adicionado (Added)
+-   **Lições Personalizadas**: Pais e professores podem agora criar listas de palavras específicas para TPC ou treino focado, guardadas localmente.
+-   **Diplomas em PDF**: Geração de certificados de conclusão diretamente no navegador (sem envio de dados para servidores) para celebrar conquistas de nível.
+-   **Backup e Restauro**: Funcionalidade de exportar/importar dados (ficheiro JSON) para permitir mover o progresso entre dispositivos mantendo a privacidade (GDPR).
+-   **Melhorias de Acessibilidade**: Substituição de metas puramente numéricas por pistas visuais e narrativa.
+
+### Alterado (Changed)
+-   **Privacidade Reforçada**: Documentação e comentários de código atualizados para explicitar o processamento de dados 100% local.
+
 ## [1.3.0] - 2025-02-26 (A Atualização Cultural | The Cultural Update)
 
 ### Adicionado (Added)

@@ -39,7 +39,12 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
       return new Date(dateStr).toLocaleDateString('pt-PT');
   };
 
-  // Export Data Logic (JSON)
+  /**
+   * GDPR / PRIVACY NOTE:
+   * Data Export implementation.
+   * This generates a JSON file entirely on the CLIENT-SIDE using the browser's Blob API.
+   * No data is sent to any external server during this process.
+   */
   const handleExport = () => {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
       const downloadAnchorNode = document.createElement('a');
@@ -50,7 +55,12 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
       downloadAnchorNode.remove();
   };
 
-  // Import Data Logic
+  /**
+   * GDPR / PRIVACY NOTE:
+   * Data Import implementation.
+   * Reads a JSON file from the user's file system using the FileReader API.
+   * Processing happens entirely in the browser memory.
+   */
   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
       const fileReader = new FileReader();
       if (event.target.files && event.target.files.length > 0) {
@@ -59,10 +69,11 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
               if (e.target?.result) {
                   try {
                       const parsed = JSON.parse(e.target.result as string);
+                      // Basic validation to check if it's a valid app state
                       if (parsed.users) {
                           onImportData(parsed);
                       } else {
-                          alert("Ficheiro inválido.");
+                          alert("Ficheiro inválido. Certifique-se que é um backup do Teclado Mágico.");
                       }
                   } catch (err) {
                       alert("Erro ao ler ficheiro.");

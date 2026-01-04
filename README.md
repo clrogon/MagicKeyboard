@@ -12,17 +12,16 @@
 
 ---
 
-## 📊 Estado Atual | Current Status (v1.3.0)
+## 📊 Estado Atual | Current Status (v1.4.0)
 
 | Módulo (Module) | Estado PT | Status EN |
 |-----------------|-----------|-----------|
 | **Motor de Digitação** | ✅ Completo | ✅ Complete |
 | **Teclado Visual 3D** | ✅ Completo | ✅ Complete |
 | **Geração de Texto IA** | ✅ Completo (PT/AO) | ✅ Complete (PT/AO) |
-| **Progressão (XP/Níveis)**| ✅ Completo | ✅ Complete |
-| **Desafios Diários** | ✅ Completo | ✅ Complete |
-| **Guia de Mãos** | ✅ Completo | ✅ Complete |
-| **Modo História** | ✅ Completo | ✅ Complete |
+| **Lições Personalizadas** | ✅ Completo | ✅ Complete |
+| **Certificados PDF** | ✅ Completo | ✅ Complete |
+| **Backup de Dados** | ✅ Completo | ✅ Complete |
 | **Inclusão Cultural** | ✅ Completo | ✅ Complete |
 
 ---
@@ -32,8 +31,8 @@
 Este projeto foi desenhado com o princípio de **"Privacy by Design"** para garantir a segurança das crianças online.
 
 ### 1. Sem Base de Dados (No Database)
-*   **PT**: Não temos servidores. Todos os dados (nome do jogador, progresso, estrelas) são guardados **exclusivamente no dispositivo** (LocalStorage). Nós não temos acesso a essa informação.
-*   **EN**: We have no servers. All data (player name, progress, stars) is stored **exclusively on the device** (LocalStorage). We do not have access to this information.
+*   **PT**: Não temos servidores. Todos os dados (nome do jogador, progresso, estrelas, lições personalizadas) são guardados **exclusivamente no dispositivo** (LocalStorage). Nós não temos acesso a essa informação.
+*   **EN**: We have no servers. All data (player name, progress, stars, custom lessons) is stored **exclusively on the device** (LocalStorage). We do not have access to this information.
 
 ### 2. Uso de IA (AI Usage)
 *   **PT**: Quando usamos a IA (Google Gemini) para gerar textos, enviamos apenas prompts anónimos (ex: "Cria uma frase com a letra A"). **Nenhum dado do perfil da criança é enviado para a Google.**
@@ -73,9 +72,9 @@ Este projeto foi desenhado com o princípio de **"Privacy by Design"** para gara
 - **PT**: Ganha **XP** por cada tecla. Sobe de nível para desbloquear **Títulos** fixes (ex: "Mestre das Palavras") e colecionar **Avatares**.
 - **EN**: Earn **XP** for every key pressed. Level up to unlock cool **Titles** and collect fun **Avatars**.
 
-### 5. Área de Pais e Professores
-- **PT**: Uma área dedicada para ver o tempo de jogo, sessões completas e gerir perfis de vários alunos no mesmo dispositivo.
-- **EN**: A dedicated area to view play time, sessions completed, and manage multiple student profiles on the same device.
+### 5. Área de Pais e Professores (v1.4.0)
+- **PT**: Uma área dedicada para gerir perfis, criar **Lições Personalizadas**, exportar backups de segurança e imprimir **Diplomas**.
+- **EN**: A dedicated area to manage profiles, create **Custom Lessons**, export security backups, and print **Diplomas**.
 
 ### 6. Inteligência Artificial (Gemini)
 - **PT**: Integração Google Gemini gera frases únicas a cada vez • Vocabulário consciente do contexto • Geração de exercícios focados nos erros.
@@ -119,6 +118,7 @@ graph TD
 | **Motor IA** | Google GenAI SDK | Geração Dinâmica de Conteúdo |
 | **Gráficos** | Recharts | Visualização de Progresso |
 | **Ícones** | Lucide React | Linguagem Visual |
+| **PDF** | jsPDF | Geração de Certificados (Client-side) |
 
 ---
 

@@ -51,7 +51,14 @@ const StatsBoard: React.FC<StatsBoardProps> = ({ user, history, unlockedLevels, 
   // Chart line color depends on theme
   const mainLineColor = theme === 'blue' ? '#3b82f6' : theme === 'amber' ? '#f59e0b' : '#f43f5e';
 
-  // GENERATE PDF CERTIFICATE (Client-Side)
+  /**
+   * GENERATE PDF CERTIFICATE (Client-Side)
+   * 
+   * PRIVACY NOTE: 
+   * This uses jsPDF to generate the PDF file entirely within the user's browser.
+   * No user data is sent to a server to create this document.
+   * This ensures strict adherence to GDPR and data minimization principles.
+   */
   const handleDownloadDiploma = () => {
       const doc = new jsPDF({
           orientation: "landscape",
