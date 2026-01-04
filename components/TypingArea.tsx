@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Level, SessionResult, GameMode, ErrorStats, Theme } from '../types';
 import { ClayButton } from './ClayButton';
 import VirtualKeyboard from './VirtualKeyboard';
-import { RotateCcw, Timer, X, Check, EyeOff } from 'lucide-react';
+import { RotateCcw, Timer, X, Play, Info, EyeOff } from 'lucide-react';
 import { generateSmartExercise } from '../services/geminiService';
 import { THEME_COLORS } from '../constants';
 
@@ -25,14 +25,17 @@ interface TypingAreaProps {
  * 
  * The core game loop component. Handles:
  * 1. AI Text Generation via 'initLevel'
- * 2. Input capture (using a hidden input field for mobile compatibility)
- * 3. Real-time validation (Hit/Miss)
- * 4. WPM, Accuracy AND Consistency calculation (Phase 4)
- * 5. Timer logic (for Timed mode)
+ * 2. Pre-Game Briefing (Explanation of goals)
+ * 3. Input capture (using a hidden input field for mobile compatibility)
+ * 4. Real-time validation (Hit/Miss)
+ * 5. WPM, Accuracy AND Consistency calculation
+ * 6. Timer logic (for Timed mode)
  */
 const TypingArea: React.FC<TypingAreaProps> = ({ 
     level, mode, errorStats, timeLimit, difficultyModifier = 'normal', blindMode = false, theme, onComplete, onExit 
 }) => {
+  // Game State
+  const [isBriefing, setIsBriefing] = useState(true); // Start in Briefing mode
   const [text, setText] = useState<string>("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [startTime, setStartTime] = useState<number | null>(null);
@@ -58,8 +61,32 @@ const TypingArea: React.FC<TypingAreaProps> = ({
   // Initialize Level: Calls AI service
   const initLevel = useCallback(async () => {
     setLoading(true);
-    const newText = await generateSmartExercise(level, mode, errorStats, difficultyModifier as 'normal' | 'hard');
-    setText(newText);
+    
+    // Safety Timeout: If AI takes too long (>8s), force enable the button with fallback
+    const safetyTimeout = setTimeout(() => {
+        setLoading((currentLoading) => {
+            if (currentLoading) {
+                console.warn("AI generation timed out, using fallback.");
+                setText(level.textSamples[0]);
+                return false;
+            }
+            return currentLoading;
+        });
+    }, 8000);
+
+    try {
+        const newText = await generateSmartExercise(level, mode, errorStats, difficultyModifier as 'normal' | 'hard');
+        clearTimeout(safetyTimeout);
+        setText(newText);
+        setLoading(false);
+    } catch (e) {
+        clearTimeout(safetyTimeout);
+        console.error("Level init error:", e);
+        setText(level.textSamples[0]);
+        setLoading(false);
+    }
+
+    // Reset Game State
     setCurrentIndex(0);
     setSessionErrors(0);
     setSessionErrorMap({});
@@ -68,14 +95,10 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     setLastKeystrokeTime(null);
     setTypedChars("");
     setStartTime(null);
-    setLoading(false);
     
     if (timeLimit) {
         setTimeLeft(timeLimit);
     }
-    
-    // Focus hack to ensure keyboard is ready
-    setTimeout(() => inputRef.current?.focus(), 100);
   }, [level, mode, errorStats, timeLimit, difficultyModifier]);
 
   useEffect(() => {
@@ -85,17 +108,17 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     }
   }, [initLevel]);
 
-  // Maintain focus on hidden input to capture keystrokes
+  // Maintain focus on hidden input to capture keystrokes (Only when NOT in briefing)
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!loading) inputRef.current?.focus();
+      if (!loading && !isBriefing) inputRef.current?.focus();
     }, 1000);
     return () => clearInterval(interval);
-  }, [loading]);
+  }, [loading, isBriefing]);
 
   // Timer Countdown Logic
   useEffect(() => {
-    if (startTime && timeLimit && timeLeft !== null) {
+    if (startTime && timeLimit && timeLeft !== null && !isBriefing) {
         timerRef.current = window.setInterval(() => {
             setTimeLeft(prev => {
                 if (prev === null || prev <= 0) {
@@ -109,7 +132,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     return () => {
         if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [startTime, timeLimit]);
+  }, [startTime, timeLimit, isBriefing]);
 
   // Auto-finish when time runs out
   useEffect(() => {
@@ -117,6 +140,12 @@ const TypingArea: React.FC<TypingAreaProps> = ({
           finishLevel();
       }
   }, [timeLeft]);
+
+  const handleStartGame = () => {
+      setIsBriefing(false);
+      // Slight delay to ensure DOM update before focus
+      setTimeout(() => inputRef.current?.focus(), 100);
+  };
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
      // Controlled input handler is empty because we use onKeyDown for granular control 
@@ -127,18 +156,19 @@ const TypingArea: React.FC<TypingAreaProps> = ({
    * Compares key press against target char.
    */
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Ignore if briefing or loading
+    if (loading || isBriefing || (timeLeft === 0)) return;
+
     // Ignore navigation keys
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
         e.preventDefault();
         return;
     }
-    
-    if (loading || (timeLeft === 0)) return;
 
     const char = e.key;
     const targetChar = text[currentIndex];
 
-    // Ignore modifier keys or multi-char events (except Backspace if we supported it)
+    // Ignore modifier keys or multi-char events
     if (char.length > 1 && char !== 'Backspace' && !['Shift'].includes(char)) return; 
     if (char === 'Shift' || char === 'Alt' || char === 'Control' || char === 'CapsLock') return;
 
@@ -162,14 +192,13 @@ const TypingArea: React.FC<TypingAreaProps> = ({
       // Phase 4: Rhythm Tracking
       if (lastKeystrokeTime) {
           const interval = now - lastKeystrokeTime;
-          // Filter out unnaturally long pauses (e.g., getting water) for calculating pure rhythm
           if (interval < 2000) { 
               setKeystrokeIntervals(prev => [...prev, interval]);
           }
       }
       setLastKeystrokeTime(now);
 
-      // Track correct stats (Used to heal/decay the error history)
+      // Track correct stats
       setSessionCorrectMap(prev => ({
           ...prev,
           [targetChar]: (prev[targetChar] || 0) + 1
@@ -181,7 +210,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({
       // Check Completion
       if (nextIndex >= text.length) {
         if (mode === GameMode.Timed) {
-            // In timed mode, append text to loop infinitely until time runs out
             setText(prev => prev + " " + prev);
         } else {
             finishLevel();
@@ -190,8 +218,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     } else {
       // -- ERROR --
       setSessionErrors(prev => prev + 1);
-      
-      // Track specific error for the "Error Drill" mode generation
       setSessionErrorMap(prev => ({
           ...prev,
           [targetChar]: (prev[targetChar] || 0) + 1
@@ -217,17 +243,13 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     const grossWpm = Math.round((totalTyped / 5) / (durationMin || 0.001)); 
     const accuracy = totalTyped > 0 ? Math.round(((totalTyped - sessionErrors) / totalTyped) * 100) : 0;
     
-    // Phase 4: Consistency Calculation (CV based)
+    // Phase 4: Consistency Calculation
     let consistency = 100;
     if (keystrokeIntervals.length > 2) {
         const mean = keystrokeIntervals.reduce((a, b) => a + b, 0) / keystrokeIntervals.length;
         const variance = keystrokeIntervals.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / keystrokeIntervals.length;
         const stdDev = Math.sqrt(variance);
-        // CV = Coefficient of Variation. Lower is better.
-        // CV of 0.1 is amazing. CV of 0.5 is choppy.
         const cv = stdDev / (mean || 1); 
-        // Map CV to 0-100 score. 
-        // Logic: 0 CV = 100 score. 0.5 CV = 50 score. >1 CV = 0 score.
         consistency = Math.max(0, Math.round(100 - (cv * 100)));
     }
 
@@ -249,6 +271,76 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     }, sessionErrorMap, sessionCorrectMap);
   };
 
+  // Render the Briefing Overlay (Now a Fixed Modal)
+  const renderBriefing = () => {
+      // Determine what to show based on mode
+      let title = level.title;
+      let description = level.description;
+      let goal = "Chega ao fim do exercício para passares de nível!";
+      let keys = level.newKeys;
+
+      if (mode === GameMode.Timed) {
+          title = "Desafio de Tempo";
+          description = "Escreve o máximo que conseguires antes que o tempo acabe!";
+          goal = "Mantém a velocidade e não pares!";
+          keys = [];
+      } else if (mode === GameMode.ErrorDrill) {
+          title = "Treino de Erros";
+          description = "Vamos focar nas teclas onde tens mais dificuldade.";
+          goal = "Atenção redobrada para eliminar erros!";
+          keys = [];
+      } else if (mode === GameMode.Story) {
+          title = "Hora do Conto";
+          description = "Escreve uma pequena história.";
+          goal = "Lê e escreve ao mesmo tempo. Diverte-te!";
+      }
+
+      return (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+             <div className="absolute inset-0 bg-white/80 backdrop-blur-md transition-all"></div>
+             <motion.div 
+                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                className="bg-white relative z-30 p-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border-4 border-white max-w-lg w-full text-center"
+             >
+                 <div className={`w-20 h-20 ${colors.bg} rounded-full flex items-center justify-center mx-auto mb-6 text-white shadow-lg`}>
+                     <Info size={40} />
+                 </div>
+                 
+                 <h2 className="text-3xl md:text-4xl font-bold text-slate-700 fun-font mb-4">{title}</h2>
+                 <p className="text-lg text-slate-500 font-medium mb-8 leading-relaxed">{description}</p>
+                 
+                 {keys.length > 0 && (
+                     <div className="mb-8 bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                         <p className="text-xs uppercase font-bold text-slate-400 tracking-widest mb-4">Novas Teclas</p>
+                         <div className="flex justify-center gap-3 flex-wrap">
+                             {keys.map(k => (
+                                 <span key={k} className="bg-white text-slate-700 font-mono font-bold text-2xl px-4 py-3 rounded-xl shadow-sm border-b-4 border-slate-200 min-w-[3rem]">
+                                     {k === ' ' ? 'Espaço' : k.replace('Shift', '⇧')}
+                                 </span>
+                             ))}
+                         </div>
+                     </div>
+                 )}
+
+                 <div className={`${colors.bgSoft} p-4 rounded-xl mb-8 border ${colors.border}`}>
+                     <p className={`${colors.text} font-bold text-sm`}>🎯 Objetivo: {goal}</p>
+                 </div>
+
+                 <ClayButton 
+                    variant="primary" 
+                    theme={theme} 
+                    onClick={handleStartGame}
+                    disabled={loading}
+                    className="w-full py-4 text-xl shadow-xl hover:scale-[1.02] active:scale-95 transition-transform"
+                 >
+                     {loading ? 'A preparar...' : 'Começar!'}
+                 </ClayButton>
+             </motion.div>
+        </div>
+      );
+  };
+
   // Renders the scrolling text area
   const renderText = () => {
     const visibleStart = Math.max(0, currentIndex - 8); 
@@ -256,7 +348,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     const displayText = text.slice(visibleStart, visibleEnd);
 
     return (
-      <div className="flex flex-wrap justify-center gap-2 text-4xl md:text-5xl font-bold font-mono leading-relaxed min-h-[160px] content-center py-8 px-4">
+      <div className="flex flex-wrap justify-center gap-2 text-4xl md:text-5xl font-bold font-mono leading-relaxed min-h-[160px] content-center py-8 px-4 select-none">
         {displayText.split('').map((char, idx) => {
           const actualIdx = visibleStart + idx;
           const isCurrent = actualIdx === currentIndex;
@@ -295,14 +387,16 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     );
   };
 
-  if (loading) {
-     return <div className={`flex items-center justify-center h-[50vh] text-2xl font-bold ${colors.textSoft} animate-pulse`}>A preparar o palco...</div>
-  }
-
   return (
-    <div className="flex flex-col items-center justify-between min-h-screen pb-10 px-4">
+    <div className="flex flex-col items-center justify-between min-h-screen pb-10 px-4 relative">
+        
+        {/* Render Briefing as a Modal Overlay */}
+        <AnimatePresence>
+            {isBriefing && renderBriefing()}
+        </AnimatePresence>
+
         {/* Header / HUD */}
-        <div className="w-full max-w-5xl flex justify-between items-center py-6">
+        <div className={`w-full max-w-5xl flex justify-between items-center py-6 transition-all duration-500 ${isBriefing ? 'blur-sm opacity-50' : ''}`}>
             <ClayButton variant="secondary" onClick={onExit} className="px-4 py-2 text-sm">
                 <RotateCcw size={16} className="mr-2" /> Sair
             </ClayButton>
@@ -338,22 +432,24 @@ const TypingArea: React.FC<TypingAreaProps> = ({
         </div>
 
         {/* Typing Stage */}
-        <div className="flex-1 w-full max-w-4xl flex flex-col justify-center items-center">
+        <div className={`flex-1 w-full max-w-4xl flex flex-col justify-center items-center transition-all duration-500 ${isBriefing ? 'blur-sm opacity-50' : ''}`}>
             <motion.div 
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="w-full bg-white rounded-[3rem] shadow-[0px_20px_40px_-10px_rgba(0,0,0,0.05)] border border-white p-4 md:p-8 relative overflow-hidden"
+                className="w-full bg-white rounded-[3rem] shadow-[0px_20px_40px_-10px_rgba(0,0,0,0.05)] border border-white p-4 md:p-8 relative overflow-hidden min-h-[250px] flex items-center justify-center"
             >
                 {/* Stage Light Effect */}
                 <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-20 ${colors.bg} opacity-5 blur-3xl rounded-full pointer-events-none`}></div>
                 
-                {mode === GameMode.Timed && (
-                    <div className={`text-center ${colors.textSoft} text-sm mb-4 font-bold uppercase tracking-widest`}>
+                {mode === GameMode.Timed && !isBriefing && (
+                    <div className={`absolute top-4 left-0 right-0 text-center ${colors.textSoft} text-sm font-bold uppercase tracking-widest`}>
                         Modo Rápido
                     </div>
                 )}
                 
+                {/* Always render text, but Briefing overlay covers it if active */}
                 {renderText()}
+
             </motion.div>
             
             {/* Hidden input sink to capture keyboard events on mobile/desktop */}
@@ -364,16 +460,15 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                 value={typedChars}
                 onChange={handleInput}
                 onKeyDown={handleKeyDown}
-                onBlur={() => setTimeout(() => inputRef.current?.focus(), 10)}
-                autoFocus
+                onBlur={() => setTimeout(() => !isBriefing && inputRef.current?.focus(), 10)}
             />
         </div>
 
         {/* 3D Keyboard */}
-        <div className="w-full">
+        <div className={`w-full transition-all duration-500 ${isBriefing ? 'blur-sm opacity-50' : ''}`}>
             <VirtualKeyboard 
-                activeKey={text[currentIndex]} 
-                nextKey={text[currentIndex + 1]} 
+                activeKey={isBriefing ? null : text[currentIndex]} 
+                nextKey={isBriefing ? null : text[currentIndex + 1]} 
                 theme={theme}
                 showLabels={!blindMode} // Pass Blind Mode toggle
             />

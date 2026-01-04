@@ -13,7 +13,7 @@ import PrivacyModal from './components/PrivacyModal';
 import CookieBanner from './components/CookieBanner';
 import HandGuideModal from './components/HandGuideModal';
 import { ClayButton } from './components/ClayButton';
-import { Shield, Zap, Star, LogOut } from 'lucide-react';
+import { Shield, Zap, Star, LogOut, Heart, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 /**
@@ -331,7 +331,8 @@ const App: React.FC = () => {
   const handleLevelComplete = (result: SessionResult, sessionErrors: ErrorStats, sessionCorrects: ErrorStats) => {
     if (!currentUser) return;
     
-    const isWin = result.stars > 1; 
+    // Win Condition: Now >= 1 star (Level Completion) is enough to progress
+    const isWin = result.stars >= 1; 
     setJustUnlockedAchievement(null);
     setLevelUpData(null);
 
@@ -471,7 +472,14 @@ const App: React.FC = () => {
     } else if (lastResult.mode === GameMode.Story) {
         message = "História completada com sucesso!";
     } else {
-        message = lastResult.stars === 3 ? SUCCESS_MESSAGES[0] : lastResult.stars === 2 ? "Muito bem!" : "Tenta de novo!";
+        message = lastResult.stars === 3 ? SUCCESS_MESSAGES[0] : lastResult.stars === 2 ? "Muito bem!" : "Bom esforço!";
+    }
+
+    // Calculate Next Level Logic
+    let nextLevel = null;
+    if (lastResult.mode === GameMode.Campaign && lastResult.stars >= 1) { // Changed condition to >= 1 star
+        const nextId = lastResult.levelId + 1;
+        nextLevel = LEVELS.find(l => l.id === nextId);
     }
 
     return (
@@ -516,11 +524,32 @@ const App: React.FC = () => {
                 </div>
                 
                 <div className="flex flex-col gap-3">
-                    <ClayButton variant="primary" theme={currentUser.theme} onClick={() => setCurrentScreen(AppScreen.Dashboard)}>
-                        Continuar
-                    </ClayButton>
-                    <ClayButton variant="secondary" onClick={() => handleStartLevel(activeLevel)}>
-                        Tentar de Novo
+                    {/* Next Level Button (Primary) */}
+                    {nextLevel && (
+                        <ClayButton 
+                            variant="primary" 
+                            theme={currentUser.theme} 
+                            onClick={() => handleStartLevel(nextLevel as Level)}
+                            className="w-full py-3"
+                        >
+                            Próximo Nível <ArrowRight size={18} className="ml-2" />
+                        </ClayButton>
+                    )}
+
+                    {/* Retry Button (Secondary if won, Primary if lost) */}
+                    {!nextLevel && (
+                        <ClayButton 
+                            variant={lastResult.stars < 2 ? "primary" : "secondary"}
+                            theme={currentUser.theme}
+                            onClick={() => handleStartLevel(activeLevel)}
+                        >
+                            Tentar de Novo
+                        </ClayButton>
+                    )}
+                    
+                    {/* Return to Menu */}
+                    <ClayButton variant="secondary" onClick={() => setCurrentScreen(AppScreen.Dashboard)}>
+                        Menu Principal
                     </ClayButton>
                 </div>
             </motion.div>
@@ -565,7 +594,7 @@ const App: React.FC = () => {
           <div className={`absolute bottom-[-20%] left-[20%] w-[500px] h-[500px] ${BlobColor3} rounded-full mix-blend-multiply filter blur-[80px] opacity-40 animate-blob animation-delay-4000 transition-colors duration-1000`}></div>
       </div>
 
-      <div className="flex-grow relative z-10">
+      <div className="flex-grow flex flex-col relative z-10">
         <header className="px-6 py-4 flex justify-between items-center max-w-7xl mx-auto w-full">
              <div className="flex items-center gap-2">
                  <div className={`${colors.bg} text-white p-2 rounded-xl shadow-lg ${colors.shadow} transition-colors duration-300`}>
@@ -586,64 +615,74 @@ const App: React.FC = () => {
                  <button onClick={handleLogout} className="text-slate-400 hover:text-red-500 transition" title="Sair">
                     <LogOut size={20} />
                  </button>
-
-                 <button onClick={() => setShowPrivacyModal(true)} className="text-slate-400 hover:text-slate-600 transition">
-                     <Shield size={20} />
-                 </button>
              </div>
         </header>
 
         {/* --- ROUTER VIEW --- */}
-        {currentScreen === AppScreen.Dashboard && (
-          <LevelSelector 
-              levels={LEVELS} 
-              unlockedLevels={currentUser.unlockedLevels}
-              gameState={currentUser as any} // Cast for compatibility with shared props
-              onSelectLevel={(l) => handleStartLevel(l)}
-              onSelectTimedMode={handleStartTimedMode}
-              onSelectErrorMode={handleStartErrorMode}
-              onSelectStoryMode={handleStartStoryMode}
-              onViewStats={() => setCurrentScreen(AppScreen.Stats)} 
-              onChangeAvatar={handleChangeAvatar}
-              onShowHandGuide={() => setShowHandGuide(true)}
-              onToggleBlindMode={setBlindMode}
-              isBlindMode={blindMode}
-          />
-        )}
-        
-        {currentScreen === AppScreen.Exercise && (
-          <TypingArea 
-              level={activeLevel}
-              mode={activeMode}
-              theme={currentUser.theme}
-              errorStats={currentUser.errorStats}
-              timeLimit={timeLimit}
-              difficultyModifier={difficultyModifier}
-              blindMode={blindMode}
-              onComplete={handleLevelComplete}
-              onExit={() => setCurrentScreen(AppScreen.Dashboard)}
-          />
-        )}
-
-        {currentScreen === AppScreen.Result && lastResult && renderResultScreen()}
-
-        {currentScreen === AppScreen.Stats && (
-            <StatsBoard 
-              history={currentUser.history} 
-              unlockedLevels={currentUser.unlockedLevels}
-              levels={LEVELS}
-              achievements={currentUser.achievements}
-              theme={currentUser.theme}
-              onBack={() => setCurrentScreen(AppScreen.Dashboard)}
-              onViewAchievements={() => setCurrentScreen(AppScreen.Achievements)}
+        <div className="flex-grow">
+            {currentScreen === AppScreen.Dashboard && (
+            <LevelSelector 
+                levels={LEVELS} 
+                unlockedLevels={currentUser.unlockedLevels}
+                gameState={currentUser as any} // Cast for compatibility with shared props
+                onSelectLevel={(l) => handleStartLevel(l)}
+                onSelectTimedMode={handleStartTimedMode}
+                onSelectErrorMode={handleStartErrorMode}
+                onSelectStoryMode={handleStartStoryMode}
+                onViewStats={() => setCurrentScreen(AppScreen.Stats)} 
+                onChangeAvatar={handleChangeAvatar}
+                onShowHandGuide={() => setShowHandGuide(true)}
+                onToggleBlindMode={setBlindMode}
+                isBlindMode={blindMode}
             />
-        )}
-
-        {currentScreen === AppScreen.Achievements && (
-            <AchievementsScreen
-              unlockedIds={currentUser.achievements}
-              onBack={() => setCurrentScreen(AppScreen.Stats)}
+            )}
+            
+            {currentScreen === AppScreen.Exercise && (
+            <TypingArea 
+                level={activeLevel}
+                mode={activeMode}
+                theme={currentUser.theme}
+                errorStats={currentUser.errorStats}
+                timeLimit={timeLimit}
+                difficultyModifier={difficultyModifier}
+                blindMode={blindMode}
+                onComplete={handleLevelComplete}
+                onExit={() => setCurrentScreen(AppScreen.Dashboard)}
             />
+            )}
+
+            {currentScreen === AppScreen.Result && lastResult && renderResultScreen()}
+
+            {currentScreen === AppScreen.Stats && (
+                <StatsBoard 
+                history={currentUser.history} 
+                unlockedLevels={currentUser.unlockedLevels}
+                levels={LEVELS}
+                achievements={currentUser.achievements}
+                theme={currentUser.theme}
+                onBack={() => setCurrentScreen(AppScreen.Dashboard)}
+                onViewAchievements={() => setCurrentScreen(AppScreen.Achievements)}
+                />
+            )}
+
+            {currentScreen === AppScreen.Achievements && (
+                <AchievementsScreen
+                unlockedIds={currentUser.achievements}
+                onBack={() => setCurrentScreen(AppScreen.Stats)}
+                />
+            )}
+        </div>
+
+        {/* --- FOOTER with Angolan Reference --- */}
+        {currentScreen !== AppScreen.Exercise && (
+            <footer className="w-full max-w-7xl mx-auto p-6 text-center text-slate-400 text-sm font-bold flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
+                <span className="flex items-center gap-2">
+                    Feito com <Heart size={14} className="text-red-400 fill-red-400" /> para a educação em Portugal e Angola 🇵🇹 🇦🇴
+                </span>
+                <button onClick={() => setShowPrivacyModal(true)} className="flex items-center gap-1 hover:text-slate-600 transition-colors">
+                     <Shield size={14} /> Privacidade e Dados
+                </button>
+            </footer>
         )}
       </div>
 

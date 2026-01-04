@@ -350,9 +350,20 @@ export const LEVELS: Level[] = [
     id: 11,
     title: "O Contador de Histórias",
     description: "Escreve pequenas histórias completas.",
-    newKeys: [], // No new keys, just integration
-    allKeys: ['f', 'j', ' ', 'd', 'k', 's', 'l', 'a', 'ç', 'e', 'i', 'r', 'u', 'ShiftLeft', 'ShiftRight', '.', ',', ';', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '?', '!', '-'],
-    textSamples: ["Era uma vez um gato que sabia ler.", "O sol brilha no céu azul de Lisboa.", "A Ana foi à praia com o seu cão."],
+    newKeys: [], 
+    // Implicitly unlock full keyboard for story mode to allow richer vocabulary
+    allKeys: [
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+        'ç', ' ', 'ShiftLeft', 'ShiftRight', 
+        '.', ',', ';', '?', '!', '-', 
+        '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'
+    ],
+    textSamples: [
+        "A Ana vive em Luanda e gosta de ler.", 
+        "O Zola viu uma Palanca Negra gigante.", 
+        "Em Lisboa e Benguela o sol brilha muito.",
+        "Era uma vez um gato que sabia ler."
+    ],
     difficulty: 'hard',
     minWpm: 15,
     minAccuracy: 92
