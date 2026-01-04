@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { KEYBOARD_LAYOUTS, FINGER_NAMES, THEME_COLORS } from '../constants';
@@ -16,7 +15,6 @@ interface VirtualKeyboardProps {
 const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, theme = 'rose', showLabels = true, layout = 'qwerty' }) => {
   
   const colors = THEME_COLORS[theme];
-  // Select the correct layout configuration
   const currentLayout = KEYBOARD_LAYOUTS[layout] || KEYBOARD_LAYOUTS['qwerty'];
 
   const decomposeAccent = (char: string | null): [string | null, string | null, boolean] => {
@@ -45,9 +43,8 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
          return 'ShiftLeft';
      }
      
-     // Special handling for AZERTY where numbers need shift
      if (layout === 'azerty' && /[0-9]/.test(char)) {
-         return 'ShiftLeft'; // Or Right, generally doesn't matter much for numbers but standard is shift
+         return 'ShiftLeft'; 
      }
      
      if ("!\"#$%&/()=?*".includes(char)) {
@@ -81,7 +78,6 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
       if (!found) {
           found = flat.find(k => k.subLabel === key);
       }
-      // Fallback for AZERTY numbers which are subLabels usually but treated as main input
       if (!found && layout === 'azerty') {
            found = flat.find(k => k.subLabel === key);
       }
@@ -182,7 +178,6 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
             </>
         )}
         
-        {/* Tactile Bumps for F/J (Qwerty) or F/J (Azerty) - They are actually same position roughly but let's strictly check char */}
         {(config.char === 'f' || config.char === 'j') && (
             <div className={`absolute bottom-2 w-4 h-1 rounded-full ${isActive ? 'bg-black/20' : 'bg-slate-200'}`}></div>
         )}

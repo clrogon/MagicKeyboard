@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Finger, Theme } from '../types';
 
@@ -28,16 +27,6 @@ const THEME_TINTS: Record<Theme, string> = {
   amber: '#fef3c7', // amber-100
 };
 
-/**
- * HandsDisplay Component
- * 
- * Renders a vector-based representation of human hands (SVG).
- * Used in two contexts:
- * 1. "active": Shows above the keyboard, highlighting only the finger needed for the current key.
- * 2. "guide": Shows in the tutorial modal, highlighting all fingers to explain the color coding.
- * 
- * Includes a static background layer ("tinted hands") to improve visual anchoring and follow the theme.
- */
 export const HandsDisplay: React.FC<HandsDisplayProps> = ({ 
     activeFinger, 
     mode = 'active', 
@@ -48,14 +37,10 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
 
   const tintColor = THEME_TINTS[theme];
 
-  // Determine fill color based on state
   const getFingerColor = (finger: Finger) => {
       if (mode === 'guide') {
-          // In guide mode, always show the color
           return FINGER_COLORS[finger];
       }
-      // In active mode, only show color if it's the active finger
-      // Otherwise transparent to let the tinted background show through
       return activeFinger === finger ? FINGER_COLORS[finger] : 'transparent';
   };
 
@@ -64,12 +49,6 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
       return activeFinger === finger ? '#fff' : '#cbd5e1';
   };
 
-  // Simplified: no specific opacity logic needed currently
-  const getOpacity = () => {
-      return 1;
-  }
-
-  // Simplified SVG Paths for fingers (Bezier curves)
   // Left Hand
   const LeftPinky = "M20,80 C15,75 10,50 15,40 C18,35 25,35 28,40 L28,85";
   const LeftRing = "M32,85 L32,30 C32,22 42,22 42,30 L42,85";
@@ -78,7 +57,7 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
   const LeftThumb = "M75,90 L95,70 C100,65 110,75 100,85 L80,105";
   const LeftPalm = "M20,80 L80,105 L80,140 C80,150 30,150 20,130 Z";
 
-  // Right Hand (Mirrored logic)
+  // Right Hand
   const RightPinky = "M180,80 C185,75 190,50 185,40 C182,35 175,35 172,40 L172,85";
   const RightRing = "M168,85 L168,30 C168,22 158,22 158,30 L158,85";
   const RightMiddle = "M154,85 L154,20 C154,12 144,12 144,20 L144,85";
@@ -92,14 +71,13 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
         fill={getFingerColor(finger)} 
         stroke={getStrokeColor(finger)}
         strokeWidth="3"
-        opacity={getOpacity()}
+        opacity={1}
         className="transition-all duration-200"
       />
   );
 
   const renderBackgroundLayer = () => (
       <g className="opacity-80">
-        {/* Left Hand Tint */}
         <path d={LeftPalm} fill={tintColor} stroke="none" />
         <path d={LeftPinky} fill={tintColor} stroke="none" />
         <path d={LeftRing} fill={tintColor} stroke="none" />
@@ -107,7 +85,6 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
         <path d={LeftIndex} fill={tintColor} stroke="none" />
         <path d={LeftThumb} fill={tintColor} stroke="none" />
 
-        {/* Right Hand Tint */}
         <path d={RightPalm} fill={tintColor} stroke="none" />
         <path d={RightPinky} fill={tintColor} stroke="none" />
         <path d={RightRing} fill={tintColor} stroke="none" />
@@ -125,12 +102,8 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
             viewBox="0 0 200 160" 
             xmlns="http://www.w3.org/2000/svg"
         >
-            {/* Background Hand Layer (Static Tinted Image) */}
             {renderBackgroundLayer()}
-
-            {/* Foreground Layer (Active/Guide Fingers) */}
             <g className="filter drop-shadow-sm">
-                {/* Left Hand */}
                 <path d={LeftPalm} fill="transparent" stroke="#e2e8f0" strokeWidth="2" />
                 {renderFinger(LeftPinky, Finger.LeftPinky)}
                 {renderFinger(LeftRing, Finger.LeftRing)}
@@ -138,7 +111,6 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
                 {renderFinger(LeftIndex, Finger.LeftIndex)}
                 {renderFinger(LeftThumb, Finger.Thumb)}
 
-                {/* Right Hand */}
                 <path d={RightPalm} fill="transparent" stroke="#e2e8f0" strokeWidth="2" />
                 {renderFinger(RightPinky, Finger.RightPinky)}
                 {renderFinger(RightRing, Finger.RightRing)}

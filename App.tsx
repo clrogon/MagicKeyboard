@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { AppState, UserProfile, AppScreen, Level, SessionResult, GameMode, ErrorStats, Theme, CustomLesson, KeyboardLayout } from './types';
@@ -13,33 +12,10 @@ import PrivacyModal from './components/PrivacyModal';
 import CookieBanner from './components/CookieBanner';
 import HandGuideModal from './components/HandGuideModal';
 import ScreenRestriction from './components/ScreenRestriction';
-import { ClayButton } from './components/ClayButton';
 import { Shield, Zap, Star, LogOut, Heart, ArrowRight, Download, WifiOff, Unlock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { audioService } from './services/audioService';
-
-/**
- * Teclado Mágico (Magic Keyboard) - v1.4.0
- * 
- * ARCHITECTURE & DATA SOVEREIGNTY NOTICE:
- * 
- * This application follows a strict "Local-First" architecture to ensure GDPR compliance 
- * and protect the privacy of children.
- * 
- * 1. NO BACKEND DATABASE: All user data (progress, XP, profiles) is stored exclusively 
- *    in the user's browser using `localStorage`. We do not have servers collecting this data.
- * 
- * 2. DATA PORTABILITY: The Parent Dashboard allows users to Export (Backup) and Import 
- *    their data via JSON files, ensuring they own their data and can move it between devices.
- * 
- * 3. OFFLINE CAPABILITY: As a PWA (Progressive Web App), the core game loop functions 
- *    entirely offline. Network access is only used for:
- *    - Loading the App initially.
- *    - Generating dynamic text via Google Gemini API (which can be disabled/fails gracefully).
- * 
- * 4. AI ANONYMITY: Interactions with the AI model are stateless and anonymous. No PII 
- *    (Personally Identifiable Information) is ever sent to the AI provider.
- */
+import { ClayButton } from './components/ClayButton';
 
 const App: React.FC = () => {
   // Initialize state from LocalStorage (Persistence Layer)
@@ -48,7 +24,6 @@ const App: React.FC = () => {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        // Migration logic for older versions (pre-v1.2.0 single user)
         if (!parsed.users) {
             const legacyUser: UserProfile = {
                 id: 'legacy',
@@ -73,7 +48,6 @@ const App: React.FC = () => {
             };
         }
         
-        // Ensure all users have layout property (Migration for v1.5.0)
         const migratedUsers = { ...parsed.users };
         Object.keys(migratedUsers).forEach(key => {
             if (!migratedUsers[key].layout) {
@@ -84,13 +58,12 @@ const App: React.FC = () => {
         return {
             ...parsed,
             users: migratedUsers,
-            customLessons: parsed.customLessons || [] // Ensure customLessons exists (v1.4.0)
+            customLessons: parsed.customLessons || []
         };
       } catch (e) {
           console.error("Save migration failed", e);
       }
     }
-    // Default initial state
     return {
       users: {},
       activeUserId: null,
@@ -234,7 +207,6 @@ const App: React.FC = () => {
   };
 
   const handleOpenParentDashboard = () => {
-    // Simple math challenge to prevent accidental child access
     const num1 = Math.floor(Math.random() * 5) + 3; 
     const num2 = Math.floor(Math.random() * 4) + 2; 
     const answer = prompt(`Controlo Parental:\nQuanto é ${num1} + ${num2}?`);
@@ -259,7 +231,6 @@ const App: React.FC = () => {
       });
   };
 
-  // Add a Custom Lesson to the Global State (v1.4.0)
   const handleAddCustomLesson = (lesson: CustomLesson) => {
       setAppState(prev => ({
           ...prev,
@@ -267,7 +238,6 @@ const App: React.FC = () => {
       }));
   };
 
-  // Remove a Custom Lesson
   const handleDeleteCustomLesson = (lessonId: string) => {
       if (!window.confirm("Apagar esta lição?")) return;
       setAppState(prev => ({
@@ -276,7 +246,6 @@ const App: React.FC = () => {
       }));
   };
 
-  // Import external Data (GDPR / Portability)
   const handleImportData = (newState: AppState) => {
       setAppState(newState);
       alert("Dados importados com sucesso! A página vai recarregar.");
@@ -289,7 +258,6 @@ const App: React.FC = () => {
   };
 
   const handleClearData = () => {
-    // Complete wipe of local storage for the app domain
     localStorage.removeItem('keyboardHeroState');
     localStorage.removeItem('cookieConsent');
     window.location.reload();
@@ -316,8 +284,6 @@ const App: React.FC = () => {
       }
   };
 
-  // --- Game Mode Handlers ---
-
   const handleStartLevel = (level: Level, modifier: 'normal' | 'hard' = 'normal') => {
     setActiveLevel(level);
     setActiveMode(GameMode.Campaign);
@@ -328,7 +294,6 @@ const App: React.FC = () => {
 
   const handleStartTimedMode = (duration: number) => {
       if (!currentUser) return;
-      // Gather known keys from unlocked levels
       const maxUnlocked = Math.max(...currentUser.unlockedLevels);
       const unlockedKeys = LEVELS.filter(l => l.id <= maxUnlocked).flatMap(l => l.newKeys);
       const uniqueKeys = Array.from(new Set(unlockedKeys));
@@ -424,14 +389,13 @@ const App: React.FC = () => {
   };
 
   const handleStartCustomLesson = (lesson: CustomLesson) => {
-      // Map CustomLesson to Level structure
       const customLevel: Level = {
-          id: -100, // ID for custom lessons
+          id: -100,
           title: lesson.title,
           description: lesson.description,
           newKeys: [],
-          allKeys: [], // Custom lessons assume all keys usually
-          textSamples: [lesson.content], // Use the custom content as the "sample"
+          allKeys: [], 
+          textSamples: [lesson.content],
           difficulty: 'medium',
           minWpm: 0,
           minAccuracy: 0
@@ -444,7 +408,6 @@ const App: React.FC = () => {
       setCurrentScreen(AppScreen.Exercise);
   };
 
-  // Helper: Check for 7 day streak
   const checkStreak = (history: SessionResult[]) => {
       const dates = [...new Set(history.map(h => h.date.split('T')[0]))].sort();
       if (dates.length < 7) return false;
@@ -479,7 +442,6 @@ const App: React.FC = () => {
     setLevelUpData(null);
     setLevelUnlocked(null);
 
-    // Audio & Visual Feedback
     if (isWin || result.mode === GameMode.Timed || result.mode === GameMode.Story || result.mode === GameMode.Custom || result.mode === GameMode.Dictation) {
        if (currentUser.soundEnabled) audioService.playWin();
        
@@ -503,7 +465,6 @@ const App: React.FC = () => {
     let newUnlocked = [...currentUser.unlockedLevels];
     let newAchievements = [...currentUser.achievements];
     
-    // Unlock Logic
     if (result.mode === GameMode.Campaign && isWin && result.levelId === Math.max(...currentUser.unlockedLevels)) {
         const nextLevelId = result.levelId + 1;
         if (LEVELS.find(l => l.id === nextLevelId) && !newUnlocked.includes(nextLevelId)) {
@@ -512,7 +473,6 @@ const App: React.FC = () => {
         }
     }
 
-    // Error Heatmap Logic (Weighted Decay)
     const newErrorStats = { ...currentUser.errorStats };
     Object.entries(sessionErrors).forEach(([char, count]) => {
         newErrorStats[char] = (newErrorStats[char] || 0) + count;
@@ -525,7 +485,6 @@ const App: React.FC = () => {
         }
     });
 
-    // Achievement Logic
     const checkForAchievement = (id: string, condition: boolean) => {
         if (condition && !newAchievements.includes(id)) {
             newAchievements.push(id);
@@ -542,10 +501,8 @@ const App: React.FC = () => {
     checkForAchievement('error_crusher', result.mode === GameMode.ErrorDrill && result.accuracy === 100 && result.levelId === -2);
     checkForAchievement('time_lord', result.mode === GameMode.Timed && (result.duration || 0) >= 1 && result.wpm >= 30);
 
-    // XP & Leveling Logic
     let sessionXp = calculateSessionXp(result);
     
-    // Daily Challenge Logic
     let daily = currentUser.dailyChallenge ? { ...currentUser.dailyChallenge } : null;
     if (daily && !daily.completed) {
         let increment = 0;
@@ -786,10 +743,8 @@ const App: React.FC = () => {
   return (
     <div className="font-sans text-slate-800 min-h-screen flex flex-col relative overflow-hidden transition-colors duration-500">
       
-      {/* Screen Restriction (Blocks Mobile) */}
       <ScreenRestriction />
 
-      {/* Background Blobs (Optimization: CSS-only animation) */}
       <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
           <div className={`absolute top-[-10%] left-[-10%] w-[500px] h-[500px] ${BlobColor1} rounded-full mix-blend-multiply filter blur-[80px] opacity-40 animate-blob transition-colors duration-1000`}></div>
           <div className={`absolute top-[-10%] right-[-10%] w-[500px] h-[500px] ${BlobColor2} rounded-full mix-blend-multiply filter blur-[80px] opacity-40 animate-blob animation-delay-2000 transition-colors duration-1000`}></div>

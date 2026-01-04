@@ -1,9 +1,10 @@
 import React from 'react';
 import { Level, UserProfile, CustomLesson } from '../types';
 import { ClayButton } from './ClayButton';
-import { Lock, Play, Clock, AlertCircle, RefreshCw, Trophy, Shield, Crown, Eye, EyeOff, BookOpen, Volume2, VolumeX, Edit3, Mic } from 'lucide-react';
+import { Lock, Play, Clock, AlertCircle, Trophy, Shield, Crown, Eye, EyeOff, BookOpen, Volume2, VolumeX, Edit3, Mic } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getXpForNextLevel, THEME_COLORS } from '../constants';
+import { RefreshCw } from 'lucide-react';
 
 interface LevelSelectorProps {
   levels: Level[];
@@ -14,7 +15,7 @@ interface LevelSelectorProps {
   onSelectTimedMode: (duration: number) => void;
   onSelectErrorMode: () => void;
   onSelectStoryMode: () => void;
-  onSelectDictationMode: () => void; // Added
+  onSelectDictationMode: () => void; 
   onSelectCustomLesson: (lesson: CustomLesson) => void;
   onViewStats: () => void;
   onChangeAvatar: () => void;

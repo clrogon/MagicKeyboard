@@ -158,15 +158,13 @@ const TypingArea: React.FC<TypingAreaProps> = ({
 
   const speakText = (textToSpeak: string) => {
       if (!window.speechSynthesis) return;
-      // Cancel previous speech to avoid queue buildup
       window.speechSynthesis.cancel();
       
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
-      utterance.lang = 'pt-PT'; // Prefer European Portuguese
-      utterance.rate = 0.8; // Slightly slower for children
-      utterance.pitch = 1.1; // Slightly friendlier pitch
+      utterance.lang = 'pt-PT';
+      utterance.rate = 0.8;
+      utterance.pitch = 1.1;
       
-      // Fallback if pt-PT not found (though browsers often handle 'pt' generic)
       const voices = window.speechSynthesis.getVoices();
       const ptVoice = voices.find(v => v.lang.includes('pt-PT')) || voices.find(v => v.lang.includes('pt'));
       if (ptVoice) utterance.voice = ptVoice;
@@ -182,10 +180,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({
       setTimeout(() => inputRef.current?.focus(), 100);
   };
 
-  /**
-   * Core Game Logic for validating a single character input.
-   * Extracted to support both KeyDown (standard) and CompositionEnd (accents).
-   */
   const validateInput = (char: string) => {
       if (loading || isBriefing || (timeLeft === 0)) return;
       
@@ -198,9 +192,8 @@ const TypingArea: React.FC<TypingAreaProps> = ({
       }
   
       if (char === targetChar) {
-        // Correct
         setTypedChars(prev => prev + char);
-        setConsecutiveErrors(0); // Reset help counter
+        setConsecutiveErrors(0);
         
         if(soundEnabled) audioService.playClick();
         
@@ -220,7 +213,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({
         const nextIndex = currentIndex + 1;
         setCurrentIndex(nextIndex);
   
-        // Feedback Logic
         const progress = nextIndex / text.length;
         if (progress === 1) setMotivationalMessage("Conseguiste! 🎉");
         else if (progress >= 0.9) setMotivationalMessage("Só mais um bocadinho! 🏁");
@@ -237,7 +229,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({
           }
         }
       } else {
-        // Error
         if(soundEnabled) audioService.playError();
         setSessionErrors(prev => prev + 1);
         setConsecutiveErrors(prev => prev + 1);
@@ -251,30 +242,19 @@ const TypingArea: React.FC<TypingAreaProps> = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Basic Filters
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
         e.preventDefault();
         return;
     }
     if (e.key === 'Shift' || e.key === 'Alt' || e.key === 'Control' || e.key === 'CapsLock') return;
-
-    // Handle Backspace (Allow correction visual but game logic doesn't strictly require it in this engine)
     if (e.key === 'Backspace') return; 
 
-    // COMPOSITION GUARD & MACOS ACCENTS:
-    // Critical for European Portuguese support (á, à, ã, ê, etc.).
-    // On macOS and some Linux setups, typing accents (e.g., Option+E or Dead Keys) initiates a "Composition Session".
-    // During this session, the browser fires 'KeyDown' events (often with 'Dead' key), but the character isn't final.
-    // We MUST ignore these intermediate events and rely on 'compositionend' to capture the final resolved character.
-    // Failure to handle this results in double-typing or error registration during accent composition.
     if (e.nativeEvent.isComposing || isComposing.current) {
         return;
     }
 
-    // Explicitly ignore 'Dead' keys (redundant with composition check but safe)
     if (e.key === 'Dead') return;
 
-    // Normal input
     if (e.key.length === 1) {
         validateInput(e.key);
     }
@@ -286,16 +266,10 @@ const TypingArea: React.FC<TypingAreaProps> = ({
 
   const handleCompositionEnd = (e: React.CompositionEvent<HTMLInputElement>) => {
     isComposing.current = false;
-    // The data attribute holds the finalized character(s)
     if (e.data) {
-        // Handle cases where multiple chars might be committed (rare in typing game, but possible)
         const chars = e.data.split('');
         chars.forEach(char => validateInput(char));
     }
-  };
-
-  const handleInput = () => {
-     // Controlled input via state, logic handled in KeyDown/CompositionEnd
   };
 
   const finishLevel = () => {
@@ -338,7 +312,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     }, sessionErrorMap, sessionCorrectMap);
   };
 
-  // Briefing Modal with specific goals - ACCESSIBILITY UPDATE
   const renderBriefing = () => {
       let title = "";
       let description = "";
@@ -404,7 +377,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                  <h2 className="text-3xl md:text-4xl font-bold text-slate-700 fun-font mb-4">{title}</h2>
                  <p className="text-lg text-slate-500 font-medium mb-6 leading-relaxed">{description}</p>
                  
-                 {/* Visual Key Indicators for Children */}
                  {keys.length > 0 && (
                      <div className="mb-6 bg-slate-50 p-6 rounded-2xl border border-slate-100">
                          <p className="text-xs uppercase font-bold text-slate-400 tracking-widest mb-4">Novas Teclas Mágicas</p>
@@ -418,7 +390,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                      </div>
                  )}
 
-                 {/* Visual Goal Card */}
                  <div className={`${colors.bgSoft} p-4 rounded-xl mb-8 border ${colors.border} flex items-center gap-4 text-left`}>
                      <div className={`bg-white p-3 rounded-full ${colors.text}`}>
                         <GoalIcon size={28} />
@@ -460,14 +431,11 @@ const TypingArea: React.FC<TypingAreaProps> = ({
           let className = "relative flex items-center justify-center rounded-2xl transition-all duration-200 ";
           let content = char === ' ' ? '␣' : char;
 
-          // Dictation Masking Logic
           if (mode === GameMode.Dictation && !isPast && !isCurrent) {
               if (char === ' ') {
-                  // Spaces are visible gaps
                   className += "w-12 h-16 md:w-14 md:h-20 text-slate-200 bg-transparent border-b-4 border-slate-100 ";
                   content = '';
               } else {
-                  // Letters are masked
                   className += "w-12 h-16 md:w-14 md:h-20 text-slate-300 ";
                   content = '•'; 
               }
@@ -501,8 +469,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     );
   };
 
-  // Logic to determine if we should show help on the keyboard
-  // In Dictation mode, we only show hint if the user is struggling (consecutive errors)
   const keyboardActiveKey = mode === GameMode.Dictation 
       ? (consecutiveErrors >= 3 ? text[currentIndex] : null) 
       : (isBriefing ? null : text[currentIndex]);
@@ -519,7 +485,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                     <RotateCcw size={16} className="mr-2" /> Sair
                 </ClayButton>
                 
-                {/* Dictation Replay Button */}
                 {mode === GameMode.Dictation && (
                     <ClayButton variant="primary" theme={theme} onClick={() => speakText(text)} className="px-4 py-2 text-sm">
                         <Volume2 size={18} className="mr-2" /> Ouvir de Novo
@@ -573,7 +538,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({
             >
                 <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-20 ${colors.bg} opacity-5 blur-3xl rounded-full pointer-events-none`}></div>
                 
-                {/* Enhanced Visual Progress Bar with Runner */}
                 {text.length > 0 && mode !== GameMode.Timed && (
                     <div className="absolute top-0 left-0 right-0 h-4 bg-slate-100 rounded-t-[2rem] overflow-hidden">
                         <motion.div 
@@ -581,7 +545,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                             initial={{ width: 0 }}
                             animate={{ width: `${(currentIndex / text.length) * 100}%` }}
                         >
-                            {/* Moving Runner Icon */}
                             <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 bg-white rounded-full p-1 shadow-sm border border-slate-100">
                                 <Flag size={10} className={colors.text} fill="currentColor" />
                             </div>
@@ -602,7 +565,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                 type="text"
                 className="opacity-0 absolute top-0 pointer-events-none"
                 value={typedChars}
-                onChange={handleInput}
+                onChange={() => {}}
                 onKeyDown={handleKeyDown}
                 onCompositionStart={handleCompositionStart}
                 onCompositionEnd={handleCompositionEnd}
