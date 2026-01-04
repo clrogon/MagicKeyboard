@@ -81,7 +81,7 @@ graph TD
     end
     
     subgraph "Google Cloud"
-        Gemini[Gemini Flash 1.5 API]
+        Gemini[Gemini 3 Flash API]
     end
 
     App -->|Render| Logic
