@@ -1,51 +1,50 @@
 
 # Changelog
 
+Todas as alterações notáveis a este projeto serão documentadas neste ficheiro.
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.2.0] - 2025-01-29 (The Family & Accessibility Update)
+## [1.3.0] - 2025-02-26 (A Atualização Cultural | The Cultural Update)
 
-### Added
--   **Multi-User Support**: Create multiple profiles on the same device, each with independent progression.
--   **Parent Dashboard**: New protected area for managing users and viewing global statistics (Total Play Time, Sessions).
--   **Theme System**: Users can now choose between **Rose** (Default), **Blue**, and **Amber** themes.
--   **Story Mode**: New game mode using AI to generate creative short stories (requires Level 11 logic).
--   **Blind Mode**: New advanced option to hide key labels on the 3D keyboard to force touch typing.
--   **UX Improvements**: 
-    -   Briefing Card is now a modal overlay to prevent layout clipping.
-    -   Simplified "Level 11" unlock logic for full keyboard storytelling.
+### Adicionado (Added)
+-   **Integração Angola**: Os níveis e a IA agora geram vocabulário específico de Angola (ex: Kwanza, Muxima, Imbondeiro) juntamente com Português de Portugal.
+-   **Níveis Revistos**: Os níveis 4, 5 e 6 foram reestruturados para garantir que todas as letras do alfabeto são ensinadas.
+-   **Footer Informativo**: Créditos atualizados para refletir o foco em Portugal e Angola.
 
-### Changed
--   **Progression**: Relaxed level completion requirement. Players can now advance with **1 Star** (Level Completion) instead of requiring 2 stars.
--   **Data Structure**: Migrated `localStorage` schema to support dictionary of users (`users: {}`) instead of single flat object. Included auto-migration for legacy saves.
+### Alterado (Changed)
+-   **Terminologia Acessível**:
+    -   "Modo Cego" renomeado para **"Teclas Invisíveis"** (Conceito de Magia).
+    -   "Estatísticas" renomeado para **"O Meu Progresso"**.
+    -   "Opções Avançadas" renomeado para **"Desafios Especiais"**.
+    -   "Ferramentas" renomeado para **"Ajudas"**.
+-   **Motor de IA**: O prompt do sistema foi atualizado para rejeitar estritamente termos do Português do Brasil (ex: gerúndio) e forçar referências geográficas locais.
 
-## [1.1.0] - 2025-01-27 (The Progression Update)
+## [1.2.0] - 2025-01-29 (Atualização Família | Family Update)
 
-### Added
--   **XP & Level System**: Users now earn XP for every session based on performance.
--   **Player Profile**: Added Level, XP Bar, dynamic Titles (e.g., "Mestre da Base"), and selectable Avatars.
--   **Daily Challenges**: A new mission is generated daily (e.g., "Get 3 Stars") offering bonus XP.
--   **Hand Guide Modal**: Interactive visual guide explaining the Home Row position and tactile bumps.
--   **Privacy Features**: Added GDPR-compliant Privacy Modal and Cookie Banner with "Clear Data" functionality.
--   **New Achievements**: Added 5 new badges including "Streak", "Symbol Expert", and "Time Lord".
--   **Visual Polish**: Added Framer Motion animations to result screens, key presses, and level selection.
+### Adicionado (Added)
+-   **Suporte Multi-Utilizador**: Criação de múltiplos perfis no mesmo dispositivo.
+-   **Área de Pais**: Dashboard para gestão de utilizadores e visualização de tempo total de jogo.
+-   **Sistema de Temas**: Escolha entre temas Rosa, Azul e Âmbar.
+-   **Modo História**: Geração de pequenas histórias criativas.
 
-### Changed
--   **UI Overhaul**: The Level Selector now features a rich profile header.
--   **Error Decay**: Correct keystrokes now gradually reduce historical error counts for better drill targeting.
--   **Footer**: Added privacy controls and attribution.
+### Alterado (Changed)
+-   **Progressão**: Requisito de nível facilitado (1 Estrela para passar).
+-   **Dados**: Migração da estrutura do `localStorage` para suportar múltiplos utilizadores.
+
+## [1.1.0] - 2025-01-27 (Atualização de Progressão)
+
+### Adicionado
+-   Sistema de XP e Níveis de Jogador.
+-   Títulos e Avatares desbloqueáveis.
+-   Desafios Diários.
+-   Guia de Mãos Interativo.
+-   Sons e Animações (Confetti).
 
 ## [1.0.0] - 2024-05-20
-### Initial Release
--   Basic home row exercises.
--   Campaign mode with 7 levels.
--   Visual keyboard integration.
--   Local storage for progress saving.
--   **Timed Mode**: 30s and 60s speed challenges.
--   **Error Drill Mode**: Custom exercises targeting user's specific weak keys using Gemini AI.
--   **Stats Dashboard**: Visual charts for WPM and Accuracy history.
--   **Confetti**: Celebration effects for level completion.
--   **Localization**: Full European Portuguese (pt-PT) support (Tu/Infinitive).
+### Lançamento Inicial
+-   Motor de digitação básico.
+-   Teclado Virtual 3D.
+-   Integração Gemini AI.

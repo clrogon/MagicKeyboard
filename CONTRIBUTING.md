@@ -1,38 +1,31 @@
-# Contributing to Teclado Mágico
 
-First off, thank you for considering contributing to Teclado Mágico! It's people like you that make tools for education better.
+# Contribuir para o Teclado Mágico | Contributing
 
-## 🇧🇷 vs 🇵🇹 Language Guidelines
+Obrigado por considerares contribuir! / Thank you for contributing!
 
-**Crucial:** This project targets **European/Angolan Portuguese (pt-PT)**.
-When contributing text or UI changes, please adhere to the following strict rules:
+## 🇵🇹 🇦🇴 Diretrizes de Linguagem | Language Guidelines
 
-1.  **Addressing the User**: Always use **"Tu"** (2nd person singular informal). Never use "Você".
-    *   *Correct*: "Tu conseguiste!", "O teu progresso".
-    *   *Incorrect*: "Você conseguiu!", "Seu progresso".
-2.  **Verb Forms**: Avoid the Gerund (Gerúndio) for ongoing actions. Use "a + infinitive".
-    *   *Correct*: "A carregar...", "A preparar desafio...".
-    *   *Incorrect*: "Carregando...", "Preparando desafio...".
-3.  **Vocabulary**: Use European terminology where it differs (e.g., "Ecrã" instead of "Tela", though "Rato" vs "Mouse" is less relevant for touch typing).
+**Crucial:** Este projeto destina-se a crianças em **Portugal e Angola**.
+Ao contribuir com texto ou código de UI, siga estas regras estritas:
 
-## 🛠️ Development Process
+1.  **Tratar o Utilizador**: Use sempre **"Tu"** (2ª pessoa do singular informal). Nunca use "Você".
+    *   *Correto*: "Tu conseguiste!", "O teu progresso".
+    *   *Incorreto*: "Você conseguiu!", "Seu progresso".
+2.  **Inclusão Cultural**:
+    *   Ao adicionar exemplos de texto, inclua nomes e locais de **ambos** os países.
+    *   *Exemplos*: Luanda, Lisboa, Kwanza, Tejo, Imbondeiro, Sobreiro, Zola, Rui.
+3.  **Formas Verbais**: Evite o Gerúndio para ações em curso (comum no Brasil e no Sul de Angola, mas em contextos educativos PT-PT prefere-se "a + infinitivo").
+    *   *Preferível*: "A carregar...", "A preparar desafio...".
+4.  **Vocabulário**: Use terminologia Europeia/Angolana (ex: "Ecrã" em vez de "Tela", "Rato" em vez de "Mouse").
 
-1.  **Fork the repo** and create your branch from `main`.
-2.  **Install dependencies** (if we transition to a package.json workflow in the future). Currently, ensure standard ES Module compatibility.
-3.  **Test your changes**. Ensure the Virtual Keyboard renders correctly on different screen sizes.
-4.  **Linting**: Keep code clean. We prefer Prettier/ESLint standards.
+## 🛠️ Processo de Desenvolvimento
 
-## 🐛 Reporting Bugs
-
-Bugs are tracked as GitHub issues. When filing an issue, please include:
--   The browser and version you are using.
--   Steps to reproduce the bug.
--   Expected behavior vs. actual behavior.
+1.  **Fork** ao repositório.
+2.  **Instalar dependências** (`npm install`).
+3.  **Testar**. Certifique-se que o Teclado Virtual funciona em ecrãs pequenos.
+4.  **Linting**: Mantenha o código limpo.
 
 ## ✉️ Pull Requests
 
-1.  Ensure the PR description clearly describes the problem and solution.
-2.  Include screenshots for any UI changes.
-3.  If adding a new Feature Level, ensure it follows the finger progression logic (Home row -> Top/Bottom -> Shift).
-
-By contributing, you agree that your contributions will be licensed under its MIT License.
+1.  Descreva claramente o problema e a solução.
+2.  Se adicionar um Nível, siga a lógica de progressão dos dedos (Linha Base -> Cima/Baixo).

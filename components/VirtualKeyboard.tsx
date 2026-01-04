@@ -41,6 +41,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
      
      if (char !== char.toLowerCase()) {
          // Standard typing rule: Use opposite hand for Shift
+         // If key is on left side (QWERT...), use Right Shift.
          const leftHandChars = "qwertasdfgzxcvbQWERTASDFGZXCVB";
          return leftHandChars.includes(char) ? 'ShiftRight' : 'ShiftLeft';
      }
@@ -128,7 +129,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
         animateProps = { scale: 1, y: 0 };
     }
     
-    // Always show label for Shift, or if showLabels is true
+    // Always show label for Shift, or if showLabels is true (Blind Mode logic)
     const shouldShowLabel = showLabels || config.label === 'Shift';
 
     return (

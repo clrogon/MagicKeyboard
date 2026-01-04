@@ -1,8 +1,8 @@
 
 # Teclado Mágico | Magic Keyboard
 
-> **EN**: A gamified, AI-powered typing trainer designed for children learning European Portuguese.
-> **PT**: Um treinador de digitação gamificado e impulsionado por IA, desenhado para crianças a aprender Português Europeu.
+> **PT**: Um treinador de digitação gamificado e impulsionado por IA, desenhado para crianças a aprender Português (Portugal e Angola).
+> **EN**: A gamified, AI-powered typing trainer designed for children learning Portuguese (Portugal and Angola).
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
@@ -12,150 +12,110 @@
 
 ---
 
-## 📊 Current Status | Estado Actual (v1.2.0)
+## 📊 Estado Atual | Current Status (v1.3.0)
 
-| Module | Status EN | Estado PT |
-|--------|-----------|-----------|
-| **Core Typing Engine** | ✅ Complete | ✅ Completo |
-| **Visual Keyboard** | ✅ Complete | ✅ Completo |
-| **AI Text Generation** | ✅ Complete | ✅ Completo |
-| **Progression (XP/Levels)**| ✅ Complete | ✅ Completo |
-| **Daily Challenges** | ✅ Complete | ✅ Completo |
-| **Hand Guide** | ✅ Complete | ✅ Completo |
-| **Multi-User Profiles** | ✅ Complete | ✅ Completo |
-| **Parent Dashboard** | ✅ Complete | ✅ Completo |
-| **Story Mode** | ✅ Complete | ✅ Completo |
-
----
-
-## 🎯 Overview | Visão Geral
-
-### EN-US
-**Teclado Mágico** is an educational web application that helps children master touch typing. Unlike generic tools, it focuses specifically on **European Portuguese** vocabulary and grammar (addressing the user as "Tu" instead of "Você"), making it culturally appropriate for Portugal and Angola. It uses Google's Gemini AI to generate infinite, context-aware typing drills.
-
-### PT-PT
-**Teclado Mágico** é uma aplicação web educativa que ajuda crianças a dominar a digitação. Ao contrário de ferramentas genéricas, foca-se especificamente no vocabulário e gramática do **Português Europeu** (tratando o utilizador por "Tu"), tornando-a culturalmente apropriada para Portugal e Angola. Utiliza a IA Gemini da Google para gerar exercícios infinitos e conscientes do contexto.
+| Módulo (Module) | Estado PT | Status EN |
+|-----------------|-----------|-----------|
+| **Motor de Digitação** | ✅ Completo | ✅ Complete |
+| **Teclado Visual 3D** | ✅ Completo | ✅ Complete |
+| **Geração de Texto IA** | ✅ Completo (PT/AO) | ✅ Complete (PT/AO) |
+| **Progressão (XP/Níveis)**| ✅ Completo | ✅ Complete |
+| **Desafios Diários** | ✅ Completo | ✅ Complete |
+| **Guia de Mãos** | ✅ Completo | ✅ Complete |
+| **Modo História** | ✅ Completo | ✅ Complete |
+| **Teclas Invisíveis** | ✅ Completo | ✅ Complete |
 
 ---
 
-## ✨ Core Features | Funcionalidades Principais
+## 🎯 Visão Geral | Overview
 
-### 1. Multi-User & Themes | Multi-Utilizador e Temas
-- **EN**: Create multiple profiles on a single device. Choose from **Rose**, **Blue**, or **Amber** interface themes.
-- **PT**: Cria vários perfis num único dispositivo. Escolhe entre os temas **Rosa**, **Azul** ou **Âmbar**.
+### PT-PT (Português)
+**Teclado Mágico** é uma aplicação web educativa que ajuda crianças a dominar a digitação. Ao contrário de ferramentas genéricas, foca-se especificamente no contexto cultural de **Portugal e Angola**, utilizando vocabulário local (ex: Kwanza, Tejo, Imbondeiro) e gramática correta (tratando o utilizador por "Tu"). Utiliza a IA Gemini da Google para gerar exercícios infinitos e adaptados.
 
-### 2. Story Mode & Blind Mode | Modo História e Modo Cego
-- **EN**: Generate creative short stories with AI to practice flow. Use **Blind Mode** to hide key labels and master touch typing.
-- **PT**: Gera pequenas histórias criativas com IA para treinar a fluidez. Usa o **Modo Cego** para esconder as letras e dominar a digitação tátil.
+### EN-US (English)
+**Teclado Mágico** is an educational web application that helps children master touch typing. Unlike generic tools, it focuses specifically on the cultural context of **Portugal and Angola**, using local vocabulary (e.g., Kwanza, Tejo, Baobab) and correct grammar (addressing the user as "Tu"). It uses Google's Gemini AI to generate infinite, adaptive typing drills.
 
-### 3. Progressive Learning | Aprendizagem Progressiva
-- **EN**: 11 distinct levels starting from the Home Row (F & J) expanding to symbols and numbers. Includes a visual "Hand Guide".
-- **PT**: 11 níveis distintos começando pela Linha Base (F & J) e expandindo para símbolos e números. Inclui um "Guia de Mãos" visual.
+---
 
-### 4. RPG Progression System | Sistema de Progressão RPG
-- **EN**: Earn **XP** for every key pressed. Level up to unlock cool **Titles** (e.g., "Keyboard Legend") and collect fun **Avatars**.
-- **PT**: Ganha **XP** por cada tecla. Sobe de nível para desbloquear **Títulos** fixes (ex: "Lenda do Teclado") e colecionar **Avatares** divertidos.
+## ✨ Funcionalidades Principais | Core Features
 
-### 5. Parent Dashboard | Área de Pais
-- **EN**: A dedicated area for parents/teachers to view play time, sessions completed, and manage user profiles.
-- **PT**: Uma área dedicada para pais/professores verem o tempo de jogo, sessões completas e gerirem perfis.
+### 1. Inclusão Cultural (Portugal & Angola)
+- **PT**: Exercícios que incluem nomes, cidades e referências culturais de ambos os países (Luanda, Lisboa, Benguela, Algarve).
+- **EN**: Drills that include names, cities, and cultural references from both countries.
 
-### 6. AI-Powered Drills | Exercícios com IA
-- **EN**: Google Gemini integration generates unique sentences every time • Context-aware vocabulary • Error-focused drill generation.
+### 2. Teclas Invisíveis (Blind Mode)
+- **PT**: Um modo de "Magia" que esconde as letras do teclado visual, forçando a criança a confiar na memória muscular.
+- **EN**: A "Magic" mode that hides labels on the visual keyboard, forcing children to rely on muscle memory.
+
+### 3. Aprendizagem Progressiva
+- **PT**: 11 níveis distintos começando pela Linha Mágica (F & J) e expandindo para o alfabeto completo, números e símbolos.
+- **EN**: 11 distinct levels starting from the Magic Line (F & J) expanding to the full alphabet, numbers, and symbols.
+
+### 4. Sistema de Progressão RPG
+- **PT**: Ganha **XP** por cada tecla. Sobe de nível para desbloquear **Títulos** fixes (ex: "Mestre das Palavras") e colecionar **Avatares**.
+- **EN**: Earn **XP** for every key pressed. Level up to unlock cool **Titles** and collect fun **Avatars**.
+
+### 5. Área de Pais e Professores
+- **PT**: Uma área dedicada para ver o tempo de jogo, sessões completas e gerir perfis de vários alunos no mesmo dispositivo.
+- **EN**: A dedicated area to view play time, sessions completed, and manage multiple student profiles on the same device.
+
+### 6. Inteligência Artificial (Gemini)
 - **PT**: Integração Google Gemini gera frases únicas a cada vez • Vocabulário consciente do contexto • Geração de exercícios focados nos erros.
-
-### 7. Gamification | Gamificação
-- **EN**: Star rating system • Confetti celebrations • Visual feedback • Time Attack modes • Achievements (Badges).
-- **PT**: Sistema de classificação por estrelas • Celebrações com confetes • Feedback visual • Modos Contra-Relógio • Conquistas (Medalhas).
-
-### 8. Privacy First | Privacidade Primeiro
-- **EN**: 100% LocalStorage based. No database, no tracking, no personal data collection. Includes GDPR-compliant Data Erasure.
-- **PT**: 100% baseado em LocalStorage. Sem base de dados, sem rastreamento, sem recolha de dados pessoais. Inclui eliminação de dados compatível com RGPD.
+- **EN**: Google Gemini integration generates unique sentences every time • Context-aware vocabulary • Error-focused drill generation.
 
 ---
 
-## 🏗️ Architecture | Arquitectura
+## 🏗️ Arquitetura | Architecture
 
-### Tech Stack | Stack Tecnológico
+### Stack Tecnológico
 
-| Component | Technology | Purpose |
-|-----------|-----------|---------|
-| **Frontend** | React 19 + TypeScript | UI & Game Logic |
-| **Styling** | Tailwind CSS | Responsive Design |
-| **Animations** | Framer Motion | Smooth transitions & feedback |
-| **AI Engine** | Google GenAI SDK | Dynamic Content Generation |
-| **Charts** | Recharts | Progress Visualization |
-| **Icons** | Lucide React | Visual Language |
-
-### Data Flow
-
-```mermaid
-flowchart LR
-    User["👶 Learner"]
-    UI["💻 React Interface"]
-    Engine["⚙️ Typing Engine"]
-    AI["🧠 Gemini AI"]
-    Storage["💾 LocalStorage"]
-
-    User -->|Keystrokes| UI
-    UI -->|Input Events| Engine
-    Engine -->|XP, Stats & Errors| UI
-    Engine -->|Progress Save| Storage
-    
-    subgraph Content Generation
-    Engine -->|Request Drill| AI
-    AI -->|Generated Text| Engine
-    end
-```
+| Componente | Tecnologia | Propósito |
+|------------|------------|-----------|
+| **Frontend** | React 19 + TypeScript | UI e Lógica de Jogo |
+| **Estilos** | Tailwind CSS | Design Responsivo |
+| **Animações** | Framer Motion | Transições suaves |
+| **Motor IA** | Google GenAI SDK | Geração Dinâmica de Conteúdo |
+| **Gráficos** | Recharts | Visualização de Progresso |
+| **Ícones** | Lucide React | Linguagem Visual |
 
 ---
 
-## 🚀 Getting Started | Começar
+## 🚀 Começar | Getting Started
 
-### Prerequisites | Pré-requisitos
+### Pré-requisitos | Prerequisites
 - Node.js 18+ 
 - Google Gemini API Key
 
-### Installation | Instalação
+### Instalação | Installation
 
-**1. Clone the repository | Clonar o repositório**
+**1. Clonar o repositório**
 ```bash
 git clone https://github.com/yourusername/teclado-magico.git
 cd teclado-magico
 ```
 
-**2. Install dependencies | Instalar dependências**
+**2. Instalar dependências**
 ```bash
 npm install
-# or
-pnpm install
 ```
 
-**3. Configure Environment | Configurar Ambiente**
-Create a `.env` file:
+**3. Configurar Ambiente**
+Crie um ficheiro `.env`:
 ```env
-API_KEY=your_api_key_here
+API_KEY=a_sua_chave_api_aqui
 ```
 
-**4. Start development server | Iniciar servidor**
+**4. Iniciar servidor**
 ```bash
 npm run dev
 ```
 
 ---
 
-## 🤝 Contributing | Contribuir
+## 📄 Licença | License
 
-**EN**: We welcome contributions! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for our language guidelines (pt-PT vs pt-BR).
-
-**PT**: Acolhemos contribuições! Por favor, leia [CONTRIBUTING.md](CONTRIBUTING.md) para as nossas diretrizes de linguagem (pt-PT vs pt-BR).
+Este projeto está licenciado sob a Licença MIT - ver ficheiro [LICENSE](LICENSE) para detalhes.
 
 ---
 
-## 📄 License | Licença
-
-This project is licensed under the MIT License - see [LICENSE](LICENSE) file for details.
-
----
-
-**Made with ❤️ for education | Feito com ❤️ para a educação**
+**Feito com ❤️ para a educação | Made with ❤️ for education**

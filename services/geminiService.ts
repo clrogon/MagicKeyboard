@@ -7,6 +7,9 @@ import { Level, GameMode, ErrorStats } from '../types';
 let genAI: GoogleGenAI | null = null;
 
 // Initialize Gemini Client safely
+// The API Key is injected via Vite's environment variable system.
+// We use a try-catch to prevent the app from crashing entirely if the key is missing,
+// allowing it to fall back to hardcoded samples.
 try {
   if (process.env.API_KEY) {
     genAI = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -30,7 +33,7 @@ export const generateSmartExercise = async (
     errorStats?: ErrorStats,
     difficultyModifier: 'normal' | 'hard' = 'normal'
 ): Promise<string> => {
-  // Helper to get a random fallback
+  // Helper to get a random fallback from the hardcoded constant lists
   const getFallback = () => {
       if (level.textSamples && level.textSamples.length > 0) {
           return level.textSamples[Math.floor(Math.random() * level.textSamples.length)];
@@ -49,6 +52,7 @@ export const generateSmartExercise = async (
   }
 
   try {
+    // using gemini-3-flash-preview for low latency and cost effectiveness
     const model = "gemini-3-flash-preview";
     
     // Clean keys for prompt (remove pseudo keys like Shift to avoid confusion in prompt)
@@ -57,14 +61,15 @@ export const generateSmartExercise = async (
         .join(', ')
         .toUpperCase();
     
-    // Base Instruction: Ensure strict European Portuguese context with Angolan inclusiveness
+    // Base Instruction: Ensure strict European Portuguese context with Angolan inclusiveness.
+    // We explicitly ban Brazilian terms (e.g., gerunds) to suit the target educational system.
     let systemInstruction = "You are a typing tutor for a child learning European Portuguese (pt-PT). STRICTLY AVOID Brazilian Portuguese terms (e.g., use 'a fazer' instead of 'fazendo'). Address the child as 'Tu'. Include cultural names, places, and context from both Portugal (e.g., Lisboa, Tejo, Serra da Estrela, Galo) and Angola (e.g., Luanda, Kwanza, Muxima, Imbondeiro, Palanca, Benguela, Huambo, Semba).";
     
     let prompt = "";
 
     // 2. Mode-Specific Prompt Engineering
     if (mode === GameMode.ErrorDrill && errorStats) {
-        // Identify top 3 weak keys based on error count
+        // Identify top 3 weak keys based on error count to create focused remediation
         const weakKeys = Object.entries(errorStats)
             .sort(([,a], [,b]) => b - a)
             .slice(0, 3)
@@ -84,6 +89,7 @@ export const generateSmartExercise = async (
         }
 
     } else if (mode === GameMode.Timed) {
+        // Timed mode needs a large buffer of text so the user doesn't run out.
         prompt = `
             ${systemInstruction}
             Generate a LONG typing text (approx 30-40 words) for a 60-second challenge.
@@ -93,7 +99,7 @@ export const generateSmartExercise = async (
             Make it fun and varied, mixing words from Portugal and Angola.
         `;
     } else if (mode === GameMode.Story) {
-        // Story Mode Logic
+        // Story Mode Logic: Prioritizes flow and narrative over strict key constraints
         prompt = `
             ${systemInstruction}
             Generate a creative, coherent SHORT STORY (3-4 sentences, about 30-40 words).
@@ -136,7 +142,7 @@ export const generateSmartExercise = async (
     
     // 4. Output validation and cleanup
     if (text) {
-       // Remove markdown code blocks or quotes if the model adds them
+       // Remove markdown code blocks or quotes if the model adds them by mistake
        let cleanText = text.replace(/`/g, '').replace(/"/g, '');
        return cleanText;
     }
@@ -146,7 +152,7 @@ export const generateSmartExercise = async (
 
   } catch (error) {
     console.error("Gemini generation failed", error);
-    // Silent fail to fallback
+    // Silent fail to fallback to keep the game playable
     return getFallback();
   }
 };

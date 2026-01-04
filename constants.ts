@@ -124,7 +124,7 @@ export const KEYBOARD_LAYOUT: KeyConfig[][] = [
     { char: 'n', finger: Finger.RightIndex, row: 3 },
     { char: 'm', finger: Finger.RightIndex, row: 3 },
     { char: ',', finger: Finger.RightMiddle, row: 3 },
-    { char: '.', finger: Finger.RightRing, row: 3 }, // In PT-PT, - is often near here or Shift+Slash, but standard varies.
+    { char: '.', finger: Finger.RightRing, row: 3 }, 
     { char: '-', subLabel: '_', finger: Finger.RightPinky, row: 3 }, // Explicit - key (generic position)
     { char: 'ShiftRight', label: 'Shift', finger: Finger.RightPinky, row: 3, width: 1.5 },
   ]
@@ -228,7 +228,16 @@ export const getXpForNextLevel = (level: number) => level * 250;
 /**
  * Progression Levels.
  * Designed for children learning PT (European/Angolan style).
- * Starts with Home Row (F/J) and expands outwards.
+ * 
+ * Logic:
+ * 1-3: Home Row (F/J -> D/K -> S/L/A/Ç)
+ * 4: Top Row Vowels + T (E/I/O/T)
+ * 5: Bottom/Top Expansion (R/U/N/M/C/V)
+ * 6: Full Alphabet Completion (B/G/H/P/Q/W/X/Y/Z)
+ * 7: Punctuation
+ * 8-9: Numbers
+ * 10: Shift/Symbols
+ * 11: Story Mode (Full keyboard fluency)
  */
 export const LEVELS: Level[] = [
   {

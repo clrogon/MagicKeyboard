@@ -15,8 +15,8 @@ interface TypingAreaProps {
   errorStats?: ErrorStats;
   timeLimit?: number; // seconds (for Timed mode)
   difficultyModifier?: 'normal' | 'hard';
-  blindMode?: boolean; // New Phase 4 Feature: Hide key labels
-  soundEnabled: boolean; // New Phase 8 Feature
+  blindMode?: boolean; // Hides key labels
+  soundEnabled: boolean;
   theme: Theme;
   onComplete: (result: SessionResult, errors: ErrorStats, corrects: ErrorStats) => void;
   onExit: () => void;
@@ -38,7 +38,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     level, mode, errorStats, timeLimit, difficultyModifier = 'normal', blindMode = false, soundEnabled = true, theme, onComplete, onExit 
 }) => {
   // Game State
-  const [isBriefing, setIsBriefing] = useState(true); // Start in Briefing mode
+  const [isBriefing, setIsBriefing] = useState(true); // Start in Briefing mode (modal overlay)
   const [text, setText] = useState<string>("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [startTime, setStartTime] = useState<number | null>(null);
@@ -48,24 +48,27 @@ const TypingArea: React.FC<TypingAreaProps> = ({
   const [sessionErrorMap, setSessionErrorMap] = useState<ErrorStats>({}); 
   const [sessionCorrectMap, setSessionCorrectMap] = useState<ErrorStats>({}); 
   
-  // Rhythm/Consistency Tracking (Phase 4)
+  // Rhythm/Consistency Tracking
+  // We track the time interval between every keystroke to calculate standard deviation later.
   const [lastKeystrokeTime, setLastKeystrokeTime] = useState<number | null>(null);
   const [keystrokeIntervals, setKeystrokeIntervals] = useState<number[]>([]);
 
+  // Input Management
   const [typedChars, setTypedChars] = useState<string>(""); 
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState<number | null>(timeLimit || null);
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  // Refs
+  const inputRef = useRef<HTMLInputElement>(null); // Hidden input for mobile keyboard triggering
   const timerRef = useRef<number | null>(null);
 
   const colors = THEME_COLORS[theme];
 
-  // Initialize Level: Calls AI service
+  // Initialize Level: Calls AI service to generate text
   const initLevel = useCallback(async () => {
     setLoading(true);
     
-    // Safety Timeout: If AI takes too long (>8s), force enable the button with fallback
+    // Safety Timeout: If AI takes too long (>8s), force enable the button with fallback text
     const safetyTimeout = setTimeout(() => {
         setLoading((currentLoading) => {
             if (currentLoading) {
@@ -89,7 +92,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
         setLoading(false);
     }
 
-    // Reset Game State
+    // Reset Game State variables
     setCurrentIndex(0);
     setSessionErrors(0);
     setSessionErrorMap({});
@@ -111,7 +114,9 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     }
   }, [initLevel]);
 
-  // Maintain focus on hidden input to capture keystrokes (Only when NOT in briefing)
+  // FOCUS MANAGEMENT:
+  // Maintain focus on hidden input to capture keystrokes.
+  // This is critical for Mobile Safari/Chrome to keep the virtual keyboard open.
   useEffect(() => {
     const interval = setInterval(() => {
       if (!loading && !isBriefing) inputRef.current?.focus();
@@ -146,7 +151,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
 
   const handleStartGame = () => {
       setIsBriefing(false);
-      // Init audio context
+      // Init audio context (must be user initiated)
       if(soundEnabled) audioService.init();
       if(soundEnabled) audioService.playStart();
       // Slight delay to ensure DOM update before focus
@@ -155,6 +160,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
 
   const handleInput = () => {
      // Controlled input handler is empty because we use onKeyDown for granular control 
+     // of special keys and prevention of default browser behaviors.
   };
 
   /**
@@ -165,7 +171,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     // Ignore if briefing or loading
     if (loading || isBriefing || (timeLeft === 0)) return;
 
-    // Ignore navigation keys
+    // Ignore navigation keys (arrows) to prevent scrolling
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
         e.preventDefault();
         return;
@@ -186,7 +192,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
       setLastKeystrokeTime(now);
     }
 
-    // Disable Backspace (Pedagogical choice: forces forward momentum)
+    // Disable Backspace (Pedagogical choice: forces forward momentum and prevents "cheating")
     if (char === 'Backspace') {
        return;
     }
@@ -197,16 +203,17 @@ const TypingArea: React.FC<TypingAreaProps> = ({
       
       if(soundEnabled) audioService.playClick();
       
-      // Phase 4: Rhythm Tracking
+      // Rhythm Tracking: Record interval since last key
       if (lastKeystrokeTime) {
           const interval = now - lastKeystrokeTime;
+          // Ignore pauses > 2s (thinking time vs typing flow)
           if (interval < 2000) { 
               setKeystrokeIntervals(prev => [...prev, interval]);
           }
       }
       setLastKeystrokeTime(now);
 
-      // Track correct stats
+      // Track correct stats for heatmap healing
       setSessionCorrectMap(prev => ({
           ...prev,
           [targetChar]: (prev[targetChar] || 0) + 1
@@ -218,6 +225,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
       // Check Completion
       if (nextIndex >= text.length) {
         if (mode === GameMode.Timed) {
+            // Infinite scroll for timed mode
             setText(prev => prev + " " + prev);
         } else {
             finishLevel();
@@ -252,7 +260,8 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     const grossWpm = Math.round((totalTyped / 5) / (durationMin || 0.001)); 
     const accuracy = totalTyped > 0 ? Math.round(((totalTyped - sessionErrors) / totalTyped) * 100) : 0;
     
-    // Phase 4: Consistency Calculation
+    // Consistency Calculation (Coefficient of Variation)
+    // 100% = Metronomic precision, 0% = Erratic
     let consistency = 100;
     if (keystrokeIntervals.length > 2) {
         const mean = keystrokeIntervals.reduce((a, b) => a + b, 0) / keystrokeIntervals.length;
@@ -280,7 +289,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     }, sessionErrorMap, sessionCorrectMap);
   };
 
-  // Render the Briefing Overlay (Now a Fixed Modal)
+  // Render the Briefing Overlay (Modal)
   const renderBriefing = () => {
       // Determine what to show based on mode
       let title = level.title;
@@ -302,7 +311,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({
           title = "Hora do Conto";
           description = "Escreve uma pequena história completa.";
           goal = "Lê e escreve ao mesmo tempo. Diverte-te!";
-          // Story mode implicitly uses almost all keys, so no specific 'newKeys' needed in briefing
           keys = []; 
       }
 
@@ -354,6 +362,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
 
   // Renders the scrolling text area
   const renderText = () => {
+    // Show a window of text centered on the current index
     const visibleStart = Math.max(0, currentIndex - 8); 
     const visibleEnd = visibleStart + 16;
     const displayText = text.slice(visibleStart, visibleEnd);
