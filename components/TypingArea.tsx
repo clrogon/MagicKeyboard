@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Level, SessionResult, GameMode, ErrorStats, Theme } from '../types';
@@ -192,6 +193,15 @@ const TypingArea: React.FC<TypingAreaProps> = ({
 
     const char = e.key;
     const targetChar = text[currentIndex];
+
+    // FIX FOR MACOS/ACCENTS:
+    // On macOS and some Linux setups, dead keys (accents) might be sent as the character itself (e.g. '´') 
+    // instead of 'Dead', or as 'Dead'.
+    // If the user types an accent to compose a character (e.g., '´' + 'a' = 'á'), 
+    // we must ignore the initial accent keypress if it doesn't match the target.
+    if (char === 'Dead' || (['´', '`', '~', '^', '¨'].includes(char) && char !== targetChar)) {
+        return;
+    }
 
     if (char.length > 1 && char !== 'Backspace' && !['Shift'].includes(char)) return; 
     if (char === 'Shift' || char === 'Alt' || char === 'Control' || char === 'CapsLock') return;
