@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-1.4.0-rose)](package.json)
 [![Status](https://img.shields.io/badge/Status-Production_Ready-green)](https://github.com/yourusername/teclado-magico)
-[![Tech Stack](https://img.shields.io/badge/Stack-React_19_%7C_Vite_%7C_Gemini_AI-8E75B2)](https://react.dev/)
+[![Tech Stack](https://img.shields.io/badge/Stack-React_18_%7C_Vite_%7C_Gemini_AI-8E75B2)](https://react.dev/)
 
 ---
 
@@ -85,7 +85,7 @@ O projeto começou em **3 de Janeiro de 2026** e encontra-se na versão de produ
 O Teclado Mágico é uma **Progressive Web App (PWA)**, o que significa que pode ser instalada no computador/tablet e funciona **Offline**.
 
 ### Stack
-*   **Frontend**: React 19 + TypeScript (Performance e Tipagem estrita)
+*   **Frontend**: React 18 + TypeScript (Performance e Tipagem estrita)
 *   **Build Tool**: Vite (Carregamento instantâneo)
 *   **Styling**: Tailwind CSS (Design responsivo e acessível)
 *   **Audio**: Web Audio API (Sintetizador de som nativo, sem assets pesados)

@@ -6,7 +6,6 @@ import { Star, Trophy, Target, Zap, Medal, ArrowRight, RotateCcw, FileBadge } fr
 import { ACHIEVEMENTS, THEME_COLORS } from '../constants';
 import { ClayButton } from './ClayButton';
 import { motion } from 'framer-motion';
-// @ts-ignore - Importing from CDN defined in index.html importmap
 import { jsPDF } from 'jspdf';
 
 interface StatsBoardProps {
