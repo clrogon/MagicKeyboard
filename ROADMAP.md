@@ -44,28 +44,33 @@ Project Start Date: **January 3, 2026**.
 
 ## ✅ Phase 6: Internationalization & Layouts (Completed)
 **Status:** Completed Mar 2026 (v1.5.0)
-**Focus:** Supporting Portuguese communities abroad (France, Luxembourg).
+**Focus:** Supporting Portuguese communities abroad & UX Polish.
 - [x] **Multi-Layout Support**: Engine support for switching between QWERTY and AZERTY layouts.
 - [x] **AZERTY Integration**: Full AZERTY visual keyboard mapping.
 - [x] **Physical Layout Detection**: Heuristics to detect physical keyboard type via `navigator.keyboard` API.
+- [x] **User Onboarding Redesign**: Overhauled "New Player" flow with avatar selection and visual layout picker.
+- [x] **Documentation Visuals**: Added visual guides and screenshots to the Parents & Teachers Manual.
 
-## 🚧 Phase 7: Future Horizons (v2.0+)
-**Status:** Planned for Late 2026
-**Focus:** Classroom Dynamics, Social Play & Advanced Gamification.
+## 🚧 Phase 7: Local Multiplayer - "O Recreio" (v1.6.0)
+**Status:** In Design
+**Focus:** Social play without internet/servers (Privacy-First Multiplayer).
+- [ ] **WebRTC P2P Engine**: Allow two computers on the same Wi-Fi to connect directly (Host/Join).
+- [ ] **Corrida de Palavras**: Real-time typing race where WPM moves a character across the screen.
+- [ ] **Tag Team**: Cooperative mode where Player 1 types the noun, Player 2 types the verb.
+- [ ] **Ghost Mode**: Race against your own "Ghost" (previous best run).
 
-### 👻 Advanced Gamification
-- [ ] **Ghost Mode**: Race against your previous best performance (Time Trial).
-- [ ] **Boss Battles**: Type against a "monster" where WPM deals damage.
+## 🔮 Phase 8: Digital Literacy - "O Hacker" (v1.7.0)
+**Status:** Planned
+**Focus:** Beyond the alphabet - Real world computer skills.
+- [ ] **Shortcuts Dojo**: Training for `Ctrl+C`, `Ctrl+V`, `Alt+Tab`, `Ctrl+Z`.
+- [ ] **Code Syntax**: Levels specifically for `{ } [ ] < > ;` used in programming.
+- [ ] **Numpad Ninja**: Dedicated training for the numeric keypad (Data Entry skills).
+- [ ] **Form Navigation**: Training the usage of `Tab` and `Shift+Tab` to move between fields.
 
-### 🏫 Classroom Mode (Sala de Aula)
-- [ ] **Teacher Dashboard**: A dedicated interface for teachers to manage 30+ students.
-- [ ] **Bulk Import**: Ability to import a class list via CSV.
-- [ ] **Homework Codes**: Teachers generate a code (e.g., "TPC-SEMANA-1") that students enter to load specific custom lessons.
-- [ ] **Class Stats**: Aggregated analytics (e.g., "The class struggles with 'X' and 'Z'").
-
-### ⚔️ Local Multiplayer (Corrida Mágica)
-- [ ] **P2P Racing**: Using WebRTC for local-network typing races between students.
-- [ ] **Team Challenges**: Cooperative typing where two students type different parts of the same story.
-
-### ⌨️ Advanced Configurations
-- [ ] **Voice Navigation**: Full menu navigation using voice commands for users with motor impairments.
+## 🔮 Phase 9: Classroom Tools - "Sala de Aula" (v2.0.0)
+**Status:** Planned
+**Focus:** Solving the "No Database" problem for Teachers.
+- [ ] **Magic QR Reporting**: At the end of a session, the app generates a QR code on the student's screen containing their WPM/Accuracy. The teacher scans it with their phone to instantly log the grade (Air-gapped data transfer).
+- [ ] **Homework Codes**: Teachers generate a code (e.g., "TPC-34") that loads a specific locked lesson configuration.
+- [ ] **Bulk CSV Import**: Import a class list of 30 names to generate profiles automatically.
+- [ ] **Kiosk Mode**: Setting to lock the UI so students cannot change settings or exit the exercise.
