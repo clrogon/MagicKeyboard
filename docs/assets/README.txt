@@ -1,13 +1,9 @@
 
-Please place your screenshots in this folder.
-Required files for documentation:
+NOTICE:
+Do not place binary image files in this folder if you are using an AI-based coding environment that syncs the filesystem. 
+They will be deleted on the next sync because the AI cannot "hold" the binary data in its memory.
 
-1. mobile_restriction.png
-2. privacy_modal.png
-3. user_select.png
-4. parents_dashboard.png
-5. parents_lessons.png
-6. parents_backup.png
-
-Note: Because the AI cannot generate binary image files, you may need to re-upload these images if a "Sync" operation wipes them. 
-To permanently fix this, consider hosting the images externally (e.g., on GitHub Issues or Imgur) and using the full URL in the Markdown files.
+Recommended Solution:
+1. Upload your screenshots to an external image host (Imgur, GitHub Issues, AWS S3).
+2. Use the direct URL to the image in the Markdown files (README.md, etc.).
+3. We are currently using placehold.co URLs as placeholders to prevent broken links.

@@ -13,7 +13,7 @@ O Teclado Mágico é uma **PWA (Progressive Web App)**. Isto significa que pode 
 > **Nota Importante**: O Teclado Mágico **NÃO** funciona em telemóveis na vertical. É necessário um teclado físico para aprender dactilografia corretamente.
 
 <p align="center">
-  <img src="assets/mobile_restriction.png" alt="Ecrã de aviso em telemóveis: O Teclado Mágico precisa de espaço" width="300" />
+  <img src="https://placehold.co/400x300/e2e8f0/64748b?text=Mobile+Warning+Screen" alt="Ecrã de aviso em telemóveis: O Teclado Mágico precisa de espaço" width="300" />
 </p>
 
 ## 2. Privacidade e Segurança de Dados
@@ -24,7 +24,7 @@ Nós levamos a segurança muito a sério.
 *   **Conformidade RGPD**: Não existem "cookies de rastreamento" nem publicidade.
 
 <p align="center">
-  <img src="assets/privacy_modal.png" alt="Ecrã de Política de Privacidade: Transparência Total" width="500" />
+  <img src="https://placehold.co/600x400/e2e8f0/64748b?text=Privacy+Modal" alt="Ecrã de Política de Privacidade: Transparência Total" width="500" />
 </p>
 
 ## 3. Criar e Gerir Perfis
@@ -32,7 +32,7 @@ Nós levamos a segurança muito a sério.
 Pode criar perfis para vários alunos no mesmo computador (ideal para irmãos ou salas de aula).
 
 <p align="center">
-  <img src="assets/user_select.png" alt="Ecrã de seleção de utilizador: Quem vai jogar?" width="500" />
+  <img src="https://placehold.co/600x400/e2e8f0/64748b?text=User+Select+Screen" alt="Ecrã de seleção de utilizador: Quem vai jogar?" width="500" />
 </p>
 
 1.  No ecrã inicial, clique em **"Novo Jogador"**.
@@ -43,7 +43,7 @@ Pode criar perfis para vários alunos no mesmo computador (ideal para irmãos ou
 Para apagar um perfil, vá à **"Área de Pais e Professores"** (ícone da roldana) -> Separador **Alunos** -> Ícone do Lixo.
 
 <p align="center">
-  <img src="assets/parents_dashboard.png" alt="Painel de Pais: Gestão de Alunos" width="600" />
+  <img src="https://placehold.co/600x400/e2e8f0/64748b?text=Parent+Dashboard" alt="Painel de Pais: Gestão de Alunos" width="600" />
 </p>
 
 ## 4. Lições Personalizadas (Novidade v1.4)
@@ -57,7 +57,7 @@ Quer que o seu filho treine palavras específicas para um ditado da escola?
 5.  O aluno poderá selecionar esta lição no menu principal, na secção "Lições Personalizadas".
 
 <p align="center">
-  <img src="assets/parents_lessons.png" alt="Painel de Pais: Criação de Lições Personalizadas" width="600" />
+  <img src="https://placehold.co/600x400/e2e8f0/64748b?text=Custom+Lessons+UI" alt="Painel de Pais: Criação de Lições Personalizadas" width="600" />
 </p>
 
 ## 5. Diplomas e Certificados 🏆
@@ -77,7 +77,7 @@ Como os dados ficam no computador, se mudar de PC, perde o progresso. Para evita
 3.  No novo computador, faça o mesmo processo mas clique em **"Importar Dados"** e selecione esse ficheiro.
 
 <p align="center">
-  <img src="assets/parents_backup.png" alt="Painel de Pais: Área de Backup e Importação" width="600" />
+  <img src="https://placehold.co/600x400/e2e8f0/64748b?text=Backup+and+Import" alt="Painel de Pais: Área de Backup e Importação" width="600" />
 </p>
 
 ## 7. Identidade Cultural e Representatividade 🤝

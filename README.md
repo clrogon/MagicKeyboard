@@ -13,8 +13,13 @@
 ## 📸 Galeria | Screenshots
 
 <p align="center">
-  <img src="docs/assets/user_select.png" alt="Ecrã de Seleção de Jogador" width="45%" style="border-radius: 10px; margin-right: 10px;" />
-  <img src="docs/assets/parents_dashboard.png" alt="Área de Pais e Professores" width="45%" style="border-radius: 10px;" />
+  <!-- 
+    NOTE: Images are using placeholders because the AI environment deletes local binary files on sync.
+    To fix this, upload your screenshots to an external host (like Imgur or GitHub Issues) 
+    and replace these URLs with your real image links.
+  -->
+  <img src="https://placehold.co/600x400/F43F5E/ffffff?text=User+Selection+Screen" alt="Ecrã de Seleção de Jogador" width="45%" style="border-radius: 10px; margin-right: 10px;" />
+  <img src="https://placehold.co/600x400/3B82F6/ffffff?text=Parent+Dashboard" alt="Área de Pais e Professores" width="45%" style="border-radius: 10px;" />
 </p>
 
 <p align="center">
