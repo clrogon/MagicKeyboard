@@ -1,7 +1,7 @@
 
 # Guia para Pais e Professores 👨‍👩‍👧‍👦
 
-Bem-vindo ao **Teclado Mágico**! Este guia ajuda-o a configurar e tirar o máximo partido desta ferramenta educativa.
+Bem-vindo ao **Teclado Mágico**! Este guia ajuda-o a configurar e tirar o máximo partido desta ferramenta educativa, desenhada para respeitar a identidade cultural das crianças.
 
 ## 1. Instalação (Funciona Offline!)
 
@@ -56,7 +56,15 @@ Como os dados ficam no computador, se mudar de PC, perde o progresso. Para evita
 2.  Clique em **"Exportar Dados"**. Será descarregado um ficheiro `.json`.
 3.  No novo computador, faça o mesmo processo mas clique em **"Importar Dados"** e selecione esse ficheiro.
 
-## 7. Dicas para Pais
+## 7. Identidade Cultural e Representatividade 🏿🏻
+
+Diferente de softwares genéricos, o Teclado Mágico foi desenvolvido com **Correção Étnica e Cultural** em mente:
+
+*   **Nomes Inclusivos**: A IA gera exercícios com nomes comuns em Angola (ex: Zola, Njinga, Jamba) e Portugal (ex: João, Maria), promovendo o reconhecimento identitário.
+*   **Contexto Local**: As frases referem realidades locais (Imbondeiros, Palancas, Rio Tejo, Azulejos) em vez de traduções literais do inglês.
+*   **Respeito Linguístico**: O sistema valida a norma do Português Europeu/Angolano, evitando confusões gramaticais com variantes de outros continentes.
+
+## 8. Dicas para Pais
 
 *   **Postura**: Garanta que a criança está sentada com as costas direitas e os pés no chão.
 *   **Mãos**: Os pulsos não devem pousar na mesa. Devem "flutuar" ligeiramente acima do teclado.
