@@ -1,10 +1,9 @@
 import React from 'react';
 import { Level, UserProfile, CustomLesson } from '../types';
 import { ClayButton } from './ClayButton';
-import { Lock, Play, Clock, AlertCircle, Trophy, Shield, Crown, Eye, EyeOff, BookOpen, Volume2, VolumeX, Edit3, Mic } from 'lucide-react';
+import { Lock, Play, Clock, AlertCircle, Trophy, Shield, Crown, Eye, EyeOff, BookOpen, Volume2, VolumeX, Edit3, Mic, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getXpForNextLevel, THEME_COLORS } from '../constants';
-import { RefreshCw } from 'lucide-react';
 
 interface LevelSelectorProps {
   levels: Level[];

@@ -1,5 +1,4 @@
 
-/// <reference types="node" />
 
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
@@ -8,7 +7,8 @@ import { VitePWA } from 'vite-plugin-pwa';
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   // Load env file based on `mode` in the current working directory.
-  const env = loadEnv(mode, process.cwd(), '');
+  // Fix: Use '.' for the directory instead of process.cwd() as node types are missing in this context
+  const env = loadEnv(mode, '.', '');
   
   return {
     plugins: [

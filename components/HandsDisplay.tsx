@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Finger, Theme } from '../types';
 
@@ -45,7 +44,7 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
     return activeFinger === finger;
   };
 
-  // Helper para opacidade/brilho
+  // Helper para preenchimento do dedo
   const getFingerFill = (finger: Finger) => {
       if (isFingerActive(finger)) return FINGER_COLORS[finger];
       return skin.fill;
@@ -95,7 +94,7 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
 
   const renderFinger = (path: string, nailPath: string, finger: Finger) => {
     const isActive = isFingerActive(finger);
-    const color = isActive ? FINGER_COLORS[finger] : skin.fill;
+    const color = getFingerFill(finger);
     const stroke = isActive ? 'none' : skin.stroke;
     
     return (
