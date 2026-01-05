@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { AppState, UserProfile, CustomLesson } from '../types';
 import { ClayButton } from './ClayButton';
-import { ArrowLeft, Trash2, Clock, Trophy, Target, Calendar, Download, Upload, Plus, Pencil, BookOpen, Users, Save, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Trash2, Clock, Trophy, Target, Calendar, Download, Upload, Plus, Pencil, BookOpen, Users, Save, TrendingUp, GraduationCap, Lock, Unlock } from 'lucide-react';
 import { THEME_COLORS } from '../constants';
 
 interface ParentDashboardProps {
@@ -13,12 +13,13 @@ interface ParentDashboardProps {
   onAddCustomLesson: (lesson: CustomLesson) => void;
   onDeleteCustomLesson: (lessonId: string) => void;
   onImportData: (data: AppState) => void;
+  onUpdateUser?: (userId: string, updates: Partial<UserProfile>) => void;
 }
 
 const ParentDashboard: React.FC<ParentDashboardProps> = ({ 
-    users, appState, onBack, onDeleteUser, onAddCustomLesson, onDeleteCustomLesson, onImportData 
+    users, appState, onBack, onDeleteUser, onAddCustomLesson, onDeleteCustomLesson, onImportData, onUpdateUser 
 }) => {
-  const [activeTab, setActiveTab] = useState<'users' | 'lessons' | 'data'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'classroom' | 'lessons' | 'data'>('users');
   
   // Custom Lesson Form State
   const [lessonTitle, setLessonTitle] = useState("");
@@ -102,6 +103,12 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
       setShowLessonForm(false);
   };
 
+  const handleToggleKiosk = (userId: string, currentStatus: boolean) => {
+      if (onUpdateUser) {
+          onUpdateUser(userId, { kioskMode: !currentStatus });
+      }
+  };
+
   return (
     <div className="min-h-screen p-4 md:p-8 relative z-10 overflow-y-auto">
       <div className="max-w-6xl mx-auto">
@@ -157,6 +164,12 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                 <Users size={18} /> Alunos
             </button>
             <button 
+                onClick={() => setActiveTab('classroom')}
+                className={`px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all ${activeTab === 'classroom' ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-200' : 'bg-white text-slate-500 hover:bg-slate-50'}`}
+            >
+                <GraduationCap size={18} /> Sala de Aula
+            </button>
+            <button 
                 onClick={() => setActiveTab('lessons')}
                 className={`px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all ${activeTab === 'lessons' ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-200' : 'bg-white text-slate-500 hover:bg-slate-50'}`}
             >
@@ -180,23 +193,14 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                             <tr className="bg-slate-50 border-b border-slate-100">
                                 <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider">Aluno</th>
                                 <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider">Nível</th>
-                                <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider">Melhor PPM</th>
                                 <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider">Último Treino</th>
-                                <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider">Evolução (5 Sessões)</th>
                                 <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider text-right">Ações</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {users.map((user) => {
-                                const maxWpm = user.history.reduce((max, h) => Math.max(max, h.wpm), 0);
                                 const lastPlayed = user.history.length > 0 ? user.history[user.history.length - 1].date : '';
                                 const colors = THEME_COLORS[user.theme];
-                                
-                                // Logic for Micro-Chart
-                                const recentSessions = user.history.slice(-5);
-                                // Determine scale max (at least 20 WPM to avoid huge bars for low scores)
-                                const maxRecentWpm = Math.max(...recentSessions.map(s => s.wpm), 20);
-
                                 return (
                                     <tr key={user.id} className="hover:bg-slate-50/50 transition-colors">
                                         <td className="p-4">
@@ -210,9 +214,6 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                                         <td className="p-4">
                                             <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-lg font-bold text-xs">Lvl {user.playerLevel}</span>
                                         </td>
-                                        <td className="p-4 font-bold text-slate-600">
-                                            {maxWpm > 0 ? `${maxWpm} PPM` : '-'}
-                                        </td>
                                         <td className="p-4 text-slate-500 text-sm font-medium">
                                             {lastPlayed ? (
                                                 <div className="flex items-center gap-2">
@@ -222,47 +223,6 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                                                 <span className="text-slate-300">Nunca</span>
                                             )}
                                         </td>
-                                        
-                                        {/* Micro Chart Column */}
-                                        <td className="p-4 align-bottom h-full">
-                                            <div className="flex items-end gap-1.5 h-10 w-32">
-                                                {recentSessions.length === 0 ? (
-                                                    <div className="flex items-center gap-2 text-slate-300 text-xs italic">
-                                                        <TrendingUp size={14} /> Sem dados
-                                                    </div>
-                                                ) : (
-                                                    // Render up to 5 bars. If less than 5 sessions, empty slots are implicit
-                                                    Array.from({ length: 5 }).map((_, i) => {
-                                                        // Get the session from the end (alignment right)
-                                                        // If we have 3 sessions: [s1, s2, s3]. We want: [empty, empty, s1, s2, s3]
-                                                        const sessionIndex = i - (5 - recentSessions.length);
-                                                        const session = sessionIndex >= 0 ? recentSessions[sessionIndex] : null;
-                                                        
-                                                        if (!session) {
-                                                            return (
-                                                                <div key={i} className="flex-1 bg-slate-100 h-1 rounded-sm" />
-                                                            );
-                                                        }
-
-                                                        const heightPercent = Math.max(15, (session.wpm / maxRecentWpm) * 100);
-
-                                                        return (
-                                                            <div key={i} className="flex-1 flex flex-col justify-end group relative h-full">
-                                                                <div 
-                                                                    className={`w-full rounded-t-sm transition-all duration-300 ${colors.bg} opacity-80 hover:opacity-100`}
-                                                                    style={{ height: `${heightPercent}%` }}
-                                                                ></div>
-                                                                {/* Tooltip */}
-                                                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 bg-slate-800 text-white text-[10px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
-                                                                    {session.wpm}
-                                                                </div>
-                                                            </div>
-                                                        );
-                                                    })
-                                                )}
-                                            </div>
-                                        </td>
-
                                         <td className="p-4 text-right">
                                             <button 
                                                 onClick={() => onDeleteUser(user.id)}
@@ -271,6 +231,73 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                                             >
                                                 <Trash2 size={16} />
                                             </button>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+
+            {activeTab === 'classroom' && (
+                <div className="overflow-x-auto">
+                    <div className="mb-4 bg-indigo-50 p-4 rounded-xl border border-indigo-100 text-indigo-700 text-sm flex items-center gap-3">
+                        <Lock size={20} />
+                        <span>
+                            <strong>Modo Kiosk:</strong> Quando ativado, bloqueia a mudança de Avatar e Tema, e impede que o aluno saia do perfil sem autorização do professor.
+                        </span>
+                    </div>
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="bg-slate-50 border-b border-slate-100">
+                                <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider">Aluno</th>
+                                <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider">Progresso Geral</th>
+                                <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider">Velocidade Máx.</th>
+                                <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider text-center">Modo Kiosk</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                            {users.map((user) => {
+                                const maxWpm = user.history.reduce((max, h) => Math.max(max, h.wpm), 0);
+                                const totalTime = (user.history.reduce((acc, h) => acc + (h.duration || 0), 0) / 60).toFixed(1);
+                                const colors = THEME_COLORS[user.theme];
+                                
+                                return (
+                                    <tr key={user.id} className="hover:bg-slate-50/50 transition-colors">
+                                        <td className="p-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm bg-slate-200`}>
+                                                    {user.currentAvatar}
+                                                </div>
+                                                <span className="font-bold text-slate-700">{user.name}</span>
+                                            </div>
+                                        </td>
+                                        <td className="p-4">
+                                            <div className="flex flex-col gap-1">
+                                                <span className="text-xs font-bold text-slate-500 uppercase">Nível {user.currentLevelId}</span>
+                                                <div className="text-xs text-slate-400">{totalTime} horas de treino</div>
+                                            </div>
+                                        </td>
+                                        <td className="p-4 font-bold text-slate-700">
+                                            {maxWpm} PPM
+                                        </td>
+                                        <td className="p-4 text-center">
+                                            <button 
+                                                onClick={() => handleToggleKiosk(user.id, !!user.kioskMode)}
+                                                className={`
+                                                    relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none
+                                                    ${user.kioskMode ? 'bg-indigo-600' : 'bg-slate-200'}
+                                                `}
+                                            >
+                                                <span className={`
+                                                    inline-block h-4 w-4 transform rounded-full bg-white transition-transform
+                                                    ${user.kioskMode ? 'translate-x-6' : 'translate-x-1'}
+                                                `}/>
+                                            </button>
+                                            <div className="text-[10px] font-bold mt-1 text-slate-400 uppercase">
+                                                {user.kioskMode ? 'Ativo' : 'Desativado'}
+                                            </div>
                                         </td>
                                     </tr>
                                 );

@@ -13,7 +13,7 @@ import PrivacyModal from './components/PrivacyModal';
 import CookieBanner from './components/CookieBanner';
 import HandGuideModal from './components/HandGuideModal';
 import ScreenRestriction from './components/ScreenRestriction';
-import { Shield, Zap, Star, LogOut, Heart, ArrowRight, Download, WifiOff, Unlock, Medal, TrendingUp, Hourglass, Target, Calendar, CalendarCheck, Crown, Hash, ShieldCheck, Clock, Check, X, Code, AtSign, Terminal } from 'lucide-react';
+import { Shield, Zap, Star, LogOut, Heart, ArrowRight, Download, WifiOff, Unlock, Medal, TrendingUp, Hourglass, Target, Calendar, CalendarCheck, Crown, Hash, ShieldCheck, Clock, Check, X, Code, AtSign, Terminal, Lock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { audioService } from './services/audioService';
 import { ClayButton } from './components/ClayButton';
@@ -44,7 +44,8 @@ const App: React.FC = () => {
                 errorStats: parsed.errorStats || {},
                 soundEnabled: true,
                 layout: parsed.layout || 'qwerty',
-                ghosts: {}
+                ghosts: {},
+                kioskMode: false
             };
             return {
                 users: { 'legacy': legacyUser },
@@ -60,6 +61,10 @@ const App: React.FC = () => {
             }
             if (!migratedUsers[key].ghosts) {
                 migratedUsers[key].ghosts = {};
+            }
+            // Ensure kioskMode defaults to false if missing
+            if (migratedUsers[key].kioskMode === undefined) {
+                migratedUsers[key].kioskMode = false;
             }
         });
 
@@ -196,7 +201,8 @@ const App: React.FC = () => {
           achievements: [],
           dailyChallenge: null,
           soundEnabled: true,
-          ghosts: {}
+          ghosts: {},
+          kioskMode: false
       };
       
       setAppState(prev => ({
@@ -259,6 +265,13 @@ const App: React.FC = () => {
   };
 
   const handleLogout = () => {
+      // If Kiosk Mode is on, secure the logout action
+      if (currentUser?.kioskMode) {
+          handleOpenParentDashboard();
+          // NOTE: handleOpenParentDashboard switches to ParentDashboard on success. 
+          // From there, teachers can disable Kiosk Mode or switch users.
+          return;
+      }
       setAppState(prev => ({ ...prev, activeUserId: null }));
       setCurrentScreen(AppScreen.UserSelect);
   };
@@ -270,14 +283,14 @@ const App: React.FC = () => {
   };
   
   const handleChangeAvatar = () => {
-      if (!currentUser) return;
+      if (!currentUser || currentUser.kioskMode) return; // Locked in Kiosk
       const currentIndex = AVATARS.indexOf(currentUser.currentAvatar);
       const nextIndex = (currentIndex + 1) % AVATARS.length;
       updateUser(currentUser.id, { currentAvatar: AVATARS[nextIndex] });
   };
 
   const handleSetTheme = (theme: Theme) => {
-      if (!currentUser) return;
+      if (!currentUser || currentUser.kioskMode) return; // Locked in Kiosk
       updateUser(currentUser.id, { theme });
   };
 
@@ -786,6 +799,7 @@ const App: React.FC = () => {
                 onAddCustomLesson={handleAddCustomLesson}
                 onDeleteCustomLesson={handleDeleteCustomLesson}
                 onImportData={handleImportData}
+                onUpdateUser={updateUser}
              />
           )
       }
@@ -823,15 +837,27 @@ const App: React.FC = () => {
                     </div>
                  )}
              </div>
+             
              <div className="flex items-center gap-4">
-                 <div className="bg-white/50 backdrop-blur-sm p-1 rounded-full flex items-center gap-1 shadow-sm border border-white">
-                     <button onClick={() => handleSetTheme('rose')} className={`w-6 h-6 rounded-full bg-rose-400 border-2 transition-transform ${currentUser.theme === 'rose' ? 'border-rose-600 scale-110' : 'border-transparent hover:scale-105'}`} aria-label="Tema Rosa" />
-                     <button onClick={() => handleSetTheme('blue')} className={`w-6 h-6 rounded-full bg-blue-400 border-2 transition-transform ${currentUser.theme === 'blue' ? 'border-blue-600 scale-110' : 'border-transparent hover:scale-105'}`} aria-label="Tema Azul" />
-                     <button onClick={() => handleSetTheme('amber')} className={`w-6 h-6 rounded-full bg-amber-400 border-2 transition-transform ${currentUser.theme === 'amber' ? 'border-amber-600 scale-110' : 'border-transparent hover:scale-105'}`} aria-label="Tema Amarelo" />
-                 </div>
-                 <button onClick={handleLogout} className="text-slate-400 hover:text-red-500 transition" title="Sair">
-                    <LogOut size={20} />
-                 </button>
+                 {/* HIDE THEME SELECTOR IF IN KIOSK MODE */}
+                 {!currentUser.kioskMode && (
+                     <div className="bg-white/50 backdrop-blur-sm p-1 rounded-full flex items-center gap-1 shadow-sm border border-white">
+                         <button onClick={() => handleSetTheme('rose')} className={`w-6 h-6 rounded-full bg-rose-400 border-2 transition-transform ${currentUser.theme === 'rose' ? 'border-rose-600 scale-110' : 'border-transparent hover:scale-105'}`} aria-label="Tema Rosa" />
+                         <button onClick={() => handleSetTheme('blue')} className={`w-6 h-6 rounded-full bg-blue-400 border-2 transition-transform ${currentUser.theme === 'blue' ? 'border-blue-600 scale-110' : 'border-transparent hover:scale-105'}`} aria-label="Tema Azul" />
+                         <button onClick={() => handleSetTheme('amber')} className={`w-6 h-6 rounded-full bg-amber-400 border-2 transition-transform ${currentUser.theme === 'amber' ? 'border-amber-600 scale-110' : 'border-transparent hover:scale-105'}`} aria-label="Tema Amarelo" />
+                     </div>
+                 )}
+                 
+                 {/* Kiosk Mode Logout Protection */}
+                 {currentUser.kioskMode ? (
+                     <button onClick={handleLogout} className="bg-slate-200 text-slate-500 hover:bg-slate-300 p-2 rounded-full transition" title="Acesso Professor (Bloqueado)">
+                        <Lock size={20} />
+                     </button>
+                 ) : (
+                     <button onClick={handleLogout} className="text-slate-400 hover:text-red-500 transition" title="Sair">
+                        <LogOut size={20} />
+                     </button>
+                 )}
              </div>
         </header>
         <div className="flex-grow">
@@ -855,7 +881,7 @@ const App: React.FC = () => {
                     <span className="flex items-center gap-2">
                         Feito com <Heart size={14} className="text-red-400 fill-red-400" /> por Cláudio Roberto Gonçalves para a educação em Portugal e Angola 🇵🇹 🇦🇴
                     </span>
-                    <span className="text-xs opacity-50">© 2026 Cláudio Roberto Gonçalves. v1.5.0 (2026) | MIT License</span>
+                    <span className="text-xs opacity-50">© 2026 Cláudio Roberto Gonçalves. v2.0.0 (2026) | MIT License</span>
                 </div>
                 <button onClick={() => setShowPrivacyModal(true)} className="flex items-center gap-1 hover:text-slate-600 transition-colors">
                      <Shield size={14} /> Privacidade e Dados

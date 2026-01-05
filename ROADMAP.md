@@ -58,17 +58,18 @@ Project Start Date: **January 3, 2026**.
 - [ ] **WebRTC P2P Engine**: Allow two computers on the same Wi-Fi to connect directly.
 - [ ] **Corrida de Palavras**: Real-time typing race.
 
-## 🚀 Phase 8: Digital Literacy - "O Hacker" (v1.7.0)
-**Status:** Completed
+## ✅ Phase 8: Digital Literacy - "O Hacker" (Completed)
+**Status:** Completed (v1.7.0)
 **Focus:** Beyond the alphabet - Real world computer skills.
 - [x] **AltGr Support**: Visual support for third-level keys (`@`, `[`, `]`, `{`, `}`).
 - [x] **Code Syntax**: Levels specifically for `{ } [ ] < > ;` used in programming.
 - [x] **Naming Conventions**: Training `camelCase` and `snake_case`.
-- [ ] **Shortcuts Dojo**: Training for `Ctrl+C`, `Ctrl+V`.
+- [x] **Achievements**: Added medals for coding and symbols.
 
-## 🔮 Phase 9: Classroom Tools - "Sala de Aula" (v2.0.0)
-**Status:** Planned
+## 🚀 Phase 9: Classroom Tools - "Sala de Aula" (v2.0.0)
+**Status:** In Progress
 **Focus:** Solving the "No Database" problem for Teachers.
-- [ ] **Magic QR Reporting**: Teachers scan student screen to log grades.
+- [x] **Classroom Report**: Consolidated view of all students for teachers.
+- [x] **Kiosk Mode**: Setting to lock the UI (hide avatars/themes) for focused classroom use.
 - [ ] **Homework Codes**: Codes (e.g., "TPC-34") that load specific configurations.
-- [ ] **Kiosk Mode**: Setting to lock the UI.
+- [ ] **Magic QR Reporting**: Teachers scan student screen to log grades.

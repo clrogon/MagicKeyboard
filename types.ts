@@ -162,6 +162,9 @@ export interface UserProfile {
   soundEnabled: boolean;
   layout: KeyboardLayout; // Added in v1.5.0
   
+  // Phase 9: Classroom Tools
+  kioskMode?: boolean; // If true, locks avatar, theme, and requires math challenge to logout
+  
   // Phase 7: Ghost Data
   // Key: LevelID (e.g., "1", "custom-id"). Value: Best Run Record
   ghosts?: Record<string, GhostRecord>;
