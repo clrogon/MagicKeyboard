@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Level, SessionResult, GameMode, ErrorStats, Theme, KeyboardLayout } from '../types';
 import { ClayButton } from './ClayButton';
 import VirtualKeyboard from './VirtualKeyboard';
-import { RotateCcw, Timer, X, Info, EyeOff, Sparkles, Flag, Play, Pencil, Star, Trophy, Target, Volume2, Mic, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { RotateCcw, Timer, X, Info, EyeOff, Sparkles, Flag, Play, Pencil, Star, Trophy, Target, Volume2, Mic, ArrowLeft } from 'lucide-react';
 import { generateSmartExercise } from '../services/geminiService';
 import { THEME_COLORS } from '../constants';
 import { audioService } from '../services/audioService';
