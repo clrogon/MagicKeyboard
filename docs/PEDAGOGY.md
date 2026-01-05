@@ -49,7 +49,14 @@ Se o sistema deteta que o aluno falha frequentemente na tecla `R`:
 2.  A IA recebe um pedido: "Gera palavras simples com muitos R's, como 'carro', 'rato', 'correr'".
 3.  O aluno pratica especificamente a sua fraqueza.
 
-## 4. Acessibilidade e Inclusão
+## 4. Ambiente Seguro (Privacidade Pedagógica)
+
+Aprender requer cometer erros. Para que a criança se sinta segura a errar:
+*   **Dados Locais**: Nada sai do computador da criança. Ela não está a ser "vigiada" por um servidor remoto.
+*   **Sem Competitividade Tóxica**: Não existem tabelas de classificação globais (Leaderboards) que comparam a criança com estranhos na internet. A competição é apenas consigo mesma (Ghost Mode).
+*   **Anonimato**: O sistema não requer identificação real, permitindo à criança criar uma "persona" de aprendizagem livre de julgamentos.
+
+## 5. Acessibilidade e Inclusão
 
 *   **Dislexia**: A fonte utilizada (`Fredoka` e `Nunito`) é arredondada e com bom espaçamento, facilitando a leitura.
 *   **Baixa Visão**: O modo "Ditado Mágico" (Nível -4) permite treinar apenas com áudio, sem depender de pistas visuais.

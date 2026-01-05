@@ -26,6 +26,14 @@ Ao contribuir com texto ou código de UI, siga estas regras estritas:
     *   *Usar*: Ecrã, Rato, Autocarro, Comboio, Peão, TPC (Trabalho de Casa).
     *   *Evitar*: Tela, Mouse, Ônibus, Trem, Pedestre, Lição de Casa.
 
+## 🛡️ Diretrizes de Privacidade (Privacy First)
+
+**Este é um software educativo para crianças.** A privacidade não é opcional.
+
+1.  **Zero Telemetria**: Não adicione Google Analytics, Mixpanel, Hotjar ou qualquer script de tracking.
+2.  **Local First**: Qualquer nova funcionalidade de persistência deve usar `LocalStorage` ou `IndexedDB`. Não adicione chamadas a bases de dados externas para guardar dados de utilizador.
+3.  **Dependências**: Audite qualquer nova dependência npm para garantir que não inclui telemetria oculta.
+
 ## 🛠️ Processo de Desenvolvimento
 
 1.  **Fork** ao repositório.

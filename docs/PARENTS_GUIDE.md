@@ -1,7 +1,7 @@
 
 # Guia para Pais e Professores 👨‍👩‍👧‍👦
 
-Bem-vindo ao **Teclado Mágico**! Este guia ajuda-o a configurar e tirar o máximo partido desta ferramenta educativa, desenhada para respeitar a identidade cultural das crianças.
+Bem-vindo ao **Teclado Mágico**! Este guia ajuda-o a configurar e tirar o máximo partido desta ferramenta educativa, desenhada para respeitar a identidade cultural das crianças e a sua privacidade.
 
 ## 1. Instalação (Funciona Offline!)
 

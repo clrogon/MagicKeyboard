@@ -25,25 +25,26 @@
 Toda a informação detalhada sobre o projeto encontra-se na pasta `/docs`:
 
 *   🎓 **[Pedagogia e Método de Ensino](docs/PEDAGOGY.md)**: Como o método funciona, estrutura dos 17 níveis e lógica da IA.
-*   👨‍👩‍👧‍👦 **[Guia para Pais e Professores](docs/PARENTS_GUIDE.md)**: Manual de utilização, instalação, privacidade e ferramentas de gestão.
+*   👨‍👩‍👧‍👦 **[Guia para Pais e Professores](docs/PARENTS_GUIDE.md)**: Manual de utilização, instalação, **privacidade** e ferramentas de gestão.
 *   🗺️ **[Roteiro do Projeto (Roadmap)](ROADMAP.md)**: O passado, presente e futuro do desenvolvimento.
+*   🛡️ **[Política de Segurança e Privacidade](SECURITY.md)**: Detalhes sobre dados locais, GDPR e anonimização de IA.
 
 ---
 
 ## 🚀 Funcionalidades de Destaque | Feature Highlights
-
-### 🧠 Inteligência Artificial Contextual (Gemini Powered)
-Ao contrário de sites que repetem as mesmas frases estáticas, o Teclado Mágico usa a **API Google Gemini** para criar conteúdos dinâmicos.
-*   **Adaptação Cultural**: O sistema sabe a diferença entre o Tejo e o Kwanza. Gera frases sobre *Imbondeiros*, *Pastéis de Nata*, *Palancas Negras* e *Elétricos de Lisboa*.
-*   **Correção de Erros em Tempo Real**: Se a criança falha muito nas teclas "A" e "S", a IA gera automaticamente um "Treino de Dificuldades" focado nessas letras.
-*   **Zero Alucinações**: Prompting rigoroso garante que o conteúdo é seguro para crianças e pedagogicamente útil.
 
 ### 🛡️ Soberania de Dados (Privacy by Design)
 A segurança das crianças é a nossa prioridade número um.
 *   **Sem Base de Dados**: Não temos servidores para guardar dados de utilizadores.
 *   **Armazenamento Local**: Todo o progresso, XP e perfis são guardados encriptados no dispositivo (LocalStorage).
 *   **Anonimato na IA**: Quando pedimos frases à Google, enviamos pedidos anónimos (ex: "Gera uma frase com a letra J"). Nenhum dado da criança é enviado para a cloud.
-*   **GDPR/RGPD**: Totalmente compatível com as normas europeias de proteção de dados.
+*   **GDPR/RGPD**: Totalmente compatível com as normas europeias de proteção de dados, incluindo ferramentas de Exportação/Eliminação de dados.
+
+### 🧠 Inteligência Artificial Contextual (Gemini Powered)
+Ao contrário de sites que repetem as mesmas frases estáticas, o Teclado Mágico usa a **API Google Gemini** para criar conteúdos dinâmicos.
+*   **Adaptação Cultural**: O sistema sabe a diferença entre o Tejo e o Kwanza. Gera frases sobre *Imbondeiros*, *Pastéis de Nata*, *Palancas Negras* e *Elétricos de Lisboa*.
+*   **Correção de Erros em Tempo Real**: Se a criança falha muito nas teclas "A" e "S", a IA gera automaticamente um "Treino de Dificuldades" focado nessas letras.
+*   **Zero Alucinações**: Prompting rigoroso garante que o conteúdo é seguro para crianças e pedagogicamente útil.
 
 ### 🌍 Internacionalização (v1.5.0)
 Suporte para comunidades portuguesas no estrangeiro e escolas internacionais.
