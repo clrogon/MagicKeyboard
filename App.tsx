@@ -654,14 +654,20 @@ const App: React.FC = () => {
         nextLevel = LEVELS.find(l => l.id === nextId);
     }
 
-    // QR Code Data Packet
-    const qrData = JSON.stringify({
-        u: currentUser.name,
-        l: lastResult.levelId,
-        w: lastResult.wpm,
-        a: lastResult.accuracy,
-        d: new Date().toISOString().split('T')[0]
-    });
+    const levelDisplay = lastResult.mode === GameMode.Campaign ? `Nível ${lastResult.levelId}` : 
+                         lastResult.mode === GameMode.Timed ? 'Desafio de Tempo' :
+                         lastResult.mode === GameMode.ErrorDrill ? 'Treino de Erros' :
+                         lastResult.mode === GameMode.Story ? 'Modo História' :
+                         lastResult.mode === GameMode.Dictation ? 'Ditado Mágico' : 'Lição Personalizada';
+
+    // QR Code Data Packet - Formatted for human readability
+    const qrData = `RELATÓRIO TECLADO MÁGICO\n` +
+        `--------------------------\n` +
+        `Aluno: ${currentUser.name}\n` +
+        `Exercício: ${levelDisplay}\n` +
+        `Velocidade: ${lastResult.wpm} PPM\n` +
+        `Precisão: ${lastResult.accuracy}%\n` +
+        `Data: ${new Date().toLocaleDateString('pt-PT')}`;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm">
