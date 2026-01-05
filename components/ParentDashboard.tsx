@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { AppState, UserProfile, CustomLesson } from '../types';
 import { ClayButton } from './ClayButton';
-import { ArrowLeft, Trash2, Clock, Trophy, Target, Calendar, Download, Upload, Plus, Edit3, BookOpen, Users, Save } from 'lucide-react';
+import { ArrowLeft, Trash2, Clock, Trophy, Target, Calendar, Download, Upload, Plus, Pencil, BookOpen, Users, Save } from 'lucide-react';
 import { THEME_COLORS } from '../constants';
 
 interface ParentDashboardProps {
@@ -247,7 +247,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {appState.customLessons.length === 0 && (
                                     <div className="col-span-2 text-center py-10 text-slate-400 border-2 border-dashed border-slate-200 rounded-2xl">
-                                        <Edit3 size={40} className="mx-auto mb-2 opacity-50" />
+                                        <Pencil size={40} className="mx-auto mb-2 opacity-50" />
                                         <p>Ainda não criaste nenhuma lição.</p>
                                         <p className="text-sm">Cria listas de palavras para trabalhos de casa!</p>
                                     </div>

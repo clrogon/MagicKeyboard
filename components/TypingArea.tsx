@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Level, SessionResult, GameMode, ErrorStats, Theme, KeyboardLayout } from '../types';
 import { ClayButton } from './ClayButton';
 import VirtualKeyboard from './VirtualKeyboard';
-import { RotateCcw, Timer, X, Info, EyeOff, Sparkles, Flag, Play, Edit, Star, Trophy, Target, Volume2, Mic } from 'lucide-react';
+import { RotateCcw, Timer, X, Info, EyeOff, Sparkles, Flag, Play, Pencil, Star, Trophy, Target, Volume2, Mic } from 'lucide-react';
 import { generateSmartExercise } from '../services/geminiService';
 import { THEME_COLORS } from '../constants';
 import { audioService } from '../services/audioService';
@@ -56,6 +56,22 @@ const TypingArea: React.FC<TypingAreaProps> = ({
   const isComposing = useRef(false); // Track IME composition state (macOS accents)
 
   const colors = THEME_COLORS[theme];
+
+  const speakText = useCallback((textToSpeak: string) => {
+      if (!window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      utterance.lang = 'pt-PT';
+      utterance.rate = 0.8;
+      utterance.pitch = 1.1;
+      
+      const voices = window.speechSynthesis.getVoices();
+      const ptVoice = voices.find(v => v.lang.includes('pt-PT')) || voices.find(v => v.lang.includes('pt'));
+      if (ptVoice) utterance.voice = ptVoice;
+
+      window.speechSynthesis.speak(utterance);
+  }, []);
 
   // Initialize Level
   const initLevel = useCallback(async () => {
@@ -141,37 +157,62 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     return () => {
         if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [startTime, timeLimit, isBriefing]);
+  }, [startTime, timeLimit, isBriefing, timeLeft]);
+
+  // Finish Level logic
+  const finishLevel = useCallback(() => {
+    const endTime = Date.now();
+    let durationMin = 0;
+    
+    if (mode === GameMode.Timed && timeLimit) {
+        durationMin = timeLimit / 60;
+    } else {
+        durationMin = (endTime - (startTime || endTime)) / 60000;
+    }
+    
+    const totalTyped = currentIndex;
+    const grossWpm = Math.round((totalTyped / 5) / (durationMin || 0.001)); 
+    const accuracy = totalTyped > 0 ? Math.round(((totalTyped - sessionErrors) / totalTyped) * 100) : 0;
+    
+    let consistency = 100;
+    if (keystrokeIntervals.length > 2) {
+        const mean = keystrokeIntervals.reduce((a, b) => a + b, 0) / keystrokeIntervals.length;
+        const variance = keystrokeIntervals.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / keystrokeIntervals.length;
+        const stdDev = Math.sqrt(variance);
+        const cv = stdDev / (mean || 1); 
+        consistency = Math.max(0, Math.round(100 - (cv * 100)));
+    }
+
+    let stars: 1 | 2 | 3 = 1;
+    if (grossWpm >= level.minWpm && accuracy >= level.minAccuracy) stars = 3;
+    else if (accuracy >= level.minAccuracy) stars = 2;
+
+    onComplete({
+      levelId: level.id,
+      mode: mode,
+      wpm: grossWpm,
+      accuracy: Math.max(0, accuracy),
+      consistency: consistency,
+      date: new Date().toISOString(),
+      stars,
+      duration: durationMin * 60,
+      correctStats: sessionCorrectMap
+    }, sessionErrorMap, sessionCorrectMap);
+  }, [currentIndex, level, mode, onComplete, sessionCorrectMap, sessionErrorMap, sessionErrors, startTime, timeLimit, keystrokeIntervals]);
 
   // Auto-finish
   useEffect(() => {
       if (timeLeft === 0 && startTime) {
           finishLevel();
       }
-  }, [timeLeft]);
+  }, [timeLeft, startTime, finishLevel]);
 
   // Dictation: Speak text when level starts (after briefing)
   useEffect(() => {
       if (!isBriefing && mode === GameMode.Dictation && text) {
           speakText(text);
       }
-  }, [isBriefing, mode, text]);
-
-  const speakText = (textToSpeak: string) => {
-      if (!window.speechSynthesis) return;
-      window.speechSynthesis.cancel();
-      
-      const utterance = new SpeechSynthesisUtterance(textToSpeak);
-      utterance.lang = 'pt-PT';
-      utterance.rate = 0.8;
-      utterance.pitch = 1.1;
-      
-      const voices = window.speechSynthesis.getVoices();
-      const ptVoice = voices.find(v => v.lang.includes('pt-PT')) || voices.find(v => v.lang.includes('pt'));
-      if (ptVoice) utterance.voice = ptVoice;
-
-      window.speechSynthesis.speak(utterance);
-  };
+  }, [isBriefing, mode, text, speakText]);
 
   const handleStartGame = () => {
       setIsBriefing(false);
@@ -273,46 +314,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     }
   };
 
-  const finishLevel = () => {
-    const endTime = Date.now();
-    let durationMin = 0;
-    
-    if (mode === GameMode.Timed && timeLimit) {
-        durationMin = timeLimit / 60;
-    } else {
-        durationMin = (endTime - (startTime || endTime)) / 60000;
-    }
-    
-    const totalTyped = currentIndex;
-    const grossWpm = Math.round((totalTyped / 5) / (durationMin || 0.001)); 
-    const accuracy = totalTyped > 0 ? Math.round(((totalTyped - sessionErrors) / totalTyped) * 100) : 0;
-    
-    let consistency = 100;
-    if (keystrokeIntervals.length > 2) {
-        const mean = keystrokeIntervals.reduce((a, b) => a + b, 0) / keystrokeIntervals.length;
-        const variance = keystrokeIntervals.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / keystrokeIntervals.length;
-        const stdDev = Math.sqrt(variance);
-        const cv = stdDev / (mean || 1); 
-        consistency = Math.max(0, Math.round(100 - (cv * 100)));
-    }
-
-    let stars: 1 | 2 | 3 = 1;
-    if (grossWpm >= level.minWpm && accuracy >= level.minAccuracy) stars = 3;
-    else if (accuracy >= level.minAccuracy) stars = 2;
-
-    onComplete({
-      levelId: level.id,
-      mode: mode,
-      wpm: grossWpm,
-      accuracy: Math.max(0, accuracy),
-      consistency: consistency,
-      date: new Date().toISOString(),
-      stars,
-      duration: durationMin * 60,
-      correctStats: sessionCorrectMap
-    }, sessionErrorMap, sessionCorrectMap);
-  };
-
   const renderBriefing = () => {
       let title = "";
       let description = "";
@@ -372,7 +373,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                 className="bg-white relative z-30 p-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border-4 border-white max-w-lg w-full text-center"
              >
                  <div className={`w-20 h-20 ${colors.bg} rounded-full flex items-center justify-center mx-auto mb-6 text-white shadow-lg`}>
-                     {mode === GameMode.Custom ? <Edit size={40} /> : mode === GameMode.Dictation ? <Mic size={40} /> : <Info size={40} />}
+                     {mode === GameMode.Custom ? <Pencil size={40} /> : mode === GameMode.Dictation ? <Mic size={40} /> : <Info size={40} />}
                  </div>
                  
                  <h2 className="text-3xl md:text-4xl font-bold text-slate-700 fun-font mb-4">{title}</h2>

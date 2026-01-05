@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Finger, Theme } from '../types';
 
@@ -38,26 +39,8 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
 
   const skin = THEME_SKIN_TONES[theme];
 
-  // Helper para determinar se um dedo específico deve estar "aceso"
-  const isFingerActive = (finger: Finger) => {
-    if (mode === 'guide') return true;
-    return activeFinger === finger;
-  };
-
-  // Helper para preenchimento do dedo
-  const getFingerFill = (finger: Finger) => {
-      if (isFingerActive(finger)) return FINGER_COLORS[finger];
-      return skin.fill;
-  };
-
-  // SVG Paths refined for organic, "chubby" cartoon hands
-  // ViewBox: 0 0 400 200 (Left Hand 0-200, Right Hand 200-400)
-  
   const LeftHandPaths = {
-      // Wrist and Back of Hand (Metacarpus)
       wrist: "M45,180 Q45,140 50,125 L150,125 Q155,140 155,180", 
-      
-      // Fingers (Cubic Beziers for organic loops)
       pinky: "M30,125 C20,125 15,65 35,65 C55,65 50,125 45,125",
       ring: "M60,120 C50,120 45,40 70,40 C95,40 90,120 85,120",
       middle: "M95,115 C85,115 80,30 110,30 C140,30 135,115 125,115",
@@ -73,10 +56,8 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
       thumb: "M180,142 Q188,146 184,154 Q176,150 180,142"
   };
 
-  // Right Hand (Mirrored Geometry)
   const RightHandPaths = {
       wrist: "M355,180 Q355,140 350,125 L250,125 Q245,140 245,180",
-      
       pinky: "M370,125 C380,125 385,65 365,65 C345,65 350,125 355,125",
       ring: "M340,120 C350,120 355,40 330,40 C305,40 310,120 315,120",
       middle: "M305,115 C315,115 320,30 290,30 C260,30 265,115 275,115",
@@ -93,13 +74,12 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
   };
 
   const renderFinger = (path: string, nailPath: string, finger: Finger) => {
-    const isActive = isFingerActive(finger);
-    const color = getFingerFill(finger);
+    const isActive = mode === 'guide' || activeFinger === finger;
+    const color = isActive ? FINGER_COLORS[finger] : skin.fill;
     const stroke = isActive ? 'none' : skin.stroke;
     
     return (
-        <g className="transition-all duration-300">
-            {/* Dedo Base */}
+        <g key={finger} className="transition-all duration-300">
             <path 
                 d={path} 
                 fill={color} 
@@ -107,13 +87,11 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
                 strokeWidth="2"
                 className={`transition-all duration-300 ${isActive ? 'filter drop-shadow-md brightness-105' : ''}`}
             />
-            {/* Unha / Brilho */}
             <path 
                 d={nailPath} 
                 fill={isActive ? 'rgba(255,255,255,0.7)' : skin.shadow} 
                 className="transition-colors duration-300"
             />
-            {/* Anel de destaque (Ripple) quando ativo */}
             {activeFinger === finger && mode === 'active' && (
                 <>
                     <path 
@@ -125,7 +103,6 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
                         className="animate-ping"
                         style={{ animationDuration: '1.5s' }}
                     />
-                     {/* Tip Glow */}
                      <path 
                         d={nailPath}
                         fill="white"
@@ -147,38 +124,22 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
             xmlns="http://www.w3.org/2000/svg"
             className="overflow-visible"
         >
-            <defs>
-                <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur stdDeviation="2" result="blur" />
-                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                </filter>
-            </defs>
-
-            {/* Mão Esquerda */}
             <g transform="translate(0, 10)">
-                {/* Back of Hand drawn first (base) */}
                 <path d={LeftHandPaths.wrist} fill={skin.fill} stroke={skin.stroke} strokeWidth="2" />
-                
-                {/* Fingers drawn on top */}
                 {renderFinger(LeftHandPaths.pinky, LeftNails.pinky, Finger.LeftPinky)}
                 {renderFinger(LeftHandPaths.ring, LeftNails.ring, Finger.LeftRing)}
                 {renderFinger(LeftHandPaths.middle, LeftNails.middle, Finger.LeftMiddle)}
                 {renderFinger(LeftHandPaths.index, LeftNails.index, Finger.LeftIndex)}
                 {renderFinger(LeftHandPaths.thumb, LeftNails.thumb, Finger.Thumb)}
             </g>
-
-            {/* Mão Direita */}
             <g transform="translate(0, 10)">
                 <path d={RightHandPaths.wrist} fill={skin.fill} stroke={skin.stroke} strokeWidth="2" />
-
                 {renderFinger(RightHandPaths.pinky, RightNails.pinky, Finger.RightPinky)}
                 {renderFinger(RightHandPaths.ring, RightNails.ring, Finger.RightRing)}
                 {renderFinger(RightHandPaths.middle, RightNails.middle, Finger.RightMiddle)}
                 {renderFinger(RightHandPaths.index, RightNails.index, Finger.RightIndex)}
                 {renderFinger(RightHandPaths.thumb, RightNails.thumb, Finger.Thumb)}
             </g>
-
-            {/* Texto de Ajuda Central */}
             {mode === 'active' && !activeFinger && (
                 <text x="200" y="190" textAnchor="middle" fill="#94a3b8" fontSize="14" fontWeight="bold" fontFamily="Nunito" className="uppercase tracking-widest opacity-50">
                     Mãos em repouso

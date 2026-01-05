@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Level, UserProfile, CustomLesson } from '../types';
 import { ClayButton } from './ClayButton';
-import { Lock, Play, Clock, AlertCircle, Trophy, Shield, Crown, Eye, EyeOff, BookOpen, Volume2, VolumeX, Edit3, Mic, RefreshCw } from 'lucide-react';
+import { Lock, Play, Clock, AlertCircle, Trophy, Shield, Crown, Eye, EyeOff, BookOpen, Volume2, VolumeX, Pencil, Mic, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getXpForNextLevel, THEME_COLORS } from '../constants';
 
@@ -197,7 +198,7 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                                     onClick={() => onSelectCustomLesson(lesson)} 
                                     className="w-full py-3 text-left justify-start px-4"
                                 >
-                                    <Edit3 size={16} className="mr-2 text-indigo-500" />
+                                    <Pencil size={16} className="mr-2 text-indigo-500" />
                                     <span className="truncate">{lesson.title}</span>
                                 </ClayButton>
                             ))}

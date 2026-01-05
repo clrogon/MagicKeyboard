@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useCallback } from 'react';
 import confetti from 'canvas-confetti';
 import { AppState, UserProfile, AppScreen, Level, SessionResult, GameMode, ErrorStats, Theme, CustomLesson, KeyboardLayout } from './types';
 import { LEVELS, SUCCESS_MESSAGES, PLAYER_TITLES, AVATARS, THEME_COLORS, getXpForNextLevel } from './constants';
@@ -18,7 +19,6 @@ import { audioService } from './services/audioService';
 import { ClayButton } from './components/ClayButton';
 
 const App: React.FC = () => {
-  // Initialize state from LocalStorage (Persistence Layer)
   const [appState, setAppState] = useState<AppState>(() => {
     const saved = localStorage.getItem('keyboardHeroState');
     if (saved) {
@@ -96,30 +96,28 @@ const App: React.FC = () => {
 
   const colors = currentUser ? THEME_COLORS[currentUser.theme] : THEME_COLORS['rose'];
 
-  // Effect: Sync State to LocalStorage on every change
   useEffect(() => {
     localStorage.setItem('keyboardHeroState', JSON.stringify(appState));
   }, [appState]);
 
-  // Effect: Handle Connectivity & PWA Install
   useEffect(() => {
-      const handleOnline = () => setIsOffline(false);
-      const handleOffline = () => setIsOffline(true);
-      
-      const handleInstallPrompt = (e: Event) => {
-          e.preventDefault();
-          setInstallPrompt(e);
-      };
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+    
+    const handleInstallPrompt = (e: any) => {
+        e.preventDefault();
+        setInstallPrompt(e);
+    };
 
-      window.addEventListener('online', handleOnline);
-      window.addEventListener('offline', handleOffline);
-      window.addEventListener('beforeinstallprompt', handleInstallPrompt);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    window.addEventListener('beforeinstallprompt', handleInstallPrompt);
 
-      return () => {
-          window.removeEventListener('online', handleOnline);
-          window.removeEventListener('offline', handleOffline);
-          window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
-      };
+    return () => {
+        window.removeEventListener('online', handleOnline);
+        window.removeEventListener('offline', handleOffline);
+        window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
+    };
   }, []);
 
   const handleInstallClick = () => {
@@ -132,13 +130,21 @@ const App: React.FC = () => {
       });
   };
 
-  // Effect: Daily Challenge Generator
+  const updateUser = useCallback((userId: string, updates: Partial<UserProfile>) => {
+      setAppState(prev => ({
+          ...prev,
+          users: {
+              ...prev.users,
+              [userId]: { ...prev.users[userId], ...updates }
+          }
+      }));
+  }, []);
+
   useEffect(() => {
     if (!currentUser) return;
     
     const today = new Date().toISOString().split('T')[0];
     if (!currentUser.dailyChallenge || currentUser.dailyChallenge.date !== today) {
-        
         const types: ('stars' | 'wpm' | 'accuracy' | 'matches')[] = ['stars', 'wpm', 'accuracy', 'matches'];
         const type = types[Math.floor(Math.random() * types.length)];
         let target = 0;
@@ -162,17 +168,7 @@ const App: React.FC = () => {
             }
         });
     }
-  }, [appState.activeUserId]);
-
-  const updateUser = (userId: string, updates: Partial<UserProfile>) => {
-      setAppState(prev => ({
-          ...prev,
-          users: {
-              ...prev.users,
-              [userId]: { ...prev.users[userId], ...updates }
-          }
-      }));
-  };
+  }, [appState.activeUserId, currentUser, updateUser]);
 
   const handleCreateUser = (name: string, avatar: string, theme: Theme, layout: KeyboardLayout) => {
       const newUser: UserProfile = {
@@ -400,7 +396,6 @@ const App: React.FC = () => {
           minWpm: 0,
           minAccuracy: 0
       };
-      
       setActiveLevel(customLevel);
       setActiveMode(GameMode.Custom);
       setDifficultyModifier('normal');
@@ -411,7 +406,6 @@ const App: React.FC = () => {
   const checkStreak = (history: SessionResult[]) => {
       const dates = [...new Set(history.map(h => h.date.split('T')[0]))].sort();
       if (dates.length < 7) return false;
-      
       let consecutive = 1;
       for (let i = dates.length - 1; i > 0; i--) {
           const d1 = new Date(dates[i]);
@@ -437,20 +431,20 @@ const App: React.FC = () => {
 
   const handleLevelComplete = (result: SessionResult, sessionErrors: ErrorStats, sessionCorrects: ErrorStats) => {
     if (!currentUser) return;
-    
     const isWin = result.stars >= 1; 
     setLevelUpData(null);
     setLevelUnlocked(null);
 
     if (isWin || result.mode === GameMode.Timed || result.mode === GameMode.Story || result.mode === GameMode.Custom || result.mode === GameMode.Dictation) {
-       if (currentUser.soundEnabled) audioService.playWin();
-       
+       if (currentUser.soundEnabled) {
+          audioService.init();
+          audioService.playWin();
+       }
        const confettiColors = currentUser.theme === 'rose' 
          ? ['#F43F5E', '#FB7185', '#FDA4AF', '#FFF1F2'] 
          : currentUser.theme === 'blue'
             ? ['#3B82F6', '#60A5FA', '#93C5FD', '#EFF6FF']
             : ['#F59E0B', '#FBBF24', '#FCD34D', '#FFFBEB'];
-
        confetti({
           particleCount: 150,
           spread: 70,
@@ -460,7 +454,6 @@ const App: React.FC = () => {
     }
 
     setLastResult(result);
-    
     const newHistory = [...currentUser.history, result];
     let newUnlocked = [...currentUser.unlockedLevels];
     let newAchievements = [...currentUser.achievements];
@@ -502,7 +495,6 @@ const App: React.FC = () => {
     checkForAchievement('time_lord', result.mode === GameMode.Timed && (result.duration || 0) >= 1 && result.wpm >= 30);
 
     let sessionXp = calculateSessionXp(result);
-    
     let daily = currentUser.dailyChallenge ? { ...currentUser.dailyChallenge } : null;
     if (daily && !daily.completed) {
         let increment = 0;
@@ -537,11 +529,7 @@ const App: React.FC = () => {
     
     let newTitle = currentUser.currentTitle;
     if (leveledUp) {
-        const unlockedTitles = Object.keys(PLAYER_TITLES)
-            .map(Number)
-            .filter(lvl => lvl <= currentLevel)
-            .sort((a,b) => b-a);
-        
+        const unlockedTitles = Object.keys(PLAYER_TITLES).map(Number).filter(lvl => lvl <= currentLevel).sort((a,b) => b-a);
         if (unlockedTitles.length > 0) {
             newTitle = PLAYER_TITLES[unlockedTitles[0]];
         }
@@ -558,13 +546,11 @@ const App: React.FC = () => {
         currentTitle: newTitle,
         dailyChallenge: daily
     });
-
     setCurrentScreen(AppScreen.Result);
   };
 
   const renderResultScreen = () => {
     if (!lastResult || !currentUser) return null;
-    
     let message = "";
     let goalStatus = "";
     const isWin = lastResult.stars >= 1;
@@ -612,13 +598,8 @@ const App: React.FC = () => {
                 animate={{ scale: 1, opacity: 1 }}
                 className="bg-white rounded-[2.5rem] p-8 max-w-md w-full text-center shadow-2xl relative overflow-hidden border-4 border-white"
             >
-                {/* Level Up Overlay */}
                 {levelUpData && (
-                    <motion.div 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className={`absolute inset-0 ${colors.bg} z-50 flex flex-col items-center justify-center text-white p-6`}
-                    >
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={`absolute inset-0 ${colors.bg} z-50 flex flex-col items-center justify-center text-white p-6`}>
                          <div className="bg-white/20 p-4 rounded-full mb-4 animate-bounce">
                             <Star size={48} className="fill-white" />
                          </div>
@@ -626,14 +607,8 @@ const App: React.FC = () => {
                          <ClayButton onClick={() => setLevelUpData(null)} variant="secondary" theme={currentUser.theme}>Uau!</ClayButton>
                     </motion.div>
                 )}
-
-                {/* Level Unlocked Overlay */}
                 {!levelUpData && levelUnlocked && (
-                    <motion.div 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className={`absolute inset-0 bg-emerald-500 z-50 flex flex-col items-center justify-center text-white p-6`}
-                    >
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={`absolute inset-0 bg-emerald-500 z-50 flex flex-col items-center justify-center text-white p-6`}>
                          <div className="bg-white/20 p-4 rounded-full mb-4 animate-bounce">
                             <Unlock size={48} className="fill-white" />
                          </div>
@@ -642,25 +617,20 @@ const App: React.FC = () => {
                          <ClayButton onClick={() => setLevelUnlocked(null)} variant="secondary" theme={currentUser.theme}>Vamos lá!</ClayButton>
                     </motion.div>
                 )}
-
                 <div className={`inline-block px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide mb-4 ${isWin ? 'bg-emerald-100 text-emerald-600' : 'bg-orange-100 text-orange-600'}`}>
                     {goalStatus}
                 </div>
-
                 <h2 className="text-3xl font-bold text-slate-800 mb-2 fun-font">{message}</h2>
-                
                 <div className="flex justify-center gap-2 my-6">
                     {[1, 2, 3].map((star) => (
                         <Star key={star} size={48} fill={star <= lastResult.stars ? "#FBBF24" : "#E2E8F0"} className={star <= lastResult.stars ? "text-yellow-400" : "text-slate-200"} />
                     ))}
                 </div>
-
                 {lastResult.mode === GameMode.Campaign && (
                     <div className="text-sm text-slate-400 font-bold mb-6">
                         {isWin ? "Conseguiste pelo menos 1 Estrela! Podes avançar." : "Precisas de 1 Estrela para passar."}
                     </div>
                 )}
-
                 <div className="grid grid-cols-3 gap-3 mb-6">
                     <div className="bg-blue-50 p-3 rounded-2xl">
                         <div className="text-[10px] md:text-xs font-bold text-blue-400 uppercase">Velocidade</div>
@@ -679,29 +649,17 @@ const App: React.FC = () => {
                          </div>
                     </div>
                 </div>
-                
                 <div className="flex flex-col gap-3">
                     {nextLevel && (
-                        <ClayButton 
-                            variant="primary" 
-                            theme={currentUser.theme} 
-                            onClick={() => handleStartLevel(nextLevel as Level)}
-                            className="w-full py-3"
-                        >
+                        <ClayButton variant="primary" theme={currentUser.theme} onClick={() => handleStartLevel(nextLevel as Level)} className="w-full py-3">
                             Próximo Nível <ArrowRight size={18} className="ml-2" />
                         </ClayButton>
                     )}
-
                     {!nextLevel && (
-                        <ClayButton 
-                            variant={lastResult.stars < 2 ? "primary" : "secondary"}
-                            theme={currentUser.theme}
-                            onClick={() => handleStartLevel(activeLevel)}
-                        >
+                        <ClayButton variant={lastResult.stars < 2 ? "primary" : "secondary"} theme={currentUser.theme} onClick={() => handleStartLevel(activeLevel)}>
                             {isWin ? "Jogar Novamente" : "Tentar de Novo"}
                         </ClayButton>
                     )}
-                    
                     <ClayButton variant="secondary" onClick={() => setCurrentScreen(AppScreen.Dashboard)}>
                         Menu Principal
                     </ClayButton>
@@ -725,14 +683,8 @@ const App: React.FC = () => {
              />
           )
       }
-
       return (
-        <UserSelectScreen 
-            users={Object.values(appState.users)} 
-            onSelectUser={handleSelectUser}
-            onCreateUser={handleCreateUser}
-            onOpenParentDashboard={handleOpenParentDashboard}
-        />
+        <UserSelectScreen users={Object.values(appState.users)} onSelectUser={handleSelectUser} onCreateUser={handleCreateUser} onOpenParentDashboard={handleOpenParentDashboard} />
       );
   }
 
@@ -742,15 +694,12 @@ const App: React.FC = () => {
 
   return (
     <div className="font-sans text-slate-800 min-h-screen flex flex-col relative overflow-hidden transition-colors duration-500">
-      
       <ScreenRestriction />
-
       <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
           <div className={`absolute top-[-10%] left-[-10%] w-[500px] h-[500px] ${BlobColor1} rounded-full mix-blend-multiply filter blur-[80px] opacity-40 animate-blob transition-colors duration-1000`}></div>
           <div className={`absolute top-[-10%] right-[-10%] w-[500px] h-[500px] ${BlobColor2} rounded-full mix-blend-multiply filter blur-[80px] opacity-40 animate-blob animation-delay-2000 transition-colors duration-1000`}></div>
           <div className={`absolute bottom-[-20%] left-[20%] w-[500px] h-[500px] ${BlobColor3} rounded-full mix-blend-multiply filter blur-[80px] opacity-40 animate-blob animation-delay-4000 transition-colors duration-1000`}></div>
       </div>
-
       <div className="flex-grow flex flex-col relative z-10">
         <header className="px-6 py-4 flex justify-between items-center max-w-7xl mx-auto w-full">
              <div className="flex items-center gap-2">
@@ -758,7 +707,6 @@ const App: React.FC = () => {
                     <Zap size={24} fill="currentColor" />
                  </div>
                  <h1 className="text-2xl font-bold text-slate-700 fun-font hidden md:block">Teclado Mágico</h1>
-                 
                  {isOffline && (
                     <div className="flex items-center gap-2 bg-red-100 text-red-500 px-3 py-1 rounded-full text-xs font-bold animate-pulse">
                         <WifiOff size={14} />
@@ -766,81 +714,32 @@ const App: React.FC = () => {
                     </div>
                  )}
              </div>
-             
              <div className="flex items-center gap-4">
                  <div className="bg-white/50 backdrop-blur-sm p-1 rounded-full flex items-center gap-1 shadow-sm border border-white">
                      <button onClick={() => handleSetTheme('rose')} className={`w-6 h-6 rounded-full bg-rose-400 border-2 transition-transform ${currentUser.theme === 'rose' ? 'border-rose-600 scale-110' : 'border-transparent hover:scale-105'}`} aria-label="Tema Rosa" />
                      <button onClick={() => handleSetTheme('blue')} className={`w-6 h-6 rounded-full bg-blue-400 border-2 transition-transform ${currentUser.theme === 'blue' ? 'border-blue-600 scale-110' : 'border-transparent hover:scale-105'}`} aria-label="Tema Azul" />
                      <button onClick={() => handleSetTheme('amber')} className={`w-6 h-6 rounded-full bg-amber-400 border-2 transition-transform ${currentUser.theme === 'amber' ? 'border-amber-600 scale-110' : 'border-transparent hover:scale-105'}`} aria-label="Tema Amarelo" />
                  </div>
-
                  <button onClick={handleLogout} className="text-slate-400 hover:text-red-500 transition" title="Sair">
                     <LogOut size={20} />
                  </button>
              </div>
         </header>
-
         <div className="flex-grow">
             {currentScreen === AppScreen.Dashboard && (
-            <LevelSelector 
-                levels={LEVELS} 
-                unlockedLevels={currentUser.unlockedLevels}
-                customLessons={appState.customLessons}
-                gameState={currentUser as any} 
-                onSelectLevel={(l) => handleStartLevel(l)}
-                onSelectTimedMode={handleStartTimedMode}
-                onSelectErrorMode={handleStartErrorMode}
-                onSelectStoryMode={handleStartStoryMode}
-                onSelectDictationMode={handleStartDictationMode}
-                onSelectCustomLesson={handleStartCustomLesson}
-                onViewStats={() => setCurrentScreen(AppScreen.Stats)} 
-                onChangeAvatar={handleChangeAvatar}
-                onShowHandGuide={() => setShowHandGuide(true)}
-                onToggleBlindMode={setBlindMode}
-                onToggleSound={handleToggleSound}
-                isBlindMode={blindMode}
-            />
+            <LevelSelector levels={LEVELS} unlockedLevels={currentUser.unlockedLevels} customLessons={appState.customLessons} gameState={currentUser as any} onSelectLevel={handleStartLevel} onSelectTimedMode={handleStartTimedMode} onSelectErrorMode={handleStartErrorMode} onSelectStoryMode={handleStartStoryMode} onSelectDictationMode={handleStartDictationMode} onSelectCustomLesson={handleStartCustomLesson} onViewStats={() => setCurrentScreen(AppScreen.Stats)} onChangeAvatar={handleChangeAvatar} onShowHandGuide={() => setShowHandGuide(true)} onToggleBlindMode={setBlindMode} onToggleSound={handleToggleSound} isBlindMode={blindMode} />
             )}
-            
             {currentScreen === AppScreen.Exercise && (
-            <TypingArea 
-                level={activeLevel}
-                mode={activeMode}
-                theme={currentUser.theme}
-                layout={currentUser.layout}
-                errorStats={currentUser.errorStats}
-                timeLimit={timeLimit}
-                difficultyModifier={difficultyModifier}
-                blindMode={blindMode}
-                soundEnabled={currentUser.soundEnabled}
-                onComplete={handleLevelComplete}
-                onExit={() => setCurrentScreen(AppScreen.Dashboard)}
-            />
+            <TypingArea level={activeLevel} mode={activeMode} theme={currentUser.theme} layout={currentUser.layout} errorStats={currentUser.errorStats} timeLimit={timeLimit} difficultyModifier={difficultyModifier} blindMode={blindMode} soundEnabled={currentUser.soundEnabled} onComplete={handleLevelComplete} onExit={() => setCurrentScreen(AppScreen.Dashboard)} />
             )}
-
             {currentScreen === AppScreen.Result && lastResult && renderResultScreen()}
-
             {currentScreen === AppScreen.Stats && (
-                <StatsBoard 
-                user={currentUser}
-                history={currentUser.history} 
-                unlockedLevels={currentUser.unlockedLevels}
-                levels={LEVELS}
-                achievements={currentUser.achievements}
-                theme={currentUser.theme}
-                onBack={() => setCurrentScreen(AppScreen.Dashboard)}
-                onViewAchievements={() => setCurrentScreen(AppScreen.Achievements)}
-                />
+                <StatsBoard user={currentUser} history={currentUser.history} unlockedLevels={currentUser.unlockedLevels} levels={LEVELS} achievements={currentUser.achievements} theme={currentUser.theme} onBack={() => setCurrentScreen(AppScreen.Dashboard)} onViewAchievements={() => setCurrentScreen(AppScreen.Achievements)} />
             )}
-
             {currentScreen === AppScreen.Achievements && (
-                <AchievementsScreen
-                unlockedIds={currentUser.achievements}
-                onBack={() => setCurrentScreen(AppScreen.Stats)}
-                />
+                <AchievementsScreen unlockedIds={currentUser.achievements} onBack={() => setCurrentScreen(AppScreen.Stats)} />
             )}
         </div>
-
         {currentScreen !== AppScreen.Exercise && (
             <footer className="w-full max-w-7xl mx-auto p-6 text-center text-slate-400 text-sm font-bold flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
                 <div className="flex flex-col items-center gap-2">
@@ -852,31 +751,17 @@ const App: React.FC = () => {
                 <button onClick={() => setShowPrivacyModal(true)} className="flex items-center gap-1 hover:text-slate-600 transition-colors">
                      <Shield size={14} /> Privacidade e Dados
                 </button>
-                
                 {installPrompt && (
-                    <button 
-                        onClick={handleInstallClick} 
-                        className="flex items-center gap-1 text-emerald-500 hover:text-emerald-700 transition-colors bg-emerald-50 px-3 py-1 rounded-full animate-bounce"
-                    >
+                    <button onClick={handleInstallClick} className="flex items-center gap-1 text-emerald-500 hover:text-emerald-700 transition-colors bg-emerald-50 px-3 py-1 rounded-full animate-bounce">
                         <Download size={14} /> Instalar Aplicação
                     </button>
                 )}
             </footer>
         )}
       </div>
-
       <CookieBanner onOpenPolicy={() => setShowPrivacyModal(true)} theme={currentUser.theme} />
-      <PrivacyModal 
-        isOpen={showPrivacyModal} 
-        onClose={() => setShowPrivacyModal(false)}
-        onClearData={handleClearData}
-        theme={currentUser.theme}
-      />
-      <HandGuideModal
-        isOpen={showHandGuide}
-        onClose={() => setShowHandGuide(false)}
-        theme={currentUser.theme}
-      />
+      <PrivacyModal isOpen={showPrivacyModal} onClose={() => setShowPrivacyModal(false)} onClearData={handleClearData} theme={currentUser.theme} />
+      <HandGuideModal isOpen={showHandGuide} onClose={() => setShowHandGuide(false)} theme={currentUser.theme} />
     </div>
   );
 };
