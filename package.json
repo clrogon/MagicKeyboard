@@ -37,6 +37,7 @@
     "recharts": "^2.12.2",
     "canvas-confetti": "^1.9.2",
     "jspdf": "^2.5.1",
+    "react-qr-code": "^2.0.15",
     "@types/canvas-confetti": "^1.6.4",
     "@types/node": "^20.11.24"
   },

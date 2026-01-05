@@ -13,10 +13,11 @@ import PrivacyModal from './components/PrivacyModal';
 import CookieBanner from './components/CookieBanner';
 import HandGuideModal from './components/HandGuideModal';
 import ScreenRestriction from './components/ScreenRestriction';
-import { Shield, Zap, Star, LogOut, Heart, ArrowRight, Download, WifiOff, Unlock, Medal, TrendingUp, Hourglass, Target, Calendar, CalendarCheck, Crown, Hash, ShieldCheck, Clock, Check, X, Code, AtSign, Terminal, Lock } from 'lucide-react';
+import { Shield, Zap, Star, LogOut, Heart, ArrowRight, Download, WifiOff, Unlock, Medal, TrendingUp, Hourglass, Target, Calendar, CalendarCheck, Crown, Hash, ShieldCheck, Clock, Check, X, Code, AtSign, Terminal, Lock, QrCode } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { audioService } from './services/audioService';
 import { ClayButton } from './components/ClayButton';
+import QRCode from 'react-qr-code';
 
 const IconMap: Record<string, React.ElementType> = {
     Star, Zap, Target, Calendar, Crown, Hash, CalendarCheck, ShieldCheck, Clock, TrendingUp, Hourglass, Code, AtSign, Terminal
@@ -101,6 +102,7 @@ const App: React.FC = () => {
   const [levelUpData, setLevelUpData] = useState<{old: number, new: number} | null>(null);
   const [levelUnlocked, setLevelUnlocked] = useState<number | null>(null);
   const [newlyUnlockedAchievements, setNewlyUnlockedAchievements] = useState<string[]>([]);
+  const [showQR, setShowQR] = useState(false);
 
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showHandGuide, setShowHandGuide] = useState(false);
@@ -458,6 +460,7 @@ const App: React.FC = () => {
     setLevelUpData(null);
     setLevelUnlocked(null);
     setNewlyUnlockedAchievements([]);
+    setShowQR(false);
 
     if (isWin || result.mode === GameMode.Timed || result.mode === GameMode.Story || result.mode === GameMode.Custom || result.mode === GameMode.Dictation) {
        if (currentUser.soundEnabled) {
@@ -651,6 +654,15 @@ const App: React.FC = () => {
         nextLevel = LEVELS.find(l => l.id === nextId);
     }
 
+    // QR Code Data Packet
+    const qrData = JSON.stringify({
+        u: currentUser.name,
+        l: lastResult.levelId,
+        w: lastResult.wpm,
+        a: lastResult.accuracy,
+        d: new Date().toISOString().split('T')[0]
+    });
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm">
             <motion.div 
@@ -702,6 +714,22 @@ const App: React.FC = () => {
                              )
                          })}
                          <ClayButton onClick={() => setNewlyUnlockedAchievements([])} variant="secondary" theme={currentUser.theme}>Espetacular!</ClayButton>
+                    </motion.div>
+                )}
+
+                {/* Magic QR Code Overlay */}
+                {showQR && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-white z-40 flex flex-col items-center justify-center p-6">
+                        <h3 className="text-xl font-bold text-slate-700 mb-4 fun-font">Magic QR Report</h3>
+                        <div className="bg-white p-4 rounded-2xl shadow-lg border border-slate-200 mb-6">
+                            <QRCode value={qrData} size={180} />
+                        </div>
+                        <p className="text-xs text-slate-400 mb-6 max-w-[200px]">
+                            O professor pode ler este código para guardar a tua nota.
+                        </p>
+                        <ClayButton onClick={() => setShowQR(false)} variant="secondary" theme={currentUser.theme}>
+                            Fechar
+                        </ClayButton>
                     </motion.div>
                 )}
 
@@ -769,6 +797,15 @@ const App: React.FC = () => {
                 )}
 
                 <div className="flex flex-col gap-3">
+                    <div className="flex gap-3">
+                        <ClayButton variant="secondary" onClick={() => setShowQR(true)} className="flex-1">
+                            <QrCode size={18} className="mr-2" /> QR Pro
+                        </ClayButton>
+                        <ClayButton variant="secondary" onClick={() => setCurrentScreen(AppScreen.Dashboard)} className="flex-1">
+                            Menu
+                        </ClayButton>
+                    </div>
+
                     {nextLevel && (
                         <ClayButton variant="primary" theme={currentUser.theme} onClick={() => handleStartLevel(nextLevel as Level)} className="w-full py-3">
                             Próximo Nível <ArrowRight size={18} className="ml-2" />
@@ -779,9 +816,6 @@ const App: React.FC = () => {
                             {isWin ? "Jogar Novamente" : "Tentar de Novo"}
                         </ClayButton>
                     )}
-                    <ClayButton variant="secondary" onClick={() => setCurrentScreen(AppScreen.Dashboard)}>
-                        Menu Principal
-                    </ClayButton>
                 </div>
             </motion.div>
         </div>
