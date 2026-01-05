@@ -1,7 +1,8 @@
+
 {
   "name": "teclado-magico",
   "version": "1.5.0",
-  "description": "AI-powered typing trainer for kids in Portugal & Angola with QWERTY/AZERTY support",
+  "description": "The AI-powered, privacy-first typing trainer for children in Portugal and Angola. Features RPG progression, voice dictation, and automatic QWERTY/AZERTY layout detection.",
   "source": "index.html",
   "type": "module",
   "scripts": {
@@ -10,14 +11,20 @@
     "preview": "vite preview"
   },
   "keywords": [
-    "typing",
+    "typing-tutor",
     "education",
     "portuguese",
     "angola",
     "kids",
     "react",
-    "gemini",
-    "pwa"
+    "gemini-ai",
+    "pwa",
+    "accessibility",
+    "azerty",
+    "qwerty",
+    "touch-typing",
+    "gamification",
+    "offline-first"
   ],
   "author": "Cláudio Roberto Gonçalves",
   "license": "MIT",
