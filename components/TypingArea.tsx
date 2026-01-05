@@ -1,13 +1,14 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Level, SessionResult, GameMode, ErrorStats, Theme, KeyboardLayout } from '../types';
+import { Level, SessionResult, GameMode, ErrorStats, Theme, KeyboardLayout, GhostRecord } from '../types';
 import { ClayButton } from './ClayButton';
 import VirtualKeyboard from './VirtualKeyboard';
-import { RotateCcw, Timer, X, Info, EyeOff, Sparkles, Flag, Play, Pencil, Star, Trophy, Target, Volume2, Mic, ArrowLeft } from 'lucide-react';
+import { RotateCcw, Timer, X, Info, EyeOff, Sparkles, Flag, Play, Pencil, Star, Trophy, Target, Volume2, Mic, ArrowLeft, Ghost } from 'lucide-react';
 import { generateSmartExercise } from '../services/geminiService';
 import { THEME_COLORS } from '../constants';
 import { audioService } from '../services/audioService';
+import { GhostCursor } from './GhostCursor';
 
 interface TypingAreaProps {
   level: Level;
@@ -19,12 +20,13 @@ interface TypingAreaProps {
   soundEnabled: boolean;
   theme: Theme;
   layout?: KeyboardLayout;
-  onComplete: (result: SessionResult, errors: ErrorStats, corrects: ErrorStats) => void;
+  existingGhost?: GhostRecord; // Passed from App.tsx if available
+  onComplete: (result: SessionResult, errors: ErrorStats, corrects: ErrorStats, ghostData?: GhostRecord) => void;
   onExit: () => void;
 }
 
 const TypingArea: React.FC<TypingAreaProps> = ({ 
-    level, mode, errorStats, timeLimit, difficultyModifier = 'normal', blindMode = false, soundEnabled = true, theme, layout = 'qwerty', onComplete, onExit 
+    level, mode, errorStats, timeLimit, difficultyModifier = 'normal', blindMode = false, soundEnabled = true, theme, layout = 'qwerty', existingGhost, onComplete, onExit 
 }) => {
   // Game State
   const [isBriefing, setIsBriefing] = useState(true);
@@ -44,6 +46,10 @@ const TypingArea: React.FC<TypingAreaProps> = ({
   // Rhythm/Consistency Tracking
   const [lastKeystrokeTime, setLastKeystrokeTime] = useState<number | null>(null);
   const [keystrokeIntervals, setKeystrokeIntervals] = useState<number[]>([]);
+
+  // Phase 7: Ghost Recording
+  // Stores the relative timestamp (ms) for each correct keystroke
+  const [ghostEvents, setGhostEvents] = useState<number[]>([]);
 
   // Input Management
   const [typedChars, setTypedChars] = useState<string>(""); 
@@ -116,6 +122,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     setSessionCorrectMap({});
     setConsecutiveErrors(0);
     setKeystrokeIntervals([]);
+    setGhostEvents([]); // Reset ghost recording
     setLastKeystrokeTime(null);
     setTypedChars("");
     setStartTime(null);
@@ -187,6 +194,17 @@ const TypingArea: React.FC<TypingAreaProps> = ({
     if (grossWpm >= level.minWpm && accuracy >= level.minAccuracy) stars = 3;
     else if (accuracy >= level.minAccuracy) stars = 2;
 
+    // Create Ghost Record if applicable
+    let newGhost: GhostRecord | undefined = undefined;
+    if (mode === GameMode.Campaign || mode === GameMode.Custom) {
+        newGhost = {
+            wpm: grossWpm,
+            accuracy: accuracy,
+            timestamp: new Date().toISOString(),
+            events: ghostEvents
+        };
+    }
+
     onComplete({
       levelId: level.id,
       mode: mode,
@@ -197,8 +215,8 @@ const TypingArea: React.FC<TypingAreaProps> = ({
       stars,
       duration: durationMin * 60,
       correctStats: sessionCorrectMap
-    }, sessionErrorMap, sessionCorrectMap);
-  }, [currentIndex, level, mode, onComplete, sessionCorrectMap, sessionErrorMap, sessionErrors, startTime, timeLimit, keystrokeIntervals]);
+    }, sessionErrorMap, sessionCorrectMap, newGhost);
+  }, [currentIndex, level, mode, onComplete, sessionCorrectMap, sessionErrorMap, sessionErrors, startTime, timeLimit, keystrokeIntervals, ghostEvents]);
 
   // Auto-finish
   useEffect(() => {
@@ -237,6 +255,10 @@ const TypingArea: React.FC<TypingAreaProps> = ({
         setTypedChars(prev => prev + char);
         setConsecutiveErrors(0);
         
+        // Record Ghost Event (Time elapsed since start)
+        const timeSinceStart = startTime ? (now - startTime) : 0;
+        setGhostEvents(prev => [...prev, timeSinceStart]);
+
         if(soundEnabled) audioService.playClick();
         
         if (lastKeystrokeTime) {
@@ -384,6 +406,13 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                  <h2 className="text-3xl md:text-4xl font-bold text-slate-700 fun-font mb-4">{title}</h2>
                  <p className="text-lg text-slate-500 font-medium mb-6 leading-relaxed px-4">{description}</p>
                  
+                 {existingGhost && (
+                    <div className="mb-4 flex items-center justify-center gap-2 bg-slate-100 py-2 px-4 rounded-xl text-slate-500">
+                        <Ghost size={20} />
+                        <span className="text-sm font-bold">Fantasma disponível: {existingGhost.wpm} PPM</span>
+                    </div>
+                 )}
+
                  {keys.length > 0 && (
                      <div className="mb-6 bg-slate-50 p-6 rounded-2xl border border-slate-100 relative overflow-hidden">
                          <div className={`absolute top-0 left-0 right-0 h-1 ${colors.bg}`}></div>
@@ -575,6 +604,16 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                     </div>
                 )}
                 
+                {/* GHOST CURSOR - Only visible if playing and ghost exists */}
+                {existingGhost && !isBriefing && text.length > 0 && (
+                    <GhostCursor 
+                        startTime={startTime} 
+                        events={existingGhost.events} 
+                        currentIndex={currentIndex} 
+                        totalLength={text.length} 
+                    />
+                )}
+
                 {renderText()}
 
                 <div className="md:hidden absolute bottom-4 text-center w-full px-4">

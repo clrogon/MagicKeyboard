@@ -114,6 +114,17 @@ export interface DailyChallenge {
 }
 
 /**
+ * Phase 7: Ghost Mode Data
+ * Records the timing of each successful character typed.
+ */
+export interface GhostRecord {
+  wpm: number;      // To decide if we should overwrite the previous ghost
+  accuracy: number;
+  timestamp: string; // Date of recording
+  events: number[]; // Array of timestamps (ms) relative to start. Index corresponds to char index.
+}
+
+/**
  * Result of a single typing session.
  */
 export interface SessionResult {
@@ -149,6 +160,10 @@ export interface UserProfile {
   theme: Theme;
   soundEnabled: boolean;
   layout: KeyboardLayout; // Added in v1.5.0
+  
+  // Phase 7: Ghost Data
+  // Key: LevelID (e.g., "1", "custom-id"). Value: Best Run Record
+  ghosts?: Record<string, GhostRecord>;
 }
 
 /**

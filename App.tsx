@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import confetti from 'canvas-confetti';
-import { AppState, UserProfile, AppScreen, Level, SessionResult, GameMode, ErrorStats, Theme, CustomLesson, KeyboardLayout } from './types';
+import { AppState, UserProfile, AppScreen, Level, SessionResult, GameMode, ErrorStats, Theme, CustomLesson, KeyboardLayout, GhostRecord } from './types';
 import { LEVELS, PLAYER_TITLES, AVATARS, THEME_COLORS, getXpForNextLevel, ACHIEVEMENTS } from './constants';
 import LevelSelector from './components/LevelSelector';
 import TypingArea from './components/TypingArea';
@@ -43,7 +43,8 @@ const App: React.FC = () => {
                 history: parsed.history || [],
                 errorStats: parsed.errorStats || {},
                 soundEnabled: true,
-                layout: parsed.layout || 'qwerty'
+                layout: parsed.layout || 'qwerty',
+                ghosts: {}
             };
             return {
                 users: { 'legacy': legacyUser },
@@ -56,6 +57,9 @@ const App: React.FC = () => {
         Object.keys(migratedUsers).forEach(key => {
             if (!migratedUsers[key].layout) {
                 migratedUsers[key].layout = 'qwerty';
+            }
+            if (!migratedUsers[key].ghosts) {
+                migratedUsers[key].ghosts = {};
             }
         });
 
@@ -191,7 +195,8 @@ const App: React.FC = () => {
           errorStats: {},
           achievements: [],
           dailyChallenge: null,
-          soundEnabled: true
+          soundEnabled: true,
+          ghosts: {}
       };
       
       setAppState(prev => ({
@@ -434,7 +439,7 @@ const App: React.FC = () => {
       return xp;
   };
 
-  const handleLevelComplete = (result: SessionResult, sessionErrors: ErrorStats, sessionCorrects: ErrorStats) => {
+  const handleLevelComplete = (result: SessionResult, sessionErrors: ErrorStats, sessionCorrects: ErrorStats, ghostData?: GhostRecord) => {
     if (!currentUser) return;
     const isWin = result.stars >= 1; 
     setLevelUpData(null);
@@ -557,6 +562,17 @@ const App: React.FC = () => {
         setLevelUpData({ old: currentUser.playerLevel, new: currentLevel });
     }
 
+    // Ghost Persistence Logic
+    let newGhosts = { ...(currentUser.ghosts || {}) };
+    if (ghostData && (result.mode === GameMode.Campaign || result.mode === GameMode.Custom)) {
+        const levelKey = result.levelId.toString();
+        const existingGhost = newGhosts[levelKey];
+        // Only save ghost if it's faster/better than previous
+        if (!existingGhost || ghostData.wpm > existingGhost.wpm) {
+            newGhosts[levelKey] = ghostData;
+        }
+    }
+
     updateUser(currentUser.id, {
         history: newHistory,
         unlockedLevels: newUnlocked,
@@ -565,7 +581,8 @@ const App: React.FC = () => {
         xp: currentXp,
         playerLevel: currentLevel,
         currentTitle: newTitle,
-        dailyChallenge: daily
+        dailyChallenge: daily,
+        ghosts: newGhosts
     });
     setCurrentScreen(AppScreen.Result);
   };
@@ -772,6 +789,9 @@ const App: React.FC = () => {
       );
   }
 
+  // Get active ghost if available
+  const currentGhost = currentUser.ghosts ? currentUser.ghosts[activeLevel.id.toString()] : undefined;
+
   const BlobColor1 = currentUser.theme === 'rose' ? 'bg-purple-200' : currentUser.theme === 'blue' ? 'bg-blue-200' : 'bg-yellow-200';
   const BlobColor2 = currentUser.theme === 'rose' ? 'bg-yellow-100' : currentUser.theme === 'blue' ? 'bg-cyan-100' : 'bg-orange-100';
   const BlobColor3 = currentUser.theme === 'rose' ? 'bg-pink-100' : currentUser.theme === 'blue' ? 'bg-indigo-100' : 'bg-amber-100';
@@ -814,7 +834,7 @@ const App: React.FC = () => {
             <LevelSelector levels={LEVELS} unlockedLevels={currentUser.unlockedLevels} customLessons={appState.customLessons} gameState={currentUser as any} onSelectLevel={handleStartLevel} onSelectTimedMode={handleStartTimedMode} onSelectErrorMode={handleStartErrorMode} onSelectStoryMode={handleStartStoryMode} onSelectDictationMode={handleStartDictationMode} onSelectCustomLesson={handleStartCustomLesson} onViewStats={() => setCurrentScreen(AppScreen.Stats)} onChangeAvatar={handleChangeAvatar} onShowHandGuide={() => setShowHandGuide(true)} onToggleBlindMode={setBlindMode} onToggleSound={handleToggleSound} isBlindMode={blindMode} />
             )}
             {currentScreen === AppScreen.Exercise && (
-            <TypingArea level={activeLevel} mode={activeMode} theme={currentUser.theme} layout={currentUser.layout} errorStats={currentUser.errorStats} timeLimit={timeLimit} difficultyModifier={difficultyModifier} blindMode={blindMode} soundEnabled={currentUser.soundEnabled} onComplete={handleLevelComplete} onExit={() => setCurrentScreen(AppScreen.Dashboard)} />
+            <TypingArea level={activeLevel} mode={activeMode} theme={currentUser.theme} layout={currentUser.layout} errorStats={currentUser.errorStats} timeLimit={timeLimit} difficultyModifier={difficultyModifier} blindMode={blindMode} soundEnabled={currentUser.soundEnabled} existingGhost={currentGhost} onComplete={handleLevelComplete} onExit={() => setCurrentScreen(AppScreen.Dashboard)} />
             )}
             {currentScreen === AppScreen.Result && lastResult && renderResultScreen()}
             {currentScreen === AppScreen.Stats && (
