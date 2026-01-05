@@ -67,9 +67,9 @@ Project Start Date: **January 3, 2026**.
 - [x] **Achievements**: Added medals for coding and symbols.
 
 ## ✅ Phase 9: Classroom Tools - "Sala de Aula" (v2.0.0)
-**Status:** Completed
+**Status:** Completed (v2.0.0)
 **Focus:** Solving the "No Database" problem for Teachers.
 - [x] **Classroom Report**: Consolidated view of all students for teachers.
 - [x] **Kiosk Mode**: Setting to lock the UI (hide avatars/themes) for focused classroom use.
 - [x] **Homework Codes**: Codes (e.g., "TPC-34") that load specific configurations.
-- [x] **Magic QR Reporting**: Teachers scan student screen to log grades.
+- [x] **Magic QR Reporting**: Teachers scan student screen to log grades without servers.
