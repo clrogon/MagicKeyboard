@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import confetti from 'canvas-confetti';
 import { AppState, UserProfile, AppScreen, Level, SessionResult, GameMode, ErrorStats, Theme, CustomLesson, KeyboardLayout } from './types';
-import { LEVELS, SUCCESS_MESSAGES, PLAYER_TITLES, AVATARS, THEME_COLORS, getXpForNextLevel } from './constants';
+import { LEVELS, SUCCESS_MESSAGES, PLAYER_TITLES, AVATARS, THEME_COLORS, getXpForNextLevel, ACHIEVEMENTS } from './constants';
 import LevelSelector from './components/LevelSelector';
 import TypingArea from './components/TypingArea';
 import StatsBoard from './components/StatsBoard';
@@ -13,10 +13,14 @@ import PrivacyModal from './components/PrivacyModal';
 import CookieBanner from './components/CookieBanner';
 import HandGuideModal from './components/HandGuideModal';
 import ScreenRestriction from './components/ScreenRestriction';
-import { Shield, Zap, Star, LogOut, Heart, ArrowRight, Download, WifiOff, Unlock } from 'lucide-react';
+import { Shield, Zap, Star, LogOut, Heart, ArrowRight, Download, WifiOff, Unlock, Medal, TrendingUp, Hourglass, Target, Calendar, CalendarCheck, Crown, Hash, ShieldCheck, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { audioService } from './services/audioService';
 import { ClayButton } from './components/ClayButton';
+
+const IconMap: Record<string, React.ElementType> = {
+    Star, Zap, Target, Calendar, Crown, Hash, CalendarCheck, ShieldCheck, Clock, TrendingUp, Hourglass
+};
 
 const App: React.FC = () => {
   const [appState, setAppState] = useState<AppState>(() => {
@@ -87,6 +91,7 @@ const App: React.FC = () => {
   const [lastResult, setLastResult] = useState<SessionResult | null>(null);
   const [levelUpData, setLevelUpData] = useState<{old: number, new: number} | null>(null);
   const [levelUnlocked, setLevelUnlocked] = useState<number | null>(null);
+  const [newlyUnlockedAchievements, setNewlyUnlockedAchievements] = useState<string[]>([]);
 
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showHandGuide, setShowHandGuide] = useState(false);
@@ -434,6 +439,7 @@ const App: React.FC = () => {
     const isWin = result.stars >= 1; 
     setLevelUpData(null);
     setLevelUnlocked(null);
+    setNewlyUnlockedAchievements([]);
 
     if (isWin || result.mode === GameMode.Timed || result.mode === GameMode.Story || result.mode === GameMode.Custom || result.mode === GameMode.Dictation) {
        if (currentUser.soundEnabled) {
@@ -457,6 +463,7 @@ const App: React.FC = () => {
     const newHistory = [...currentUser.history, result];
     let newUnlocked = [...currentUser.unlockedLevels];
     let newAchievements = [...currentUser.achievements];
+    const unlockedNow: string[] = [];
     
     if (result.mode === GameMode.Campaign && isWin && result.levelId === Math.max(...currentUser.unlockedLevels)) {
         const nextLevelId = result.levelId + 1;
@@ -478,9 +485,12 @@ const App: React.FC = () => {
         }
     });
 
+    const totalPlayTimeMinutes = newHistory.reduce((acc, sess) => acc + (sess.duration || 0), 0);
+
     const checkForAchievement = (id: string, condition: boolean) => {
         if (condition && !newAchievements.includes(id)) {
             newAchievements.push(id);
+            unlockedNow.push(id);
         }
     };
     checkForAchievement('first_3_stars', result.stars === 3);
@@ -493,6 +503,11 @@ const App: React.FC = () => {
     checkForAchievement('streak_7', checkStreak(newHistory));
     checkForAchievement('error_crusher', result.mode === GameMode.ErrorDrill && result.accuracy === 100 && result.levelId === -2);
     checkForAchievement('time_lord', result.mode === GameMode.Timed && (result.duration || 0) >= 1 && result.wpm >= 30);
+    checkForAchievement('marathon_runner', totalPlayTimeMinutes >= 60);
+
+    if (unlockedNow.length > 0) {
+        setNewlyUnlockedAchievements(unlockedNow);
+    }
 
     let sessionXp = calculateSessionXp(result);
     let daily = currentUser.dailyChallenge ? { ...currentUser.dailyChallenge } : null;
@@ -527,6 +542,12 @@ const App: React.FC = () => {
         leveledUp = true;
     }
     
+    // Check level achievements after update
+    if (currentLevel >= 5 && !newAchievements.includes('level_5')) {
+        newAchievements.push('level_5');
+        setNewlyUnlockedAchievements(prev => [...prev, 'level_5']);
+    }
+
     let newTitle = currentUser.currentTitle;
     if (leveledUp) {
         const unlockedTitles = Object.keys(PLAYER_TITLES).map(Number).filter(lvl => lvl <= currentLevel).sort((a,b) => b-a);
@@ -598,6 +619,7 @@ const App: React.FC = () => {
                 animate={{ scale: 1, opacity: 1 }}
                 className="bg-white rounded-[2.5rem] p-8 max-w-md w-full text-center shadow-2xl relative overflow-hidden border-4 border-white"
             >
+                {/* Level Up Notification */}
                 {levelUpData && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={`absolute inset-0 ${colors.bg} z-50 flex flex-col items-center justify-center text-white p-6`}>
                          <div className="bg-white/20 p-4 rounded-full mb-4 animate-bounce">
@@ -607,6 +629,7 @@ const App: React.FC = () => {
                          <ClayButton onClick={() => setLevelUpData(null)} variant="secondary" theme={currentUser.theme}>Uau!</ClayButton>
                     </motion.div>
                 )}
+                {/* Unlock Notification */}
                 {!levelUpData && levelUnlocked && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={`absolute inset-0 bg-emerald-500 z-50 flex flex-col items-center justify-center text-white p-6`}>
                          <div className="bg-white/20 p-4 rounded-full mb-4 animate-bounce">
@@ -617,6 +640,32 @@ const App: React.FC = () => {
                          <ClayButton onClick={() => setLevelUnlocked(null)} variant="secondary" theme={currentUser.theme}>Vamos lá!</ClayButton>
                     </motion.div>
                 )}
+                
+                {/* Achievement Notification */}
+                {!levelUpData && !levelUnlocked && newlyUnlockedAchievements.length > 0 && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={`absolute inset-0 bg-yellow-400 z-50 flex flex-col items-center justify-center text-white p-6`}>
+                         {newlyUnlockedAchievements.map(achId => {
+                             const ach = ACHIEVEMENTS.find(a => a.id === achId);
+                             if (!ach) return null;
+                             const Icon = IconMap[ach.icon] || Star;
+                             return (
+                                 <div key={achId} className="flex flex-col items-center">
+                                     <div className="bg-white/20 p-4 rounded-full mb-4 animate-bounce">
+                                        <Medal size={48} className="fill-white" />
+                                     </div>
+                                     <h2 className="text-3xl font-bold mb-2 font-fredoka">CONQUISTA!</h2>
+                                     <div className="bg-white/20 px-4 py-2 rounded-xl mb-4 flex items-center gap-2">
+                                         <Icon size={20} />
+                                         <span className="font-bold">{ach.title}</span>
+                                     </div>
+                                     <p className="text-lg mb-6 max-w-[80%]">{ach.description}</p>
+                                 </div>
+                             )
+                         })}
+                         <ClayButton onClick={() => setNewlyUnlockedAchievements([])} variant="secondary" theme={currentUser.theme}>Espetacular!</ClayButton>
+                    </motion.div>
+                )}
+
                 <div className={`inline-block px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide mb-4 ${isWin ? 'bg-emerald-100 text-emerald-600' : 'bg-orange-100 text-orange-600'}`}>
                     {goalStatus}
                 </div>

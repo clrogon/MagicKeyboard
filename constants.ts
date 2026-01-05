@@ -269,6 +269,20 @@ export const ACHIEVEMENTS: Achievement[] = [
     description: '+30 PPM num desafio de 60s.',
     icon: 'Clock',
     color: 'bg-violet-500'
+  },
+  {
+    id: 'level_5',
+    title: 'A Subir na Vida',
+    description: 'Chegaste ao Nível de Jogador 5!',
+    icon: 'TrendingUp',
+    color: 'bg-cyan-500'
+  },
+  {
+    id: 'marathon_runner',
+    title: 'Maratonista',
+    description: 'Jogaste mais de 1 hora no total.',
+    icon: 'Hourglass',
+    color: 'bg-teal-500'
   }
 ];
 
@@ -604,6 +618,96 @@ export const LEVELS: Level[] = [
     difficulty: 'hard',
     minWpm: 10,
     minAccuracy: 85
+  },
+  {
+    id: 14,
+    title: "Gritos e Emoções",
+    description: "Letras grandes com acento! Á, É, Í, Ó, Ú.",
+    newKeys: [], 
+    allKeys: [
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+        'ç', ' ', 'ShiftLeft', 'ShiftRight', '´', '`', '~', '^',
+        '.', ',', ';', '?', '!', '-', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'
+    ],
+    textSamples: [
+        "Ágata", "Évora", "Índia", "Óscar", "Úrsula", "Áurea", "Énio", "Íris", "Átila",
+        "Olá Ágata!", "É verdade?", "Óscar, anda cá!", "A Úrsula é fixe.", "O Ícaro voa.",
+        "Érica e Évora.", "Álvaro e Átila.", "Avo e Avó.", "És tu?", "Água fresca.",
+        "Óleo e azeite.", "Único e último.", "Índio e ilha.", "Épico!", "Ótimo!",
+        "A Águia voa alto.", "O pó é do avô.", "A pá é da avó.", "É ele?", "É ela?"
+    ],
+    difficulty: 'hard',
+    minWpm: 12,
+    minAccuracy: 90
+  },
+  {
+    id: 15,
+    title: "Símbolos Mágicos",
+    description: "Descobre os símbolos escondidos nos números! # $ % &",
+    newKeys: ['"', '#', '$', '%', '&', '/', '(', ')', '='],
+    allKeys: [
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+        'ç', ' ', 'ShiftLeft', 'ShiftRight', '´', '`', '~', '^',
+        '.', ',', ';', '?', '!', '-', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+        '"', '#', '$', '%', '&', '/', '(', ')', '='
+    ],
+    textSamples: [
+        "#Top1", "100%", "Eu & Tu", "Sim/Não", "(1+1)", "Ouro $", "A=B", "Data: 20/10",
+        "Preço: 50$", "Desconto: 20%", "Hashtag #Fixe", "Azul & Verde", "Certo (Sim)",
+        "Erro (Não)", "1+2=3", "4+4=8", "Atenção!", "\"Olá\"", "\"Bom dia\"",
+        "O teu #ID", "Código: (123)", "Pai & Filho", "Sol & Mar", "50% Off",
+        "10/10/2026", "A+B=C", "X=Y", "O #Rei", "A #Rainha"
+    ],
+    difficulty: 'hard',
+    minWpm: 12,
+    minAccuracy: 88
+  },
+  {
+    id: 16,
+    title: "A Grande Mistura",
+    description: "Números, símbolos e letras. O derradeiro teste!",
+    newKeys: [],
+    allKeys: [
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+        'ç', ' ', 'ShiftLeft', 'ShiftRight', '´', '`', '~', '^',
+        '.', ',', ';', '?', '!', '-', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+        '"', '#', '$', '%', '&', '/', '(', ')', '='
+    ],
+    textSamples: [
+        "Rua 25, n.º 10.", "Tel: 912 345 678", "Email: ana@sapo.pt", "100% Amigos!",
+        "Data: 01/01/2026", "Preço: 15€", "Código: #A1-B2", "(3+2)=5", "Nota 20!",
+        "O meu PC é #1.", "Siga: @teclado", "User: zola_99", "Pass: 1234!",
+        "Lisboa, 2026.", "Porto & Gaia.", "Luanda #1", "B.I. 123456", "Conta: 100$",
+        "A turma (5.º B)", "O jogo: 5-0", "Vencedor: Tu!", "Fim da Fase 16."
+    ],
+    difficulty: 'hard',
+    minWpm: 18,
+    minAccuracy: 92
+  },
+  {
+    id: 17,
+    title: "O Poeta Mágico",
+    description: "Rimas e canções com muitos acentos!",
+    newKeys: [],
+    allKeys: [
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+        'ç', ' ', 'ShiftLeft', 'ShiftRight', '´', '`', '~', '^',
+        '.', ',', ';', '?', '!', '-', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+        '"', '#', '$', '%', '&', '/', '(', ')', '='
+    ],
+    textSamples: [
+        "A avó levou o avô ao café de Azeitão.", "O leão comeu pão e caiu no chão.",
+        "O João tem um balão e um cão.", "A lição do camaleão é uma canção.",
+        "O capitão tem um botão no casacão.", "A mão do irmão segura o peão.",
+        "A avelã é da irmã do cristão.", "O fogão tem carvão e feijão.",
+        "O coração do dragão é um vulcão.", "A maça e o amanhã.",
+        "Põe o pão na mão, não no chão.", "A bênção da mãe é proteção.",
+        "O algodão é macio como o verão.", "A multidão viu o avião.",
+        "O tubarão é o patrão do oceano.", "A romã é sã e dá paixão."
+    ],
+    difficulty: 'hard',
+    minWpm: 20,
+    minAccuracy: 95
   }
 ];
 

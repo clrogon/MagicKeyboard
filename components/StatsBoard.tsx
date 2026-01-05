@@ -2,7 +2,7 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { SessionResult, Level, Theme, UserProfile } from '../types';
-import { Star, Trophy, Target, Zap, Medal, ArrowRight, RotateCcw, FileBadge } from 'lucide-react';
+import { Star, Trophy, Target, Zap, Medal, ArrowRight, RotateCcw, FileBadge, Calendar, CalendarCheck, Crown, Hash, ShieldCheck, Clock, TrendingUp, Hourglass } from 'lucide-react';
 import { ACHIEVEMENTS, THEME_COLORS } from '../constants';
 import { ClayButton } from './ClayButton';
 import { motion } from 'framer-motion';
@@ -18,6 +18,10 @@ interface StatsBoardProps {
   onBack: () => void;
   onViewAchievements: () => void;
 }
+
+const IconMap: Record<string, React.ElementType> = {
+    Star, Zap, Target, Calendar, Crown, Hash, CalendarCheck, ShieldCheck, Clock, TrendingUp, Hourglass
+};
 
 /**
  * StatsBoard Component
@@ -49,6 +53,9 @@ const StatsBoard: React.FC<StatsBoardProps> = ({ user, history, unlockedLevels, 
 
   // Chart line color depends on theme
   const mainLineColor = theme === 'blue' ? '#3b82f6' : theme === 'amber' ? '#f59e0b' : '#f43f5e';
+
+  // Get last 3 achievements
+  const recentAchievements = achievements.slice(-3).reverse().map(id => ACHIEVEMENTS.find(a => a.id === id)).filter(Boolean);
 
   /**
    * GENERATE PDF CERTIFICATE (Client-Side)
@@ -305,6 +312,35 @@ const StatsBoard: React.FC<StatsBoardProps> = ({ user, history, unlockedLevels, 
                 </ClayButton>
             </div>
         </motion.div>
+
+        {/* Recent Achievements Row */}
+        {recentAchievements.length > 0 && (
+            <div className="mb-8">
+                <h3 className="text-lg font-bold text-slate-500 uppercase tracking-wider mb-4 px-2">Últimas Conquistas</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {recentAchievements.map((ach) => {
+                        if (!ach) return null;
+                        const Icon = IconMap[ach.icon] || Star;
+                        return (
+                            <motion.div 
+                                key={ach.id}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="bg-white p-4 rounded-2xl border border-slate-100 flex items-center gap-4 shadow-sm"
+                            >
+                                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${ach.color} text-white shadow-inner`}>
+                                    <Icon size={20} />
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-slate-700">{ach.title}</h4>
+                                    <p className="text-xs text-slate-400">{ach.description}</p>
+                                </div>
+                            </motion.div>
+                        );
+                    })}
+                </div>
+            </div>
+        )}
 
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
