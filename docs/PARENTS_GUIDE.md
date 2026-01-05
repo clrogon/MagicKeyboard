@@ -56,7 +56,7 @@ Como os dados ficam no computador, se mudar de PC, perde o progresso. Para evita
 2.  Clique em **"Exportar Dados"**. Será descarregado um ficheiro `.json`.
 3.  No novo computador, faça o mesmo processo mas clique em **"Importar Dados"** e selecione esse ficheiro.
 
-## 7. Identidade Cultural e Representatividade 🏿🏻
+## 7. Identidade Cultural e Representatividade 🤝
 
 Diferente de softwares genéricos, o Teclado Mágico foi desenvolvido com **Correção Étnica e Cultural** em mente:
 

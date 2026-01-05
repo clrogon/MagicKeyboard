@@ -45,7 +45,7 @@ export const generateSmartExercise = async (
       CRITICAL VOCABULARY RULES:
       1. STRICTLY AVOID Brazilian Portuguese terms (e.g., use 'a fazer' instead of 'fazendo', 'autocarro' instead of 'ônibus', 'ecrã' instead of 'tela'). 
       2. Address the child as 'Tu' (2nd person singular informal).
-      3. Include cultural names, places, and context from both Portugal and Angola.
+      3. ETHNIC CORRECTNESS: Include diverse cultural names representing the full Lusophone spectrum (e.g., Zola, Njinga, Jamba, Ana, João, Matilde) and specific places/context from both Portugal and Angola.
       4. Use a friendly and encouraging tone.
     `;
     
