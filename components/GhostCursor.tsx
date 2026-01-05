@@ -6,11 +6,10 @@ import { Ghost } from 'lucide-react';
 interface GhostCursorProps {
   startTime: number | null; // The real-time timestamp when the user started typing
   events: number[]; // The array of relative timestamps (ms) for the ghost's progress
-  currentIndex: number; // The user's current index (to calculate race position)
   totalLength: number; // Total length of text
 }
 
-export const GhostCursor: React.FC<GhostCursorProps> = ({ startTime, events, currentIndex, totalLength }) => {
+export const GhostCursor: React.FC<GhostCursorProps> = ({ startTime, events, totalLength }) => {
   const [ghostIndex, setGhostIndex] = useState(0);
 
   useEffect(() => {

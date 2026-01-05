@@ -609,7 +609,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                     <GhostCursor 
                         startTime={startTime} 
                         events={existingGhost.events} 
-                        currentIndex={currentIndex} 
                         totalLength={text.length} 
                     />
                 )}
