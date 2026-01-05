@@ -23,6 +23,10 @@ Nós levamos a segurança muito a sério.
 *   **Dados Locais**: Todo o progresso, estrelas e lições são guardados **apenas no seu dispositivo** (no navegador).
 *   **Conformidade RGPD**: Não existem "cookies de rastreamento" nem publicidade.
 
+<p align="center">
+  <img src="assets/privacy_modal.png" alt="Ecrã de Política de Privacidade: Transparência Total" width="500" />
+</p>
+
 ## 3. Criar e Gerir Perfis
 
 Pode criar perfis para vários alunos no mesmo computador (ideal para irmãos ou salas de aula).
