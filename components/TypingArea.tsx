@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Level, SessionResult, GameMode, ErrorStats, Theme, KeyboardLayout } from '../types';
 import { ClayButton } from './ClayButton';
 import VirtualKeyboard from './VirtualKeyboard';
-import { RotateCcw, Timer, X, Info, EyeOff, Sparkles, Flag, Play, Pencil, Star, Trophy, Target, Volume2, Mic } from 'lucide-react';
+import { RotateCcw, Timer, X, Info, EyeOff, Sparkles, Flag, Play, Pencil, Star, Trophy, Target, Volume2, Mic, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { generateSmartExercise } from '../services/geminiService';
 import { THEME_COLORS } from '../constants';
 import { audioService } from '../services/audioService';
@@ -317,6 +317,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
   const renderBriefing = () => {
       let title = "";
       let description = "";
+      let goalTitle = "O Teu Objetivo";
       let goalText = "";
       let keys = level.newKeys;
       let GoalIcon = Star;
@@ -325,42 +326,42 @@ const TypingArea: React.FC<TypingAreaProps> = ({
           case GameMode.Timed:
               title = "Desafio do Relógio";
               description = "O relógio vai contar! Escreve o máximo que conseguires sem parar.";
-              goalText = "Escreve muito até o tempo acabar!";
+              goalText = "Escreve o máximo de palavras corretas possível em 60 segundos.";
               GoalIcon = Timer;
               keys = [];
               break;
           case GameMode.ErrorDrill:
               title = "Limpar Erros";
               description = "O teu treinador pessoal preparou um treino especial com as letras que achas difíceis.";
-              goalText = "Acertar nas letras complicadas.";
+              goalText = "Treinar as letras difíceis e atingir 100% de precisão.";
               GoalIcon = Target;
               keys = [];
               break;
           case GameMode.Story:
               title = "Hora da História";
               description = "Vais escrever uma pequena aventura criada só para ti.";
-              goalText = "Chegar ao fim da história.";
+              goalText = "Escreve a história completa até ao fim.";
               GoalIcon = Trophy;
               keys = [];
               break;
           case GameMode.Custom:
               title = "A Minha Lição";
               description = level.description || "Uma lição especial criada pelo teu professor ou pais.";
-              goalText = "Chegar ao fim da linha!";
+              goalText = "Completa todo o texto sem desistir!";
               GoalIcon = Flag;
               keys = [];
               break;
           case GameMode.Dictation:
               title = "Ditado Mágico";
               description = "Ouve com atenção! O computador vai falar e tu tens de escrever. As letras estão escondidas!";
-              goalText = "Ouvir e escrever corretamente.";
+              goalText = "Ouve e escreve corretamente as palavras.";
               GoalIcon = Mic;
               keys = [];
               break;
           default: 
               title = `Nível ${level.id}: ${level.title}`;
               description = level.description;
-              goalText = "Ganhar pelo menos 1 Estrela.";
+              goalText = `Atinge ${level.minWpm} Palavras por Minuto com ${level.minAccuracy}% de Precisão.`;
               break;
       }
 
@@ -372,33 +373,44 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 className="bg-white relative z-30 p-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border-4 border-white max-w-lg w-full text-center"
              >
+                 <button onClick={onExit} className="absolute top-6 left-6 text-slate-400 hover:text-slate-600 transition-colors p-2 bg-slate-100 rounded-full">
+                     <ArrowLeft size={20} />
+                 </button>
+
                  <div className={`w-20 h-20 ${colors.bg} rounded-full flex items-center justify-center mx-auto mb-6 text-white shadow-lg`}>
                      {mode === GameMode.Custom ? <Pencil size={40} /> : mode === GameMode.Dictation ? <Mic size={40} /> : <Info size={40} />}
                  </div>
                  
                  <h2 className="text-3xl md:text-4xl font-bold text-slate-700 fun-font mb-4">{title}</h2>
-                 <p className="text-lg text-slate-500 font-medium mb-6 leading-relaxed">{description}</p>
+                 <p className="text-lg text-slate-500 font-medium mb-6 leading-relaxed px-4">{description}</p>
                  
                  {keys.length > 0 && (
-                     <div className="mb-6 bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                         <p className="text-xs uppercase font-bold text-slate-400 tracking-widest mb-4">Novas Teclas Mágicas</p>
+                     <div className="mb-6 bg-slate-50 p-6 rounded-2xl border border-slate-100 relative overflow-hidden">
+                         <div className={`absolute top-0 left-0 right-0 h-1 ${colors.bg}`}></div>
+                         <p className="text-xs uppercase font-bold text-slate-400 tracking-widest mb-4">Novas Teclas a Aprender</p>
                          <div className="flex justify-center gap-3 flex-wrap">
                              {keys.map(k => (
-                                 <span key={k} className="bg-white text-slate-700 font-mono font-bold text-2xl px-4 py-3 rounded-xl shadow-sm border-b-4 border-slate-200 min-w-[3rem] animate-bounce-slow">
+                                 <motion.div 
+                                    key={k}
+                                    initial={{ scale: 0 }}
+                                    animate={{ scale: 1 }}
+                                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                    className="bg-white text-slate-700 font-mono font-bold text-2xl px-4 py-3 rounded-xl shadow-sm border-b-4 border-slate-200 min-w-[3rem]"
+                                 >
                                      {k === ' ' ? 'Espaço' : k.replace('Shift', '⇧')}
-                                 </span>
+                                 </motion.div>
                              ))}
                          </div>
                      </div>
                  )}
 
-                 <div className={`${colors.bgSoft} p-4 rounded-xl mb-8 border ${colors.border} flex items-center gap-4 text-left`}>
-                     <div className={`bg-white p-3 rounded-full ${colors.text}`}>
+                 <div className={`${colors.bgSoft} p-4 rounded-2xl mb-8 border ${colors.border} flex items-center gap-4 text-left shadow-sm`}>
+                     <div className={`bg-white p-3 rounded-full ${colors.text} shrink-0`}>
                         <GoalIcon size={28} />
                      </div>
                      <div>
-                        <p className={`${colors.text} font-bold text-xs uppercase mb-1`}>O Teu Objetivo</p>
-                        <p className="text-slate-600 font-bold text-lg leading-tight">{goalText}</p>
+                        <p className={`${colors.text} font-bold text-xs uppercase mb-1 tracking-wider`}>{goalTitle}</p>
+                        <p className="text-slate-600 font-bold text-md leading-tight">{goalText}</p>
                      </div>
                  </div>
 

@@ -13,7 +13,7 @@ import PrivacyModal from './components/PrivacyModal';
 import CookieBanner from './components/CookieBanner';
 import HandGuideModal from './components/HandGuideModal';
 import ScreenRestriction from './components/ScreenRestriction';
-import { Shield, Zap, Star, LogOut, Heart, ArrowRight, Download, WifiOff, Unlock, Medal, TrendingUp, Hourglass, Target, Calendar, CalendarCheck, Crown, Hash, ShieldCheck, Clock } from 'lucide-react';
+import { Shield, Zap, Star, LogOut, Heart, ArrowRight, Download, WifiOff, Unlock, Medal, TrendingUp, Hourglass, Target, Calendar, CalendarCheck, Crown, Hash, ShieldCheck, Clock, Check, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { audioService } from './services/audioService';
 import { ClayButton } from './components/ClayButton';
@@ -576,6 +576,11 @@ const App: React.FC = () => {
     let goalStatus = "";
     const isWin = lastResult.stars >= 1;
 
+    // Use current activeLevel state to get requirements
+    const wpmGoal = activeLevel.minWpm;
+    const accuracyGoal = activeLevel.minAccuracy;
+    const isCampaign = lastResult.mode === GameMode.Campaign;
+
     if (lastResult.mode === GameMode.Timed) {
         message = `Escreveste ${Math.round(lastResult.wpm * (lastResult.duration || 1))} palavras!`;
         goalStatus = "Corrida Terminada";
@@ -589,16 +594,15 @@ const App: React.FC = () => {
         message = "Ditado completo!";
         goalStatus = "Bom ouvido!";
     } else {
-        message = lastResult.stars === 3 ? SUCCESS_MESSAGES[0] : lastResult.stars === 2 ? "Muito bem!" : "Bom esforço!";
-        goalStatus = isWin ? "Nível Completado!" : "Vamos tentar outra vez?";
+        // Campaign messages
+        if (isWin) {
+            message = lastResult.stars === 3 ? "Missão Perfeita!" : "Missão Cumprida!";
+            goalStatus = "Nível Completado!";
+        } else {
+            message = "Quase lá!";
+            goalStatus = "Missão Falhada";
+        }
     }
-
-    const getAccuracyLabel = (val: number) => {
-        if (val === 100) return "Perfeita!";
-        if (val >= 95) return "Quase Perfeita!";
-        if (val >= 85) return "Muito Boa!";
-        return "Vamos Treinar!";
-    };
 
     const getConsistencyLabel = (val: number) => {
         if (val >= 90) return "Super Regular!";
@@ -607,7 +611,7 @@ const App: React.FC = () => {
     };
 
     let nextLevel = null;
-    if (lastResult.mode === GameMode.Campaign && isWin) { 
+    if (isCampaign && isWin) { 
         const nextId = lastResult.levelId + 1;
         nextLevel = LEVELS.find(l => l.id === nextId);
     }
@@ -666,38 +670,69 @@ const App: React.FC = () => {
                     </motion.div>
                 )}
 
-                <div className={`inline-block px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide mb-4 ${isWin ? 'bg-emerald-100 text-emerald-600' : 'bg-orange-100 text-orange-600'}`}>
+                <div className={`inline-block px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide mb-4 ${isWin ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
                     {goalStatus}
                 </div>
                 <h2 className="text-3xl font-bold text-slate-800 mb-2 fun-font">{message}</h2>
-                <div className="flex justify-center gap-2 my-6">
+                <div className="flex justify-center gap-2 my-4">
                     {[1, 2, 3].map((star) => (
-                        <Star key={star} size={48} fill={star <= lastResult.stars ? "#FBBF24" : "#E2E8F0"} className={star <= lastResult.stars ? "text-yellow-400" : "text-slate-200"} />
+                        <Star key={star} size={40} fill={star <= lastResult.stars ? "#FBBF24" : "#E2E8F0"} className={star <= lastResult.stars ? "text-yellow-400" : "text-slate-200"} />
                     ))}
                 </div>
-                {lastResult.mode === GameMode.Campaign && (
-                    <div className="text-sm text-slate-400 font-bold mb-6">
-                        {isWin ? "Conseguiste pelo menos 1 Estrela! Podes avançar." : "Precisas de 1 Estrela para passar."}
-                    </div>
-                )}
-                <div className="grid grid-cols-3 gap-3 mb-6">
-                    <div className="bg-blue-50 p-3 rounded-2xl">
-                        <div className="text-[10px] md:text-xs font-bold text-blue-400 uppercase">Velocidade</div>
-                        <div className="text-2xl md:text-3xl font-bold text-blue-600">{lastResult.wpm}</div>
-                    </div>
-                    <div className="bg-emerald-50 p-3 rounded-2xl">
-                        <div className="text-[10px] md:text-xs font-bold text-emerald-400 uppercase">Precisão</div>
-                        <div className="text-base md:text-lg font-bold text-emerald-600 leading-tight pt-1">
-                            {getAccuracyLabel(lastResult.accuracy)}
+
+                {isCampaign && (
+                    <div className="bg-slate-50 rounded-2xl p-4 mb-6 text-left border border-slate-100">
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Relatório da Missão</p>
+                        
+                        {/* Speed Goal Check */}
+                        <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                                {lastResult.wpm >= wpmGoal ? <Check className="text-emerald-500" size={18} /> : <X className="text-red-400" size={18} />}
+                                <span className="text-sm font-bold text-slate-600">Velocidade</span>
+                            </div>
+                            <div className="text-sm">
+                                <span className={`font-bold ${lastResult.wpm >= wpmGoal ? 'text-emerald-600' : 'text-red-500'}`}>{lastResult.wpm} PPM</span>
+                                <span className="text-slate-400 mx-1">/</span>
+                                <span className="text-slate-400">{wpmGoal} alvo</span>
+                            </div>
+                        </div>
+
+                        {/* Accuracy Goal Check */}
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                {lastResult.accuracy >= accuracyGoal ? <Check className="text-emerald-500" size={18} /> : <X className="text-red-400" size={18} />}
+                                <span className="text-sm font-bold text-slate-600">Precisão</span>
+                            </div>
+                            <div className="text-sm">
+                                <span className={`font-bold ${lastResult.accuracy >= accuracyGoal ? 'text-emerald-600' : 'text-red-500'}`}>{lastResult.accuracy}%</span>
+                                <span className="text-slate-400 mx-1">/</span>
+                                <span className="text-slate-400">{accuracyGoal}% alvo</span>
+                            </div>
                         </div>
                     </div>
-                    <div className="bg-purple-50 p-3 rounded-2xl">
-                         <div className="text-[10px] md:text-xs font-bold text-purple-400 uppercase">Ritmo</div>
-                         <div className="text-base md:text-lg font-bold text-purple-600 leading-tight pt-1">
-                             {getConsistencyLabel(lastResult.consistency ?? 100)}
-                         </div>
+                )}
+
+                {!isCampaign && (
+                    <div className="grid grid-cols-3 gap-3 mb-6">
+                        <div className="bg-blue-50 p-3 rounded-2xl">
+                            <div className="text-[10px] md:text-xs font-bold text-blue-400 uppercase">Velocidade</div>
+                            <div className="text-2xl md:text-3xl font-bold text-blue-600">{lastResult.wpm}</div>
+                        </div>
+                        <div className="bg-emerald-50 p-3 rounded-2xl">
+                            <div className="text-[10px] md:text-xs font-bold text-emerald-400 uppercase">Precisão</div>
+                            <div className="text-xl md:text-2xl font-bold text-emerald-600 leading-tight pt-1">
+                                {lastResult.accuracy}%
+                            </div>
+                        </div>
+                        <div className="bg-purple-50 p-3 rounded-2xl">
+                            <div className="text-[10px] md:text-xs font-bold text-purple-400 uppercase">Ritmo</div>
+                            <div className="text-sm md:text-base font-bold text-purple-600 leading-tight pt-1">
+                                {getConsistencyLabel(lastResult.consistency ?? 100)}
+                            </div>
+                        </div>
                     </div>
-                </div>
+                )}
+
                 <div className="flex flex-col gap-3">
                     {nextLevel && (
                         <ClayButton variant="primary" theme={currentUser.theme} onClick={() => handleStartLevel(nextLevel as Level)} className="w-full py-3">
