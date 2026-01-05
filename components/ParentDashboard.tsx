@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { AppState, UserProfile, CustomLesson } from '../types';
 import { ClayButton } from './ClayButton';
-import { ArrowLeft, Trash2, Clock, Trophy, Target, Calendar, Download, Upload, Plus, Pencil, BookOpen, Users, Save } from 'lucide-react';
+import { ArrowLeft, Trash2, Clock, Trophy, Target, Calendar, Download, Upload, Plus, Pencil, BookOpen, Users, Save, TrendingUp } from 'lucide-react';
 import { THEME_COLORS } from '../constants';
 
 interface ParentDashboardProps {
@@ -182,6 +182,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                                 <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider">Nível</th>
                                 <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider">Melhor PPM</th>
                                 <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider">Último Treino</th>
+                                <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider">Evolução (5 Sessões)</th>
                                 <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider text-right">Ações</th>
                             </tr>
                         </thead>
@@ -190,6 +191,11 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                                 const maxWpm = user.history.reduce((max, h) => Math.max(max, h.wpm), 0);
                                 const lastPlayed = user.history.length > 0 ? user.history[user.history.length - 1].date : '';
                                 const colors = THEME_COLORS[user.theme];
+                                
+                                // Logic for Micro-Chart
+                                const recentSessions = user.history.slice(-5);
+                                // Determine scale max (at least 20 WPM to avoid huge bars for low scores)
+                                const maxRecentWpm = Math.max(...recentSessions.map(s => s.wpm), 20);
 
                                 return (
                                     <tr key={user.id} className="hover:bg-slate-50/50 transition-colors">
@@ -216,6 +222,47 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                                                 <span className="text-slate-300">Nunca</span>
                                             )}
                                         </td>
+                                        
+                                        {/* Micro Chart Column */}
+                                        <td className="p-4 align-bottom h-full">
+                                            <div className="flex items-end gap-1.5 h-10 w-32">
+                                                {recentSessions.length === 0 ? (
+                                                    <div className="flex items-center gap-2 text-slate-300 text-xs italic">
+                                                        <TrendingUp size={14} /> Sem dados
+                                                    </div>
+                                                ) : (
+                                                    // Render up to 5 bars. If less than 5 sessions, empty slots are implicit
+                                                    Array.from({ length: 5 }).map((_, i) => {
+                                                        // Get the session from the end (alignment right)
+                                                        // If we have 3 sessions: [s1, s2, s3]. We want: [empty, empty, s1, s2, s3]
+                                                        const sessionIndex = i - (5 - recentSessions.length);
+                                                        const session = sessionIndex >= 0 ? recentSessions[sessionIndex] : null;
+                                                        
+                                                        if (!session) {
+                                                            return (
+                                                                <div key={i} className="flex-1 bg-slate-100 h-1 rounded-sm" />
+                                                            );
+                                                        }
+
+                                                        const heightPercent = Math.max(15, (session.wpm / maxRecentWpm) * 100);
+
+                                                        return (
+                                                            <div key={i} className="flex-1 flex flex-col justify-end group relative h-full">
+                                                                <div 
+                                                                    className={`w-full rounded-t-sm transition-all duration-300 ${colors.bg} opacity-80 hover:opacity-100`}
+                                                                    style={{ height: `${heightPercent}%` }}
+                                                                ></div>
+                                                                {/* Tooltip */}
+                                                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 bg-slate-800 text-white text-[10px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
+                                                                    {session.wpm}
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })
+                                                )}
+                                            </div>
+                                        </td>
+
                                         <td className="p-4 text-right">
                                             <button 
                                                 onClick={() => onDeleteUser(user.id)}
