@@ -721,8 +721,16 @@ const App: React.FC = () => {
                 {showQR && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-white z-40 flex flex-col items-center justify-center p-6">
                         <h3 className="text-xl font-bold text-slate-700 mb-4 fun-font">Magic QR Report</h3>
-                        <div className="bg-white p-4 rounded-2xl shadow-lg border border-slate-200 mb-6">
-                            <QRCode value={qrData} size={180} />
+                        <div className="bg-white p-4 rounded-2xl shadow-lg border border-slate-200 mb-6 w-full max-w-[220px] flex items-center justify-center">
+                            {/* Responsive QR Code Container */}
+                            <div style={{ height: "auto", margin: "0 auto", maxWidth: 180, width: "100%" }}>
+                                <QRCode
+                                    size={256}
+                                    style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                                    value={qrData}
+                                    viewBox={`0 0 256 256`}
+                                />
+                            </div>
                         </div>
                         <p className="text-xs text-slate-400 mb-6 max-w-[200px]">
                             O professor pode ler este código para guardar a tua nota.
