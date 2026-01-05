@@ -73,20 +73,35 @@ export const generateSmartExercise = async (
     } else if (mode === GameMode.Story) {
         prompt = `${systemInstruction} Generate a SHORT STORY in European Portuguese (3-4 sentences). Available keys: [${availableKeys}].`;
     } else {
-        const lengthInstruction = difficultyModifier === 'hard' 
-            ? "Generate a longer sentence (8-10 words)." 
-            : "Generate a single line of text (about 4-6 words).";
-        
-        const hasNumbers = level.newKeys.some(k => '0123456789'.includes(k));
-        const numberInstruction = hasNumbers ? "Include numbers." : "";
+        // Digital Literacy Levels Logic (IDs 18, 19, 20)
+        if (level.id >= 18) {
+             let codeTopic = "";
+             if (level.id === 18) codeTopic = "Generate a list of 5 variable names in camelCase and snake_case (e.g. myVar, user_id).";
+             if (level.id === 19) codeTopic = "Generate a fake code snippet using brackets and special chars: [ ] { } @ €.";
+             if (level.id === 20) codeTopic = "Generate a fake terminal command or code line using a mix of letters, symbols, and numbers.";
 
-        prompt = `
-            ${systemInstruction}
-            ${lengthInstruction}
-            ${numberInstruction}
-            Use ONLY these letters: [${availableKeys}].
-            Keep it mostly lowercase, proper European Portuguese.
-        `;
+             prompt = `
+                You are a coding tutor.
+                ${codeTopic}
+                Use ONLY these available keys: [${availableKeys}].
+                Output ONLY the code text, space separated if list.
+             `;
+        } else {
+            const lengthInstruction = difficultyModifier === 'hard' 
+                ? "Generate a longer sentence (8-10 words)." 
+                : "Generate a single line of text (about 4-6 words).";
+            
+            const hasNumbers = level.newKeys.some(k => '0123456789'.includes(k));
+            const numberInstruction = hasNumbers ? "Include numbers." : "";
+
+            prompt = `
+                ${systemInstruction}
+                ${lengthInstruction}
+                ${numberInstruction}
+                Use ONLY these letters: [${availableKeys}].
+                Keep it mostly lowercase, proper European Portuguese.
+            `;
+        }
     }
 
     const response = await genAI.models.generateContent({

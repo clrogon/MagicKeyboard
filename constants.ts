@@ -75,22 +75,22 @@ const QWERTY: KeyConfig[][] = [
   // Number Row (1234567890')
   [
     { char: '1', subLabel: '!', finger: Finger.LeftPinky, row: 0 },
-    { char: '2', subLabel: '"', finger: Finger.LeftRing, row: 0 },
-    { char: '3', subLabel: '#', finger: Finger.LeftMiddle, row: 0 },
-    { char: '4', subLabel: '$', finger: Finger.LeftIndex, row: 0 },
-    { char: '5', subLabel: '%', finger: Finger.LeftIndex, row: 0 },
+    { char: '2', subLabel: '"', tertLabel: '@', finger: Finger.LeftRing, row: 0 },
+    { char: '3', subLabel: '#', tertLabel: '£', finger: Finger.LeftMiddle, row: 0 },
+    { char: '4', subLabel: '$', tertLabel: '§', finger: Finger.LeftIndex, row: 0 },
+    { char: '5', subLabel: '%', tertLabel: '€', finger: Finger.LeftIndex, row: 0 },
     { char: '6', subLabel: '&', finger: Finger.RightIndex, row: 0 },
-    { char: '7', subLabel: '/', finger: Finger.RightIndex, row: 0 },
-    { char: '8', subLabel: '(', finger: Finger.RightMiddle, row: 0 },
-    { char: '9', subLabel: ')', finger: Finger.RightRing, row: 0 },
-    { char: '0', subLabel: '=', finger: Finger.RightPinky, row: 0 },
+    { char: '7', subLabel: '/', tertLabel: '{', finger: Finger.RightIndex, row: 0 },
+    { char: '8', subLabel: '(', tertLabel: '[', finger: Finger.RightMiddle, row: 0 },
+    { char: '9', subLabel: ')', tertLabel: ']', finger: Finger.RightRing, row: 0 },
+    { char: '0', subLabel: '=', tertLabel: '}', finger: Finger.RightPinky, row: 0 },
     { char: "'", subLabel: '?', finger: Finger.RightPinky, row: 0 }, 
   ],
   // Top Row (QWERTY...) + Acute Accent
   [
     { char: 'q', finger: Finger.LeftPinky, row: 1 },
     { char: 'w', finger: Finger.LeftRing, row: 1 },
-    { char: 'e', finger: Finger.LeftMiddle, row: 1 },
+    { char: 'e', tertLabel: '€', finger: Finger.LeftMiddle, row: 1 },
     { char: 'r', finger: Finger.LeftIndex, row: 1 },
     { char: 't', finger: Finger.LeftIndex, row: 1 },
     { char: 'y', finger: Finger.RightIndex, row: 1 },
@@ -117,8 +117,8 @@ const QWERTY: KeyConfig[][] = [
   // Bottom Row (ZXCV...)
   [
     { char: 'ShiftLeft', label: 'Shift', finger: Finger.LeftPinky, row: 3, width: 1.5 },
-    { char: 'z', finger: Finger.LeftPinky, row: 3 },
-    { char: 'x', finger: Finger.LeftRing, row: 3 },
+    { char: 'z', tertLabel: '<', finger: Finger.LeftPinky, row: 3 },
+    { char: 'x', tertLabel: '>', finger: Finger.LeftRing, row: 3 },
     { char: 'c', finger: Finger.LeftMiddle, row: 3 },
     { char: 'v', finger: Finger.LeftIndex, row: 3 },
     { char: 'b', finger: Finger.LeftIndex, row: 3 },
@@ -135,22 +135,22 @@ const AZERTY: KeyConfig[][] = [
   // Number Row (AZERTY uses Shift for numbers)
   [
     { char: '&', subLabel: '1', finger: Finger.LeftPinky, row: 0 },
-    { char: 'é', subLabel: '2', finger: Finger.LeftRing, row: 0 },
-    { char: '"', subLabel: '3', finger: Finger.LeftMiddle, row: 0 },
-    { char: "'", subLabel: '4', finger: Finger.LeftIndex, row: 0 },
-    { char: '(', subLabel: '5', finger: Finger.LeftIndex, row: 0 },
-    { char: '-', subLabel: '6', finger: Finger.RightIndex, row: 0 },
-    { char: 'è', subLabel: '7', finger: Finger.RightIndex, row: 0 },
-    { char: '_', subLabel: '8', finger: Finger.RightMiddle, row: 0 },
-    { char: 'ç', subLabel: '9', finger: Finger.RightRing, row: 0 },
-    { char: 'à', subLabel: '0', finger: Finger.RightPinky, row: 0 },
-    { char: ')', subLabel: '°', finger: Finger.RightPinky, row: 0 },
+    { char: 'é', subLabel: '2', tertLabel: '~', finger: Finger.LeftRing, row: 0 },
+    { char: '"', subLabel: '3', tertLabel: '#', finger: Finger.LeftMiddle, row: 0 },
+    { char: "'", subLabel: '4', tertLabel: '{', finger: Finger.LeftIndex, row: 0 },
+    { char: '(', subLabel: '5', tertLabel: '[', finger: Finger.LeftIndex, row: 0 },
+    { char: '-', subLabel: '6', tertLabel: '|', finger: Finger.RightIndex, row: 0 },
+    { char: 'è', subLabel: '7', tertLabel: '`', finger: Finger.RightIndex, row: 0 },
+    { char: '_', subLabel: '8', tertLabel: '\\', finger: Finger.RightMiddle, row: 0 },
+    { char: 'ç', subLabel: '9', tertLabel: '^', finger: Finger.RightRing, row: 0 },
+    { char: 'à', subLabel: '0', tertLabel: '@', finger: Finger.RightPinky, row: 0 },
+    { char: ')', subLabel: '°', tertLabel: ']', finger: Finger.RightPinky, row: 0 },
   ],
   // Top Row (AZERTY)
   [
     { char: 'a', finger: Finger.LeftPinky, row: 1 },
     { char: 'z', finger: Finger.LeftRing, row: 1 },
-    { char: 'e', finger: Finger.LeftMiddle, row: 1 },
+    { char: 'e', tertLabel: '€', finger: Finger.LeftMiddle, row: 1 },
     { char: 'r', finger: Finger.LeftIndex, row: 1 },
     { char: 't', finger: Finger.LeftIndex, row: 1 },
     { char: 'y', finger: Finger.RightIndex, row: 1 },
@@ -718,6 +718,77 @@ export const LEVELS: Level[] = [
         "O jacaré tem chulé.", "O bebé está no sopé.", "A música é mágica.", "A lâmpada é rápida.", "O pássaro voa.",
         "O céu é azul.", "O sol brilha.", "A lua ilumina.", "As estrelas cintilam.", "O vento sopra.", "A chuva cai.",
         "A neve cobre.", "O rio corre.", "O mar ondula.", "A flor desabrocha.", "A árvore cresce.", "O fruto amadurece."
+    ],
+    difficulty: 'hard',
+    minWpm: 20,
+    minAccuracy: 95
+  },
+  {
+    id: 18,
+    title: "O Código (Variáveis)",
+    description: "Aprende a escrever como um programador! camelCase e snake_case.",
+    newKeys: ['_'],
+    allKeys: [
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+        'ç', ' ', 'ShiftLeft', 'ShiftRight', 
+        '.', ',', ';', '?', '!', '-', '_',
+        '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'
+    ],
+    textSamples: [
+        "minhaVariavel", "nomeDoUtilizador", "totalDePontos", "velocidadeMaxima", "posicaoX", "posicaoY",
+        "nome_do_utilizador", "total_de_pontos", "velocidade_maxima", "id_do_aluno", "data_de_nascimento",
+        "const pi = 3.14;", "let idade = 10;", "var nome = 'Ana';", "score = 100;", "nivel_atual = 18;",
+        "gameOver = false;", "isWinner = true;", "function iniciar()", "return true;", "if (score > 10) {",
+        "minhaVariavel = 10;", "teuNome = 'Pedro';", "pontos_extra = 50;", "cor_favorita = 'Azul';",
+        "larguraDoEcra", "alturaDoEcra", "numeroDeVidas", "tempoRestante", "lista_de_amigos"
+    ],
+    difficulty: 'hard',
+    minWpm: 15,
+    minAccuracy: 90
+  },
+  {
+    id: 19,
+    title: "O Hacker (Alt Gr)",
+    description: "Usa a tecla Alt Gr (ou Ctrl+Alt) para símbolos especiais!",
+    newKeys: ['@', '[', ']', '{', '}', '€'],
+    allKeys: [
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+        'ç', ' ', 'ShiftLeft', 'ShiftRight', 
+        '.', ',', ';', '?', '!', '-', '_', '@', '[', ']', '{', '}', '€',
+        '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'
+    ],
+    textSamples: [
+        "user@gmail.com", "aluno@escola.pt", "prof@teclado.pt", "Preço: 20€", "Custo: 100€",
+        "[1, 2, 3]", "lista = [10, 20]", "cores = ['azul', 'verde']", "{ nome: 'Ana' }",
+        "function() { return; }", "if (x) { y = 2; }", "id = 500€", "promo@loja.com",
+        "vetor[0] = 1;", "matriz[1][2]", "{ id: 1, valor: 10€ }", "mapa = { x: 10, y: 20 }",
+        "ola@mundo", "teste@123", "[a, b, c]", "{x, y, z}", "10€ + 20€ = 30€"
+    ],
+    difficulty: 'hard',
+    minWpm: 12,
+    minAccuracy: 85
+  },
+  {
+    id: 20,
+    title: "O Sistema (Comandos)",
+    description: "Mistura tudo! Código real e comandos de sistema.",
+    newKeys: [],
+    allKeys: [
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+        'ç', ' ', 'ShiftLeft', 'ShiftRight', 
+        '.', ',', ';', '?', '!', '-', '_', '@', '[', ']', '{', '}', '€',
+        '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+        '"', '#', '$', '%', '&', '/', '(', ')', '='
+    ],
+    textSamples: [
+        "console.log('Olá Mundo');", "print('Teclado Mágico')", "alert('Erro!');",
+        "for (i=0; i<10; i++) {", "while (true) {", "return x + y;",
+        "<div>Olá</div>", "<span>Texto</span>", "<a href='#'>Link</a>",
+        "user_id = 12345;", "email = 'eu@tu.pt';", "preço_final = 50.99€;",
+        "if (user.isLogin) {", "array.push('item');", "const PI = 3.14159;",
+        "#include <stdio.h>", "import React from 'react';", "export default App;",
+        "git commit -m 'Update';", "npm install react", "docker build .",
+        "sudo apt-get update", "echo 'Hello'", "ls -la", "cd /home/user"
     ],
     difficulty: 'hard',
     minWpm: 20,

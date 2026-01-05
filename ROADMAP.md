@@ -51,26 +51,24 @@ Project Start Date: **January 3, 2026**.
 - [x] **User Onboarding Redesign**: Overhauled "New Player" flow with avatar selection and visual layout picker.
 - [x] **Documentation Visuals**: Added visual guides and screenshots to the Parents & Teachers Manual.
 
-## 🚧 Phase 7: Local Multiplayer - "O Recreio" (v1.6.0)
-**Status:** In Design
-**Focus:** Social play without internet/servers (Privacy-First Multiplayer).
-- [ ] **WebRTC P2P Engine**: Allow two computers on the same Wi-Fi to connect directly (Host/Join).
-- [ ] **Corrida de Palavras**: Real-time typing race where WPM moves a character across the screen.
-- [ ] **Tag Team**: Cooperative mode where Player 1 types the noun, Player 2 types the verb.
-- [ ] **Ghost Mode**: Race against your own "Ghost" (previous best run).
+## ⏸️ Phase 7: Local Multiplayer - "O Recreio" (Paused)
+**Status:** Paused for Security Review (v1.6.0)
+**Reason:** Strict privacy audit requires "Serverless Signaling" to prevent IP leaks. Ghost Mode (Phase 7.1) implemented as a safe alternative.
+- [x] **Ghost Mode**: Race against your own "Ghost" (previous best run).
+- [ ] **WebRTC P2P Engine**: Allow two computers on the same Wi-Fi to connect directly.
+- [ ] **Corrida de Palavras**: Real-time typing race.
 
-## 🔮 Phase 8: Digital Literacy - "O Hacker" (v1.7.0)
-**Status:** Planned
+## 🚀 Phase 8: Digital Literacy - "O Hacker" (v1.7.0)
+**Status:** In Progress
 **Focus:** Beyond the alphabet - Real world computer skills.
-- [ ] **Shortcuts Dojo**: Training for `Ctrl+C`, `Ctrl+V`, `Alt+Tab`, `Ctrl+Z`.
-- [ ] **Code Syntax**: Levels specifically for `{ } [ ] < > ;` used in programming.
-- [ ] **Numpad Ninja**: Dedicated training for the numeric keypad (Data Entry skills).
-- [ ] **Form Navigation**: Training the usage of `Tab` and `Shift+Tab` to move between fields.
+- [x] **AltGr Support**: Visual support for third-level keys (`@`, `[`, `]`, `{`, `}`).
+- [x] **Code Syntax**: Levels specifically for `{ } [ ] < > ;` used in programming.
+- [x] **Naming Conventions**: Training `camelCase` and `snake_case`.
+- [ ] **Shortcuts Dojo**: Training for `Ctrl+C`, `Ctrl+V`.
 
 ## 🔮 Phase 9: Classroom Tools - "Sala de Aula" (v2.0.0)
 **Status:** Planned
 **Focus:** Solving the "No Database" problem for Teachers.
-- [ ] **Magic QR Reporting**: At the end of a session, the app generates a QR code on the student's screen containing their WPM/Accuracy. The teacher scans it with their phone to instantly log the grade (Air-gapped data transfer).
-- [ ] **Homework Codes**: Teachers generate a code (e.g., "TPC-34") that loads a specific locked lesson configuration.
-- [ ] **Bulk CSV Import**: Import a class list of 30 names to generate profiles automatically.
-- [ ] **Kiosk Mode**: Setting to lock the UI so students cannot change settings or exit the exercise.
+- [ ] **Magic QR Reporting**: Teachers scan student screen to log grades.
+- [ ] **Homework Codes**: Codes (e.g., "TPC-34") that load specific configurations.
+- [ ] **Kiosk Mode**: Setting to lock the UI.

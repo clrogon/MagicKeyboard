@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { KEYBOARD_LAYOUTS, FINGER_NAMES, THEME_COLORS } from '../constants';
@@ -51,9 +52,8 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
          return 'ShiftRight'; 
      }
      
-     if (char === char.toLowerCase() && !'!@#$%&*()_+{}|:"<>?`^'.includes(char)) return null; 
-     
-     if (char !== char.toLowerCase()) {
+     // Basic Shift detection for uppercase
+     if (char !== char.toLowerCase() && !'!@#$%&*()_+{}|:"<>?`^~[]{}'.includes(char)) {
          const leftHandChars = layout === 'qwerty' ? "qwertasdfgzxcvbQWERTASDFGZXCVB" : "azertqsdfgwxcvbAZERTQSDFGWXCVB";
          return leftHandChars.includes(char) ? 'ShiftRight' : 'ShiftLeft';
      }
@@ -78,6 +78,9 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
       if (!found) {
           found = flat.find(k => k.subLabel === key);
       }
+      if (!found) {
+           found = flat.find(k => k.tertLabel === key);
+      }
       if (!found && layout === 'azerty') {
            found = flat.find(k => k.subLabel === key);
       }
@@ -90,6 +93,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
   const renderKey = (config: KeyConfig) => {
     let isActive = false;
     let isSemiActive = false;
+    let isTertiaryActive = false; // Is active via AltGr
 
     if (activeKey) {
         if (requiredAccentKey) {
@@ -99,13 +103,20 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
         } else {
             if (activeKey.toLowerCase() === config.char.toLowerCase()) isActive = true;
             if (config.subLabel === activeKey) isActive = true;
+            if (config.tertLabel === activeKey) {
+                isActive = true;
+                isTertiaryActive = true;
+            }
         }
     }
     
     if (config.char === 'ShiftLeft' && reqShift === 'ShiftLeft') isActive = true;
     if (config.char === 'ShiftRight' && reqShift === 'ShiftRight') isActive = true;
 
-    const isNext = nextKey?.toLowerCase() === config.char.toLowerCase() || nextKey === config.subLabel;
+    // TODO: Visualize AltGr press if needed for tertiary characters
+    // For now, we rely on highlighting the target key itself.
+
+    const isNext = nextKey?.toLowerCase() === config.char.toLowerCase() || nextKey === config.subLabel || nextKey === config.tertLabel;
     
     const styleWidth = config.width ? { width: `${config.width * 3.5}rem` } : {}; 
 
@@ -166,20 +177,28 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
         
         {shouldShowLabel && (
             <>
+                {/* Secondary Label (Shift) - Top Right */}
                 {config.subLabel && (
-                    <span className={`absolute top-1 right-2 text-[10px] md:text-xs opacity-70 ${isActive ? 'text-white' : 'text-slate-400'}`}>
+                    <span className={`absolute top-1 right-2 text-[10px] md:text-xs opacity-70 ${isActive && !isTertiaryActive ? 'text-white' : 'text-slate-400'}`}>
                         {config.subLabel}
                     </span>
                 )}
                 
-                <span className={isActive ? 'drop-shadow-sm' : ''}>
+                {/* Tertiary Label (AltGr) - Bottom Right */}
+                {config.tertLabel && (
+                    <span className={`absolute bottom-1 right-2 text-[10px] md:text-xs font-bold ${isActive && isTertiaryActive ? 'text-white opacity-100' : 'text-slate-300 opacity-60'}`}>
+                        {config.tertLabel}
+                    </span>
+                )}
+                
+                <span className={`${isActive ? 'drop-shadow-sm' : ''} ${config.tertLabel ? 'mb-2 mr-2' : ''}`}>
                     {config.label || config.char}
                 </span>
             </>
         )}
         
         {(config.char === 'f' || config.char === 'j') && (
-            <div className={`absolute bottom-2 w-4 h-1 rounded-full ${isActive ? 'bg-black/20' : 'bg-slate-200'}`}></div>
+            <div className={`absolute bottom-2 left-2 w-4 h-1 rounded-full ${isActive ? 'bg-black/20' : 'bg-slate-200'}`}></div>
         )}
       </motion.div>
     );

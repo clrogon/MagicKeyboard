@@ -40,6 +40,7 @@ export interface KeyConfig {
   width?: number;       // Relative width (e.g., 1.5 for Shift)
   label?: string;       // Optional label (e.g., "Shift" instead of "ShiftLeft")
   subLabel?: string;    // Label for the Shift-state (e.g. "!" for key "1")
+  tertLabel?: string;   // Label for the AltGr-state (e.g. "@" for key "2")
 }
 
 /**
