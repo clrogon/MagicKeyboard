@@ -59,7 +59,7 @@ Project Start Date: **January 3, 2026**.
 - [ ] **Corrida de Palavras**: Real-time typing race.
 
 ## 🚀 Phase 8: Digital Literacy - "O Hacker" (v1.7.0)
-**Status:** In Progress
+**Status:** Completed
 **Focus:** Beyond the alphabet - Real world computer skills.
 - [x] **AltGr Support**: Visual support for third-level keys (`@`, `[`, `]`, `{`, `}`).
 - [x] **Code Syntax**: Levels specifically for `{ } [ ] < > ;` used in programming.

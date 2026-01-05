@@ -60,7 +60,14 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
      return null;
   };
 
+  const isAltGrRequired = (char: string | null): boolean => {
+      if (!char) return false;
+      // Check if the character is a tertiary label on any key
+      return currentLayout.flat().some(k => k.tertLabel === char);
+  };
+
   const reqShift = getShiftRequirement(activeKey);
+  const reqAltGr = isAltGrRequired(activeKey);
 
   const getFinger = (key: string | null): Finger | null => {
       if (!key) return null;
@@ -112,17 +119,24 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
     
     if (config.char === 'ShiftLeft' && reqShift === 'ShiftLeft') isActive = true;
     if (config.char === 'ShiftRight' && reqShift === 'ShiftRight') isActive = true;
-
-    // TODO: Visualize AltGr press if needed for tertiary characters
-    // For now, we rely on highlighting the target key itself.
+    if (config.char === 'AltRight' && reqAltGr) isActive = true;
 
     const isNext = nextKey?.toLowerCase() === config.char.toLowerCase() || nextKey === config.subLabel || nextKey === config.tertLabel;
     
+    // Space bar special styling logic
+    const isSpace = config.char === ' ';
+    const isSpaceActive = activeKey === ' ' && isSpace;
+    
+    if (isSpaceActive) isActive = true;
+
     const styleWidth = config.width ? { width: `${config.width * 3.5}rem` } : {}; 
+
+    // Base height logic
+    const heightClass = "h-12 md:h-14 lg:h-16";
 
     const baseClasses = `
         relative flex flex-col items-center justify-center rounded-xl m-1
-        h-12 md:h-14 lg:h-16
+        ${heightClass}
         ${!config.width && 'w-10 md:w-14 lg:w-16'}
         font-bold text-xl uppercase
         transition-all duration-150
@@ -163,7 +177,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
         animateProps = { scale: 1, y: 0 };
     }
     
-    const shouldShowLabel = showLabels || config.label === 'Shift';
+    const shouldShowLabel = showLabels || config.label === 'Shift' || config.label === 'Ctrl' || config.label === 'Alt' || config.label === 'AltGr' || config.label === 'Espaço' || config.label === 'Espace';
 
     return (
       <motion.div
@@ -191,7 +205,11 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
                     </span>
                 )}
                 
-                <span className={`${isActive ? 'drop-shadow-sm' : ''} ${config.tertLabel ? 'mb-2 mr-2' : ''}`}>
+                <span className={`
+                    ${isActive ? 'drop-shadow-sm' : ''} 
+                    ${config.tertLabel ? 'mb-2 mr-2' : ''}
+                    ${isSpace ? 'text-sm md:text-base tracking-widest' : ''}
+                `}>
                     {config.label || config.char}
                 </span>
             </>
@@ -203,39 +221,6 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
       </motion.div>
     );
   };
-
-  const renderSpaceBar = () => {
-     const isActive = activeKey === ' ';
-     const isNext = nextKey === ' ';
-     
-     let visualClasses = "";
-     let animateProps = {};
-
-     if (isActive) {
-         visualClasses = `${colors.bg} text-white shadow-[inset_0px_2px_4px_rgba(0,0,0,0.2)] translate-y-1`;
-         animateProps = { scale: 0.98 };
-     } else if (isNext) {
-         visualClasses = `${colors.bgSoft} ${colors.textSoft} border-b-4 border-slate-100`;
-         animateProps = { scale: 1 };
-     } else {
-         visualClasses = `bg-white text-slate-400 shadow-[0px_4px_0px_#cbd5e1,0px_6px_6px_rgba(0,0,0,0.05)]`;
-         animateProps = { scale: 1 };
-     }
-
-     return (
-        <motion.div
-            className={`
-                h-12 md:h-14 lg:h-16 rounded-xl m-1 mt-2 w-1/2 mx-auto flex items-center justify-center
-                font-bold tracking-widest text-sm md:text-base transition-all duration-150 relative
-                ${visualClasses}
-            `}
-            animate={animateProps}
-        >
-             {!isActive && <div className="absolute top-1 left-4 right-4 h-1/3 bg-gradient-to-b from-white/60 to-transparent rounded-t-lg pointer-events-none" />}
-            ESPAÇO
-        </motion.div>
-     )
-  }
 
   return (
     <div className="perspective-1000 w-full max-w-4xl mx-auto mt-4">
@@ -261,9 +246,6 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ activeKey, nextKey, t
                 {row.map(keyConfig => renderKey(keyConfig))}
                 </div>
             ))}
-            <div className="flex justify-center w-full">
-                {renderSpaceBar()}
-            </div>
             
             <div className="w-[90%] h-4 bg-black/10 blur-xl rounded-[50%] mt-4"></div>
         </div>

@@ -128,6 +128,14 @@ const QWERTY: KeyConfig[][] = [
     { char: '.', finger: Finger.RightRing, row: 3 }, 
     { char: '-', subLabel: '_', finger: Finger.RightPinky, row: 3 },
     { char: 'ShiftRight', label: 'Shift', finger: Finger.RightPinky, row: 3, width: 1.5 },
+  ],
+  // Space Row (Includes AltGr for Phase 8)
+  [
+    { char: 'ControlLeft', label: 'Ctrl', finger: Finger.LeftPinky, row: 4, width: 1.5 },
+    { char: 'AltLeft', label: 'Alt', finger: Finger.Thumb, row: 4, width: 1.5 },
+    { char: ' ', label: 'Espaço', finger: Finger.Thumb, row: 4, width: 7 }, // Wide space
+    { char: 'AltRight', label: 'AltGr', finger: Finger.Thumb, row: 4, width: 1.5 },
+    { char: 'ControlRight', label: 'Ctrl', finger: Finger.RightPinky, row: 4, width: 1.5 }
   ]
 ];
 
@@ -188,6 +196,14 @@ const AZERTY: KeyConfig[][] = [
     { char: ':', subLabel: '/', finger: Finger.RightRing, row: 3 },
     { char: '!', subLabel: '§', finger: Finger.RightPinky, row: 3 },
     { char: 'ShiftRight', label: 'Shift', finger: Finger.RightPinky, row: 3, width: 1.5 },
+  ],
+  // Space Row (AZERTY)
+  [
+    { char: 'ControlLeft', label: 'Ctrl', finger: Finger.LeftPinky, row: 4, width: 1.5 },
+    { char: 'AltLeft', label: 'Alt', finger: Finger.Thumb, row: 4, width: 1.5 },
+    { char: ' ', label: 'Espace', finger: Finger.Thumb, row: 4, width: 7 },
+    { char: 'AltRight', label: 'AltGr', finger: Finger.Thumb, row: 4, width: 1.5 },
+    { char: 'ControlRight', label: 'Ctrl', finger: Finger.RightPinky, row: 4, width: 1.5 }
   ]
 ];
 
@@ -755,7 +771,7 @@ export const LEVELS: Level[] = [
         'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
         'ç', ' ', 'ShiftLeft', 'ShiftRight', 
         '.', ',', ';', '?', '!', '-', '_', '@', '[', ']', '{', '}', '€',
-        '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'
+        '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'AltRight'
     ],
     textSamples: [
         "user@gmail.com", "aluno@escola.pt", "prof@teclado.pt", "Preço: 20€", "Custo: 100€",
@@ -778,7 +794,7 @@ export const LEVELS: Level[] = [
         'ç', ' ', 'ShiftLeft', 'ShiftRight', 
         '.', ',', ';', '?', '!', '-', '_', '@', '[', ']', '{', '}', '€',
         '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
-        '"', '#', '$', '%', '&', '/', '(', ')', '='
+        '"', '#', '$', '%', '&', '/', '(', ')', '=', 'AltRight'
     ],
     textSamples: [
         "console.log('Olá Mundo');", "print('Teclado Mágico')", "alert('Erro!');",
