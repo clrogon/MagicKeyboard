@@ -10,6 +10,19 @@
 
 ---
 
+## 📸 Galeria | Screenshots
+
+<p align="center">
+  <img src="docs/assets/user_select.png" alt="Ecrã de Seleção de Jogador" width="45%" style="border-radius: 10px; margin-right: 10px;" />
+  <img src="docs/assets/parents_dashboard.png" alt="Área de Pais e Professores" width="45%" style="border-radius: 10px;" />
+</p>
+
+<p align="center">
+  <strong>Interface amigável para crianças (Esq.) e Dashboard de gestão para Pais/Professores (Dir.)</strong>
+</p>
+
+---
+
 ## 🌟 Porquê o Teclado Mágico? | Why Magic Keyboard?
 
 **O Problema:** A maioria dos treinadores de digitação online ou são apenas em Inglês ou, quando em Português, utilizam vocabulário e gramática do Brasil (PT-BR). Para crianças em **Portugal** e **Angola**, isto cria confusão linguística (ex: "tela" vs "ecrã", "mouse" vs "rato", uso do gerúndio).
