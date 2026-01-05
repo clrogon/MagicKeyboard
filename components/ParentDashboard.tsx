@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { AppState, UserProfile, CustomLesson } from '../types';
 import { ClayButton } from './ClayButton';
-import { ArrowLeft, Trash2, Clock, Trophy, Target, Calendar, Download, Upload, Plus, Pencil, BookOpen, Users, Save, TrendingUp, GraduationCap, Lock, Unlock } from 'lucide-react';
+import { ArrowLeft, Trash2, Clock, Trophy, Target, Calendar, Download, Upload, Plus, Pencil, BookOpen, Users, Save, GraduationCap, Lock } from 'lucide-react';
 import { THEME_COLORS } from '../constants';
 
 interface ParentDashboardProps {
@@ -261,7 +261,6 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                             {users.map((user) => {
                                 const maxWpm = user.history.reduce((max, h) => Math.max(max, h.wpm), 0);
                                 const totalTime = (user.history.reduce((acc, h) => acc + (h.duration || 0), 0) / 60).toFixed(1);
-                                const colors = THEME_COLORS[user.theme];
                                 
                                 return (
                                     <tr key={user.id} className="hover:bg-slate-50/50 transition-colors">

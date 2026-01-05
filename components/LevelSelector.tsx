@@ -2,9 +2,9 @@
 import React from 'react';
 import { Level, UserProfile, CustomLesson } from '../types';
 import { ClayButton } from './ClayButton';
-import { Lock, Play, Clock, AlertCircle, Trophy, Shield, Crown, Eye, EyeOff, BookOpen, Volume2, VolumeX, Pencil, Mic, RefreshCw } from 'lucide-react';
+import { Lock, Play, Clock, AlertCircle, Trophy, Shield, Crown, Eye, EyeOff, BookOpen, Volume2, VolumeX, Pencil, Mic, RefreshCw, KeyRound } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { getXpForNextLevel, THEME_COLORS } from '../constants';
+import { getXpForNextLevel, THEME_COLORS, HOMEWORK_CODES } from '../constants';
 
 interface LevelSelectorProps {
   levels: Level[];
@@ -47,6 +47,27 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
   const xpProgress = Math.min(100, (xp / xpNeeded) * 100);
   
   const colors = THEME_COLORS[theme];
+
+  const handleHomeworkCode = () => {
+      const code = prompt("Insere o Código de TPC dado pelo professor:\n(Exemplo: TPC-1)");
+      if (!code) return;
+      
+      const normalizedCode = code.toUpperCase().trim();
+      const homework = HOMEWORK_CODES[normalizedCode];
+      
+      if (homework) {
+          const lesson: CustomLesson = {
+              id: 'hw-' + normalizedCode,
+              title: homework.title,
+              description: homework.desc,
+              content: homework.content,
+              createdAt: new Date().toISOString()
+          };
+          onSelectCustomLesson(lesson);
+      } else {
+          alert("Código inválido. Tenta outra vez!");
+      }
+  };
 
   return (
     <div className="min-h-screen p-4 md:p-8 relative z-10">
@@ -183,6 +204,9 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                         </ClayButton>
                         <ClayButton variant="primary" theme="rose" onClick={onSelectDictationMode} className="w-full py-3 bg-gradient-to-r from-purple-400 to-pink-500 shadow-purple-200">
                             <Mic size={18} className="mr-2" /> Ditado Mágico
+                        </ClayButton>
+                        <ClayButton variant="primary" theme="amber" onClick={handleHomeworkCode} className="w-full py-3 bg-gradient-to-r from-teal-400 to-emerald-500 shadow-teal-200">
+                            <KeyRound size={18} className="mr-2" /> Código TPC
                         </ClayButton>
                     </div>
                 </div>

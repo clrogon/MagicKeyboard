@@ -343,6 +343,18 @@ export const AVATARS = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', 
 export const getXpForNextLevel = (level: number) => level * 250;
 
 /**
+ * HOMEWORK CODES (Static Presets for Teachers)
+ * Used in "Sala de Aula" tools without backend.
+ */
+export const HOMEWORK_CODES: Record<string, { title: string; content: string; desc: string }> = {
+    'TPC-1': { title: 'Desafio do CH', desc: 'Palavras com CH', content: 'chave chuva chefe chato cheio tacho bicho cacho chofer chutar chaminé' },
+    'TPC-2': { title: 'Desafio do LH', desc: 'Palavras com LH', content: 'milho filho olho alho telha velha folha ilha palha colher coelho ovelha' },
+    'TPC-3': { title: 'Desafio do NH', desc: 'Palavras com NH', content: 'banho ninho vinho linha pinho sonho rainha galinha moinho cozinha vizinha' },
+    'TPC-4': { title: 'Gigantes', desc: 'Palavras Grandes', content: 'hipopótamo paralelepípedo frigorífico carpinteiro autocarro computador borboleta' },
+    'TPC-5': { title: 'Geografia', desc: 'Países e Cidades', content: 'Portugal Angola Brasil Lisboa Luanda Porto Benguela Coimbra Huambo Faro Malanje' }
+};
+
+/**
  * Progression Levels.
  * Designed for children learning PT (European/Angolan style).
  * 
