@@ -13,13 +13,13 @@ import PrivacyModal from './components/PrivacyModal';
 import CookieBanner from './components/CookieBanner';
 import HandGuideModal from './components/HandGuideModal';
 import ScreenRestriction from './components/ScreenRestriction';
-import { Shield, Zap, Star, LogOut, Heart, ArrowRight, Download, WifiOff, Unlock, Medal, TrendingUp, Hourglass, Target, Calendar, CalendarCheck, Crown, Hash, ShieldCheck, Clock, Check, X } from 'lucide-react';
+import { Shield, Zap, Star, LogOut, Heart, ArrowRight, Download, WifiOff, Unlock, Medal, TrendingUp, Hourglass, Target, Calendar, CalendarCheck, Crown, Hash, ShieldCheck, Clock, Check, X, Code, AtSign, Terminal } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { audioService } from './services/audioService';
 import { ClayButton } from './components/ClayButton';
 
 const IconMap: Record<string, React.ElementType> = {
-    Star, Zap, Target, Calendar, Crown, Hash, CalendarCheck, ShieldCheck, Clock, TrendingUp, Hourglass
+    Star, Zap, Target, Calendar, Crown, Hash, CalendarCheck, ShieldCheck, Clock, TrendingUp, Hourglass, Code, AtSign, Terminal
 };
 
 const App: React.FC = () => {
@@ -509,6 +509,11 @@ const App: React.FC = () => {
     checkForAchievement('error_crusher', result.mode === GameMode.ErrorDrill && result.accuracy === 100 && result.levelId === -2);
     checkForAchievement('time_lord', result.mode === GameMode.Timed && (result.duration || 0) >= 1 && result.wpm >= 30);
     checkForAchievement('marathon_runner', totalPlayTimeMinutes >= 60);
+    
+    // New Achievements Logic for Phase 8
+    checkForAchievement('code_master', result.levelId === 18 && result.stars >= 1);
+    checkForAchievement('altgr_pro', result.levelId === 19 && result.stars >= 1);
+    checkForAchievement('terminal_wizard', result.levelId === 20 && result.stars >= 1);
 
     if (unlockedNow.length > 0) {
         setNewlyUnlockedAchievements(unlockedNow);

@@ -299,6 +299,27 @@ export const ACHIEVEMENTS: Achievement[] = [
     description: 'Jogaste mais de 1 hora no total.',
     icon: 'Hourglass',
     color: 'bg-teal-500'
+  },
+  {
+    id: 'code_master',
+    title: 'Programador Júnior',
+    description: 'Completaste o Nível 18: Variáveis.',
+    icon: 'Code',
+    color: 'bg-cyan-600'
+  },
+  {
+    id: 'altgr_pro',
+    title: 'Mestre do Arroba',
+    description: 'Dominaste o Alt Gr no Nível 19.',
+    icon: 'AtSign',
+    color: 'bg-violet-600'
+  },
+  {
+    id: 'terminal_wizard',
+    title: 'Feiticeiro do Terminal',
+    description: 'Sobreviveste ao Nível 20!',
+    icon: 'Terminal',
+    color: 'bg-slate-800'
   }
 ];
 

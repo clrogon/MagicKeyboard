@@ -2,7 +2,7 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { SessionResult, Level, Theme, UserProfile } from '../types';
-import { Star, Trophy, Target, Zap, Medal, ArrowRight, RotateCcw, FileBadge, Calendar, CalendarCheck, Crown, Hash, ShieldCheck, Clock, TrendingUp, Hourglass } from 'lucide-react';
+import { Star, Trophy, Target, Zap, Medal, ArrowRight, RotateCcw, FileBadge, Calendar, CalendarCheck, Crown, Hash, ShieldCheck, Clock, TrendingUp, Hourglass, Code, AtSign, Terminal } from 'lucide-react';
 import { ACHIEVEMENTS, THEME_COLORS } from '../constants';
 import { ClayButton } from './ClayButton';
 import { motion } from 'framer-motion';
@@ -20,7 +20,7 @@ interface StatsBoardProps {
 }
 
 const IconMap: Record<string, React.ElementType> = {
-    Star, Zap, Target, Calendar, Crown, Hash, CalendarCheck, ShieldCheck, Clock, TrendingUp, Hourglass
+    Star, Zap, Target, Calendar, Crown, Hash, CalendarCheck, ShieldCheck, Clock, TrendingUp, Hourglass, Code, AtSign, Terminal
 };
 
 /**
