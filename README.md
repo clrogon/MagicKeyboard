@@ -5,7 +5,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-1.5.0-rose)](package.json)
-[![Status](https://img.shields.io/badge/Status-Production_Ready-green)](https://github.com/yourusername/teclado-magico)
+[![Status](https://img.shields.io/badge/Status-Production_Ready-green)](https://github.com/clrogon/MagicKeyboard)
 [![Tech Stack](https://img.shields.io/badge/Stack-React_19_%7C_Vite_%7C_Gemini_AI-8E75B2)](https://react.dev/)
 
 ---
@@ -17,6 +17,16 @@
 **A Solução:** O **Teclado Mágico** é uma plataforma educativa "Privacy-First" que utiliza Inteligência Artificial para gerar exercícios infinitos, culturalmente relevantes e gramaticalmente corretos para o contexto Luso-Afro-Europeu.
 
 > **Our Mission:** To provide a safe, engaging, and culturally accurate typing environment for children in the CPLP (Community of Portuguese Language Countries), specifically focusing on the linguistic nuances of Portugal and Angola.
+
+---
+
+## 📚 Documentação Oficial | Documentation
+
+Toda a informação detalhada sobre o projeto encontra-se na pasta `/docs`:
+
+*   🎓 **[Pedagogia e Método de Ensino](docs/PEDAGOGY.md)**: Como o método funciona, estrutura dos 17 níveis e lógica da IA.
+*   👨‍👩‍👧‍👦 **[Guia para Pais e Professores](docs/PARENTS_GUIDE.md)**: Manual de utilização, instalação, privacidade e ferramentas de gestão.
+*   🗺️ **[Roteiro do Projeto (Roadmap)](ROADMAP.md)**: O passado, presente e futuro do desenvolvimento.
 
 ---
 
@@ -65,24 +75,6 @@ Este projeto celebra a lusofonia. Os níveis avançados e o Modo História intro
 | **Cultura** | Fado, Galo de Barcelos, Azulejo | Semba, Kizomba, Pensador, Soba |
 | **Fauna/Flora**| Lince Ibérico, Sobreiro | Palanca Negra, Imbondeiro, Welwitschia |
 | **Culinária** | Sardinha, Caldo Verde, Pastel de Nata | Muamba, Funge, Ginguba, Mufete |
-
----
-
-## 🔮 Roteiro de Desenvolvimento | Roadmap
-
-O projeto começou em **3 de Janeiro de 2026** e encontra-se na versão de produção v1.5.0.
-
-| Fase | Foco | Versão | Estado |
-| :--- | :--- | :--- | :--- |
-| **Fase 1** | **Fundação Técnica** (PWA, Motor de Jogo) | v1.0.0 | ✅ Concluído |
-| **Fase 2** | **Inteligência** (IA, Treino de Erros, Gamificação) | v1.1.0 | ✅ Concluído |
-| **Fase 3** | **Motor Cultural** (Adaptação PT/AO) | v1.3.0 | ✅ Concluído |
-| **Fase 4** | **"As Minhas Palavras"** (Lições, Diplomas, Backup) | v1.4.0 | ✅ Concluído |
-| **Fase 5** | **Acessibilidade** (Modo Ditado/TTS, Guias Visuais) | v1.4.0 | ✅ Concluído |
-| **Fase 6** | **Internacionalização** (AZERTY, Det. Layout) | v1.5.0 | ✅ Concluído |
-| **Fase 7** | **Sala de Aula** (Modo Multijogador, Turmas) | v2.0+ | 🚧 Planeado |
-
-*Para veres o roteiro detalhado, consulta o ficheiro [ROADMAP.md](ROADMAP.md).*
 
 ---
 
@@ -135,8 +127,8 @@ O motor de jogo implementa gestão de eventos `compositionstart` e `compositione
 ### Passos
 1.  **Clonar o Repositório**
     ```bash
-    git clone https://github.com/yourusername/teclado-magico.git
-    cd teclado-magico
+    git clone https://github.com/clrogon/MagicKeyboard.git
+    cd MagicKeyboard
     ```
 
 2.  **Instalar Dependências**
