@@ -1,7 +1,7 @@
 {
   "name": "teclado-magico",
   "version": "1.5.0",
-  "description": "Typing trainer for children learning European and Angolan Portuguese",
+  "description": "AI-powered typing trainer for kids in Portugal & Angola with QWERTY/AZERTY support",
   "source": "index.html",
   "type": "module",
   "scripts": {
@@ -29,13 +29,13 @@
     "@google/genai": "^1.34.0",
     "recharts": "^2.12.2",
     "canvas-confetti": "^1.9.2",
-    "jspdf": "^2.5.1"
+    "jspdf": "^2.5.1",
+    "@types/canvas-confetti": "^1.6.4",
+    "@types/node": "^20.11.24"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "@types/node": "^20.11.24",
-    "@types/canvas-confetti": "^1.6.4",
     "@vitejs/plugin-react": "^4.2.1",
     "typescript": "^5.2.2",
     "vite": "^5.2.0",

@@ -1,17 +1,5 @@
-
-/// <reference types="node" />
-
 import { GoogleGenAI } from "@google/genai";
 import { Level, GameMode, ErrorStats } from '../types';
-
-// Defensive declaration for process.env to avoid TS errors in some environments
-declare global {
-  namespace NodeJS {
-    interface ProcessEnv {
-      API_KEY?: string;
-    }
-  }
-}
 
 /**
  * PRIVACY & GDPR COMPLIANCE NOTICE:
@@ -35,6 +23,7 @@ declare global {
 let genAI: GoogleGenAI | null = null;
 
 // Initialize Gemini Client safely
+// process.env.API_KEY is replaced by Vite at build time.
 try {
   if (process.env.API_KEY) {
     genAI = new GoogleGenAI({ apiKey: process.env.API_KEY });

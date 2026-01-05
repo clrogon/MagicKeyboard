@@ -1,5 +1,5 @@
 {
-  "name": "Teclado Mágico (Magic Keyboard)",
-  "description": "A gamified, AI-powered typing trainer for children learning Portuguese. Features RPG progression, daily challenges, and adaptive AI drills.",
+  "name": "Teclado Mágico",
+  "description": "The AI-powered, privacy-first typing trainer for children in Portugal and Angola. Features RPG progression, voice dictation, and automatic QWERTY/AZERTY layout detection.",
   "requestFramePermissions": []
 }

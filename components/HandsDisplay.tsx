@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Finger, Theme } from '../types';
 
@@ -9,22 +10,23 @@ interface HandsDisplayProps {
   theme?: Theme;
 }
 
+// Cores mais vibrantes e distintas para as crianças
 const FINGER_COLORS: Record<Finger, string> = {
-  [Finger.LeftPinky]: '#f472b6', // pink-400
-  [Finger.LeftRing]: '#60a5fa', // blue-400
-  [Finger.LeftMiddle]: '#4ade80', // green-400
-  [Finger.LeftIndex]: '#facc15', // yellow-400
-  [Finger.Thumb]: '#cbd5e1', // slate-300
-  [Finger.RightIndex]: '#fb923c', // orange-400
-  [Finger.RightMiddle]: '#a78bfa', // purple-400
-  [Finger.RightRing]: '#2dd4bf', // teal-400
-  [Finger.RightPinky]: '#f43f5e', // rose-500
+  [Finger.LeftPinky]: '#ec4899',   // Pink-500
+  [Finger.LeftRing]: '#3b82f6',    // Blue-500
+  [Finger.LeftMiddle]: '#22c55e',  // Green-500
+  [Finger.LeftIndex]: '#eab308',   // Yellow-500
+  [Finger.Thumb]: '#94a3b8',       // Slate-400 (Polegares neutros)
+  [Finger.RightIndex]: '#f97316',  // Orange-500
+  [Finger.RightMiddle]: '#a855f7', // Purple-500
+  [Finger.RightRing]: '#14b8a6',   // Teal-500
+  [Finger.RightPinky]: '#f43f5e',  // Rose-500
 };
 
-const THEME_TINTS: Record<Theme, string> = {
-  rose: '#ffe4e6', // rose-100
-  blue: '#dbeafe', // blue-100
-  amber: '#fef3c7', // amber-100
+const THEME_SKIN_TONES: Record<Theme, { fill: string; stroke: string; shadow: string }> = {
+  rose: { fill: '#ffe4e6', stroke: '#fda4af', shadow: '#fecdd3' }, // Rose base
+  blue: { fill: '#e0f2fe', stroke: '#bae6fd', shadow: '#bfdbfe' }, // Blue base
+  amber: { fill: '#fef3c7', stroke: '#fde68a', shadow: '#fde68a' }, // Amber base
 };
 
 export const HandsDisplay: React.FC<HandsDisplayProps> = ({ 
@@ -35,89 +37,154 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
     theme = 'rose'
 }) => {
 
-  const tintColor = THEME_TINTS[theme];
+  const skin = THEME_SKIN_TONES[theme];
 
-  const getFingerColor = (finger: Finger) => {
-      if (mode === 'guide') {
-          return FINGER_COLORS[finger];
-      }
-      return activeFinger === finger ? FINGER_COLORS[finger] : 'transparent';
+  // Helper para determinar se um dedo específico deve estar "aceso"
+  const isFingerActive = (finger: Finger) => {
+    if (mode === 'guide') return true;
+    return activeFinger === finger;
   };
 
-  const getStrokeColor = (finger: Finger) => {
-      if (mode === 'guide') return '#fff';
-      return activeFinger === finger ? '#fff' : '#cbd5e1';
+  // Helper para opacidade/brilho
+  const getFingerFill = (finger: Finger) => {
+      if (isFingerActive(finger)) return FINGER_COLORS[finger];
+      return skin.fill;
   };
 
-  // Left Hand
-  const LeftPinky = "M20,80 C15,75 10,50 15,40 C18,35 25,35 28,40 L28,85";
-  const LeftRing = "M32,85 L32,30 C32,22 42,22 42,30 L42,85";
-  const LeftMiddle = "M46,85 L46,20 C46,12 56,12 56,20 L56,85";
-  const LeftIndex = "M60,85 L60,30 C60,22 70,22 70,30 L70,88";
-  const LeftThumb = "M75,90 L95,70 C100,65 110,75 100,85 L80,105";
-  const LeftPalm = "M20,80 L80,105 L80,140 C80,150 30,150 20,130 Z";
+  // SVG Paths refined for organic, "chubby" cartoon hands
+  // ViewBox: 0 0 400 200 (Left Hand 0-200, Right Hand 200-400)
+  
+  const LeftHandPaths = {
+      // Wrist and Back of Hand (Metacarpus)
+      wrist: "M45,180 Q45,140 50,125 L150,125 Q155,140 155,180", 
+      
+      // Fingers (Cubic Beziers for organic loops)
+      pinky: "M30,125 C20,125 15,65 35,65 C55,65 50,125 45,125",
+      ring: "M60,120 C50,120 45,40 70,40 C95,40 90,120 85,120",
+      middle: "M95,115 C85,115 80,30 110,30 C140,30 135,115 125,115",
+      index: "M135,120 C125,120 125,45 150,45 C175,45 170,120 165,120",
+      thumb: "M160,135 C160,125 205,135 195,160 C185,175 160,165 160,160"
+  };
 
-  // Right Hand
-  const RightPinky = "M180,80 C185,75 190,50 185,40 C182,35 175,35 172,40 L172,85";
-  const RightRing = "M168,85 L168,30 C168,22 158,22 158,30 L158,85";
-  const RightMiddle = "M154,85 L154,20 C154,12 144,12 144,20 L144,85";
-  const RightIndex = "M140,85 L140,30 C140,22 130,22 130,30 L130,88";
-  const RightThumb = "M125,90 L105,70 C100,65 90,75 100,85 L120,105";
-  const RightPalm = "M180,80 L120,105 L120,140 C120,150 170,150 180,130 Z";
+  const LeftNails = {
+      pinky: "M28,75 Q35,70 42,75 Q35,82 28,75",
+      ring: "M58,50 Q70,45 82,50 Q70,58 58,50",
+      middle: "M95,40 Q110,35 125,40 Q110,48 95,40",
+      index: "M138,55 Q150,50 162,55 Q150,63 138,55",
+      thumb: "M180,142 Q188,146 184,154 Q176,150 180,142"
+  };
 
-  const renderFinger = (path: string, finger: Finger) => (
-      <path 
-        d={path} 
-        fill={getFingerColor(finger)} 
-        stroke={getStrokeColor(finger)}
-        strokeWidth="3"
-        opacity={1}
-        className="transition-all duration-200"
-      />
-  );
+  // Right Hand (Mirrored Geometry)
+  const RightHandPaths = {
+      wrist: "M355,180 Q355,140 350,125 L250,125 Q245,140 245,180",
+      
+      pinky: "M370,125 C380,125 385,65 365,65 C345,65 350,125 355,125",
+      ring: "M340,120 C350,120 355,40 330,40 C305,40 310,120 315,120",
+      middle: "M305,115 C315,115 320,30 290,30 C260,30 265,115 275,115",
+      index: "M265,120 C275,120 275,45 250,45 C225,45 230,120 235,120",
+      thumb: "M240,135 C240,125 195,135 205,160 C215,175 240,165 240,160"
+  };
 
-  const renderBackgroundLayer = () => (
-      <g className="opacity-80">
-        <path d={LeftPalm} fill={tintColor} stroke="none" />
-        <path d={LeftPinky} fill={tintColor} stroke="none" />
-        <path d={LeftRing} fill={tintColor} stroke="none" />
-        <path d={LeftMiddle} fill={tintColor} stroke="none" />
-        <path d={LeftIndex} fill={tintColor} stroke="none" />
-        <path d={LeftThumb} fill={tintColor} stroke="none" />
+  const RightNails = {
+      pinky: "M372,75 Q365,70 358,75 Q365,82 372,75",
+      ring: "M342,50 Q330,45 318,50 Q330,58 342,50",
+      middle: "M305,40 Q290,35 275,40 Q290,48 305,40",
+      index: "M262,55 Q250,50 238,55 Q250,63 262,55",
+      thumb: "M220,142 Q212,146 216,154 Q224,150 220,142"
+  };
 
-        <path d={RightPalm} fill={tintColor} stroke="none" />
-        <path d={RightPinky} fill={tintColor} stroke="none" />
-        <path d={RightRing} fill={tintColor} stroke="none" />
-        <path d={RightMiddle} fill={tintColor} stroke="none" />
-        <path d={RightIndex} fill={tintColor} stroke="none" />
-        <path d={RightThumb} fill={tintColor} stroke="none" />
-      </g>
-  );
+  const renderFinger = (path: string, nailPath: string, finger: Finger) => {
+    const isActive = isFingerActive(finger);
+    const color = isActive ? FINGER_COLORS[finger] : skin.fill;
+    const stroke = isActive ? 'none' : skin.stroke;
+    
+    return (
+        <g className="transition-all duration-300">
+            {/* Dedo Base */}
+            <path 
+                d={path} 
+                fill={color} 
+                stroke={stroke}
+                strokeWidth="2"
+                className={`transition-all duration-300 ${isActive ? 'filter drop-shadow-md brightness-105' : ''}`}
+            />
+            {/* Unha / Brilho */}
+            <path 
+                d={nailPath} 
+                fill={isActive ? 'rgba(255,255,255,0.7)' : skin.shadow} 
+                className="transition-colors duration-300"
+            />
+            {/* Anel de destaque (Ripple) quando ativo */}
+            {activeFinger === finger && mode === 'active' && (
+                <>
+                    <path 
+                        d={path} 
+                        fill="none" 
+                        stroke={color} 
+                        strokeWidth="3" 
+                        strokeOpacity="0.5"
+                        className="animate-ping"
+                        style={{ animationDuration: '1.5s' }}
+                    />
+                     {/* Tip Glow */}
+                     <path 
+                        d={nailPath}
+                        fill="white"
+                        fillOpacity="0.4"
+                        className="animate-pulse"
+                    />
+                </>
+            )}
+        </g>
+    );
+  };
 
   return (
     <div className={`flex justify-center items-center ${className}`}>
         <svg 
-            width={200 * scale} 
-            height={160 * scale} 
-            viewBox="0 0 200 160" 
+            width={400 * scale} 
+            height={200 * scale} 
+            viewBox="0 0 400 200" 
             xmlns="http://www.w3.org/2000/svg"
+            className="overflow-visible"
         >
-            {renderBackgroundLayer()}
-            <g className="filter drop-shadow-sm">
-                <path d={LeftPalm} fill="transparent" stroke="#e2e8f0" strokeWidth="2" />
-                {renderFinger(LeftPinky, Finger.LeftPinky)}
-                {renderFinger(LeftRing, Finger.LeftRing)}
-                {renderFinger(LeftMiddle, Finger.LeftMiddle)}
-                {renderFinger(LeftIndex, Finger.LeftIndex)}
-                {renderFinger(LeftThumb, Finger.Thumb)}
+            <defs>
+                <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="2" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+            </defs>
 
-                <path d={RightPalm} fill="transparent" stroke="#e2e8f0" strokeWidth="2" />
-                {renderFinger(RightPinky, Finger.RightPinky)}
-                {renderFinger(RightRing, Finger.RightRing)}
-                {renderFinger(RightMiddle, Finger.RightMiddle)}
-                {renderFinger(RightIndex, Finger.RightIndex)}
-                {renderFinger(RightThumb, Finger.Thumb)}
+            {/* Mão Esquerda */}
+            <g transform="translate(0, 10)">
+                {/* Back of Hand drawn first (base) */}
+                <path d={LeftHandPaths.wrist} fill={skin.fill} stroke={skin.stroke} strokeWidth="2" />
+                
+                {/* Fingers drawn on top */}
+                {renderFinger(LeftHandPaths.pinky, LeftNails.pinky, Finger.LeftPinky)}
+                {renderFinger(LeftHandPaths.ring, LeftNails.ring, Finger.LeftRing)}
+                {renderFinger(LeftHandPaths.middle, LeftNails.middle, Finger.LeftMiddle)}
+                {renderFinger(LeftHandPaths.index, LeftNails.index, Finger.LeftIndex)}
+                {renderFinger(LeftHandPaths.thumb, LeftNails.thumb, Finger.Thumb)}
             </g>
+
+            {/* Mão Direita */}
+            <g transform="translate(0, 10)">
+                <path d={RightHandPaths.wrist} fill={skin.fill} stroke={skin.stroke} strokeWidth="2" />
+
+                {renderFinger(RightHandPaths.pinky, RightNails.pinky, Finger.RightPinky)}
+                {renderFinger(RightHandPaths.ring, RightNails.ring, Finger.RightRing)}
+                {renderFinger(RightHandPaths.middle, RightNails.middle, Finger.RightMiddle)}
+                {renderFinger(RightHandPaths.index, RightNails.index, Finger.RightIndex)}
+                {renderFinger(RightHandPaths.thumb, RightNails.thumb, Finger.Thumb)}
+            </g>
+
+            {/* Texto de Ajuda Central */}
+            {mode === 'active' && !activeFinger && (
+                <text x="200" y="190" textAnchor="middle" fill="#94a3b8" fontSize="14" fontWeight="bold" fontFamily="Nunito" className="uppercase tracking-widest opacity-50">
+                    Mãos em repouso
+                </text>
+            )}
         </svg>
     </div>
   );
