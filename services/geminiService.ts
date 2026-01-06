@@ -71,7 +71,23 @@ export const generateSmartExercise = async (
     } else if (mode === GameMode.Timed) {
         prompt = `${systemInstruction} Generate a LONG text in European Portuguese (30-40 words). Use ONLY: [${availableKeys}].`;
     } else if (mode === GameMode.Story) {
-        prompt = `${systemInstruction} Generate a SHORT STORY in European Portuguese (3-4 sentences). Available keys: [${availableKeys}].`;
+        prompt = `
+            ${systemInstruction}
+            Generate a CREATIVE SHORT STORY in European Portuguese (4-5 sentences).
+            Structure: Beginning, Middle, End.
+            Themes: Magical Animals, Space Adventure, or School Mystery.
+            Cultural Context: Mention a Portuguese or Angolan element (e.g., Imbondeiro, Azulejos, Pastéis).
+            Use ONLY: [${availableKeys}].
+        `;
+    } else if (mode === GameMode.Dictation) {
+        prompt = `
+            ${systemInstruction}
+            Generate 3 distinct, simple, and rhythmic sentences for a DICTATION exercise.
+            Focus on phonetic clarity for Text-to-Speech.
+            Avoid complex punctuation. Use simple Subject-Verb-Object structure.
+            Topics: Nature, Family, or Friendship.
+            Use ONLY: [${availableKeys}].
+        `;
     } else {
         // Digital Literacy Levels Logic (IDs 18, 19, 20)
         if (level.id >= 18) {

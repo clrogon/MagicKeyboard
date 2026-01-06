@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Level, SessionResult, GameMode, ErrorStats, Theme, KeyboardLayout, GhostRecord } from '../types';
 import { ClayButton } from './ClayButton';
 import VirtualKeyboard from './VirtualKeyboard';
-import { RotateCcw, Timer, X, Info, EyeOff, Sparkles, Flag, Play, Pencil, Star, Trophy, Target, Volume2, Mic, ArrowLeft, Ghost } from 'lucide-react';
+import { RotateCcw, Timer, X, Info, EyeOff, Sparkles, Flag, Play, Pencil, Star, Trophy, Target, Volume2, Mic, ArrowLeft, Ghost, BookOpen } from 'lucide-react';
 import { generateSmartExercise } from '../services/geminiService';
 import { THEME_COLORS } from '../constants';
 import { audioService } from '../services/audioService';
@@ -69,10 +69,11 @@ const TypingArea: React.FC<TypingAreaProps> = ({
       
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
       utterance.lang = 'pt-PT';
-      utterance.rate = 0.8;
+      utterance.rate = 0.85; // Slightly slower for better clarity
       utterance.pitch = 1.1;
       
       const voices = window.speechSynthesis.getVoices();
+      // Prefer Google Português or a native system voice
       const ptVoice = voices.find(v => v.lang.includes('pt-PT')) || voices.find(v => v.lang.includes('pt'));
       if (ptVoice) utterance.voice = ptVoice;
 
@@ -298,7 +299,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
         const newConsecutive = consecutiveErrors + 1;
         setConsecutiveErrors(newConsecutive);
         
-        // Accessible struggle feedback: Provide visual cue after repeated errors
+        // Accessible struggle feedback
         if (newConsecutive >= 3) {
              setMotivationalMessage("Olha para as cores das teclas! 👇");
         } else {
@@ -368,9 +369,9 @@ const TypingArea: React.FC<TypingAreaProps> = ({
               break;
           case GameMode.Story:
               title = "Hora da História";
-              description = "Vais escrever uma pequena aventura criada só para ti.";
-              goalText = "Chegar ao fim da história.";
-              GoalIcon = Trophy;
+              description = "Vais escrever uma pequena aventura mágica criada pela Inteligência Artificial.";
+              goalText = "Descobre o final da história sem cometer erros.";
+              GoalIcon = BookOpen;
               keys = [];
               break;
           case GameMode.Custom:
@@ -382,8 +383,8 @@ const TypingArea: React.FC<TypingAreaProps> = ({
               break;
           case GameMode.Dictation:
               title = "Ditado Mágico";
-              description = "Ouve com atenção! O computador vai falar e tu tens de escrever. As letras estão escondidas!";
-              goalText = "Ouve e escreve corretamente as palavras.";
+              description = "Usa os teus ouvidos! O computador vai falar e tu tens de escrever. O texto está escondido!";
+              goalText = "Ouve com atenção e escreve as palavras misteriosas.";
               GoalIcon = Mic;
               keys = [];
               break;
@@ -391,7 +392,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
               title = `Nível ${level.id}: ${level.title}`;
               description = level.description;
               
-              // Child-friendly goal explanation without focusing purely on percentages
+              // Child-friendly goal explanation
               const speedText = level.minWpm > 10 ? "com rapidez" : "com calma";
               const accuracyText = level.minAccuracy >= 90 ? "sem erros" : "com atenção";
               
@@ -416,7 +417,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                  </button>
 
                  <div className={`w-20 h-20 ${colors.bg} rounded-full flex items-center justify-center mx-auto mb-6 text-white shadow-lg`}>
-                     {mode === GameMode.Custom ? <Pencil size={40} /> : mode === GameMode.Dictation ? <Mic size={40} /> : <Info size={40} />}
+                     {mode === GameMode.Story ? <BookOpen size={40} /> : mode === GameMode.Dictation ? <Mic size={40} /> : mode === GameMode.Custom ? <Pencil size={40} /> : <Info size={40} />}
                  </div>
                  
                  <h2 className="text-3xl md:text-4xl font-bold text-slate-700 fun-font mb-4">{title}</h2>
@@ -493,15 +494,30 @@ const TypingArea: React.FC<TypingAreaProps> = ({
           // Inline style for gradual fade effect on past characters
           let style: React.CSSProperties = {};
 
-          if (mode === GameMode.Dictation && !isPast && !isCurrent) {
-              if (char === ' ') {
-                  className += "w-12 h-16 md:w-14 md:h-20 text-slate-200 bg-transparent border-b-4 border-slate-100 ";
-                  content = '';
+          if (mode === GameMode.Dictation && !isPast) {
+              // Hide everything not typed yet (Current and Future) for Dictation
+              // Unless user is struggling with current char
+              let isMasked = true;
+              if (isCurrent && consecutiveErrors >= 3) {
+                  isMasked = false; // Reveal hint
+              }
+
+              if (isMasked) {
+                  if (char === ' ') {
+                      className += "w-12 h-16 md:w-14 md:h-20 text-slate-200 bg-transparent border-b-4 border-slate-100 ";
+                      content = '';
+                  } else {
+                      className += "w-12 h-16 md:w-14 md:h-20 text-slate-300 ";
+                      content = '•'; // Secret dot
+                  }
               } else {
-                  className += "w-12 h-16 md:w-14 md:h-20 text-slate-300 ";
-                  content = '•'; 
+                  // Struggling reveal styling
+                  if (isCurrent) {
+                      className += `w-16 h-20 md:w-20 md:h-24 ${colors.text} bg-white shadow-2xl ring-4 ${colors.border} z-20 scale-110 -translate-y-2`;
+                  }
               }
           } else {
+              // Standard Mode Rendering
               if (isCurrent) {
                  // Enhanced active character styling: Larger, brighter, prominent ring/shadow
                  className += `w-16 h-20 md:w-20 md:h-24 ${colors.text} bg-white shadow-2xl ring-4 ${colors.border} z-20 scale-110 -translate-y-2`;

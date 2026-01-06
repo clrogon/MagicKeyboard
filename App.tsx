@@ -377,7 +377,12 @@ const App: React.FC = () => {
           description: "Era uma vez...",
           newKeys: [],
           allKeys: uniqueKeys,
-          textSamples: ["Era uma vez um gato que queria aprender a teclar.", "A Ana foi à escola e aprendeu muitas coisas novas hoje.", "O sol brilha no céu azul de Portugal."],
+          // Updated default story samples to be more engaging
+          textSamples: [
+              "A Ana encontrou um mapa antigo no sótão do avô.", 
+              "O gato Miau saltou para o telhado para ver a lua.", 
+              "Em Luanda, o Zola correu para ver o mar azul."
+          ],
           difficulty: 'hard',
           minWpm: 0,
           minAccuracy: 0
@@ -401,7 +406,12 @@ const App: React.FC = () => {
           description: "Ouve e escreve!",
           newKeys: [],
           allKeys: uniqueKeys,
-          textSamples: ["A Ana gosta de ler e escrever.", "O sol brilha muito em Luanda.", "Vamos passear ao parque hoje."],
+          // Simpler, distinct sentences better suited for audio dictation
+          textSamples: [
+              "O sol brilha.", 
+              "A Ana gosta de ler.", 
+              "Vamos brincar no parque."
+          ],
           difficulty: 'medium',
           minWpm: 0,
           minAccuracy: 0
