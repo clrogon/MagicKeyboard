@@ -295,9 +295,16 @@ const TypingArea: React.FC<TypingAreaProps> = ({
       } else {
         if(soundEnabled) audioService.playError();
         setSessionErrors(prev => prev + 1);
-        setConsecutiveErrors(prev => prev + 1);
+        const newConsecutive = consecutiveErrors + 1;
+        setConsecutiveErrors(newConsecutive);
         
-        setMotivationalMessage("Ups! Tenta outra vez. 🛡️"); 
+        // Accessible struggle feedback: Provide visual cue after repeated errors
+        if (newConsecutive >= 3) {
+             setMotivationalMessage("Olha para as cores das teclas! 👇");
+        } else {
+             setMotivationalMessage("Ups! Tenta outra vez. 🛡️"); 
+        }
+
         setSessionErrorMap(prev => ({
             ...prev,
             [targetChar]: (prev[targetChar] || 0) + 1
@@ -339,7 +346,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
   const renderBriefing = () => {
       let title = "";
       let description = "";
-      let goalTitle = "O Teu Objetivo";
+      let goalTitle = "A Tua Missão";
       let goalText = "";
       let keys = level.newKeys;
       let GoalIcon = Star;
@@ -348,21 +355,21 @@ const TypingArea: React.FC<TypingAreaProps> = ({
           case GameMode.Timed:
               title = "Desafio do Relógio";
               description = "O relógio vai contar! Escreve o máximo que conseguires sem parar.";
-              goalText = "Escreve o máximo de palavras corretas possível em 60 segundos.";
+              goalText = "Tens 60 segundos! Quantas palavras consegues escrever?";
               GoalIcon = Timer;
               keys = [];
               break;
           case GameMode.ErrorDrill:
               title = "Limpar Erros";
               description = "O teu treinador pessoal preparou um treino especial com as letras que achas difíceis.";
-              goalText = "Treinar as letras difíceis e atingir 100% de precisão.";
+              goalText = "Treinar as letras difíceis e limpar todos os erros.";
               GoalIcon = Target;
               keys = [];
               break;
           case GameMode.Story:
               title = "Hora da História";
               description = "Vais escrever uma pequena aventura criada só para ti.";
-              goalText = "Escreve a história completa até ao fim.";
+              goalText = "Chegar ao fim da história.";
               GoalIcon = Trophy;
               keys = [];
               break;
@@ -383,7 +390,16 @@ const TypingArea: React.FC<TypingAreaProps> = ({
           default: 
               title = `Nível ${level.id}: ${level.title}`;
               description = level.description;
-              goalText = `Atinge ${level.minWpm} Palavras por Minuto com ${level.minAccuracy}% de Precisão.`;
+              
+              // Child-friendly goal explanation without focusing purely on percentages
+              const speedText = level.minWpm > 10 ? "com rapidez" : "com calma";
+              const accuracyText = level.minAccuracy >= 90 ? "sem erros" : "com atenção";
+              
+              goalText = `Objetivo: Escreve ${speedText} e ${accuracyText}!`;
+              
+              if (difficultyModifier === 'hard') {
+                  goalText += " (Modo Difícil ativado!)";
+              }
               break;
       }
 
@@ -416,7 +432,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
                  {keys.length > 0 && (
                      <div className="mb-6 bg-slate-50 p-6 rounded-2xl border border-slate-100 relative overflow-hidden">
                          <div className={`absolute top-0 left-0 right-0 h-1 ${colors.bg}`}></div>
-                         <p className="text-xs uppercase font-bold text-slate-400 tracking-widest mb-4">Novas Teclas a Aprender</p>
+                         <p className="text-xs uppercase font-bold text-slate-400 tracking-widest mb-4">Teclas Mágicas deste Nível</p>
                          <div className="flex justify-center gap-3 flex-wrap">
                              {keys.map(k => (
                                  <motion.div 

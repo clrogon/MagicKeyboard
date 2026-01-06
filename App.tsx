@@ -102,6 +102,7 @@ const App: React.FC = () => {
   const [levelUpData, setLevelUpData] = useState<{old: number, new: number} | null>(null);
   const [levelUnlocked, setLevelUnlocked] = useState<number | null>(null);
   const [newlyUnlockedAchievements, setNewlyUnlockedAchievements] = useState<string[]>([]);
+  const [challengeCompleted, setChallengeCompleted] = useState(false);
   const [showQR, setShowQR] = useState(false);
 
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
@@ -169,7 +170,10 @@ const App: React.FC = () => {
 
         if (type === 'stars') { target = 3; desc = "Consegue 3 Estrelas num nível hoje"; }
         else if (type === 'wpm') { target = Math.min(60, 15 + (currentUser.playerLevel * 2)); desc = `Atinge ${target} Palavras por Minuto`; }
-        else if (type === 'accuracy') { target = 100; desc = "Completa um exercício com 100% de Precisão"; }
+        else if (type === 'accuracy') { 
+            target = currentUser.playerLevel < 5 ? 95 : 100; 
+            desc = `Completa um exercício com ${target}% de Precisão`; 
+        }
         else if (type === 'matches') { target = 3; desc = "Completa 3 exercícios hoje"; }
 
         updateUser(currentUser.id, {
@@ -460,6 +464,7 @@ const App: React.FC = () => {
     setLevelUpData(null);
     setLevelUnlocked(null);
     setNewlyUnlockedAchievements([]);
+    setChallengeCompleted(false);
     setShowQR(false);
 
     if (isWin || result.mode === GameMode.Timed || result.mode === GameMode.Story || result.mode === GameMode.Custom || result.mode === GameMode.Dictation) {
@@ -553,6 +558,7 @@ const App: React.FC = () => {
             daily.completed = true;
             daily.currentValue = daily.targetValue;
             sessionXp += daily.rewardXp;
+            setChallengeCompleted(true);
         }
     }
 
@@ -642,6 +648,30 @@ const App: React.FC = () => {
         }
     }
 
+    // Child-friendly feedback logic
+    let feedbackSuggestion = "";
+    if (isCampaign) {
+        if (!isWin) {
+            if (lastResult.wpm < wpmGoal && lastResult.accuracy < accuracyGoal) {
+                feedbackSuggestion = "Precisas de ser mais rápido e ter mais atenção às teclas.";
+            } else if (lastResult.wpm < wpmGoal) {
+                feedbackSuggestion = "Acertaste bem, mas tenta escrever um pouco mais depressa!";
+            } else if (lastResult.accuracy < accuracyGoal) {
+                feedbackSuggestion = "Estás a ir depressa demais! Abranda para não falhares.";
+            } else {
+                feedbackSuggestion = "Estiveste quase, quase lá! Tenta outra vez.";
+            }
+        } else {
+            const nextId = lastResult.levelId + 1;
+            const nextLevel = LEVELS.find(l => l.id === nextId);
+            if (nextLevel && currentUser.unlockedLevels.includes(nextId)) {
+                feedbackSuggestion = "Excelente! Estás pronto para o próximo nível.";
+            } else {
+                feedbackSuggestion = "Já dominas este nível! Tenta bater o teu recorde.";
+            }
+        }
+    }
+
     const getConsistencyLabel = (val: number) => {
         if (val >= 90) return "Super Regular!";
         if (val >= 70) return "Regular";
@@ -698,8 +728,23 @@ const App: React.FC = () => {
                     </motion.div>
                 )}
                 
+                {/* Daily Challenge Notification */}
+                {!levelUpData && !levelUnlocked && challengeCompleted && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={`absolute inset-0 bg-orange-400 z-50 flex flex-col items-center justify-center text-white p-6`}>
+                         <div className="bg-white/20 p-4 rounded-full mb-4 animate-bounce">
+                            <Crown size={48} className="fill-white" />
+                         </div>
+                         <h2 className="text-3xl font-bold mb-2 font-fredoka">DESAFIO DIÁRIO!</h2>
+                         <p className="text-xl mb-6">{currentUser.dailyChallenge?.description}</p>
+                         <div className="bg-white/20 px-6 py-3 rounded-xl mb-6">
+                            <span className="font-bold text-2xl">+{currentUser.dailyChallenge?.rewardXp} XP</span>
+                         </div>
+                         <ClayButton onClick={() => setChallengeCompleted(false)} variant="secondary" theme={currentUser.theme}>Fantástico!</ClayButton>
+                    </motion.div>
+                )}
+
                 {/* Achievement Notification */}
-                {!levelUpData && !levelUnlocked && newlyUnlockedAchievements.length > 0 && (
+                {!levelUpData && !levelUnlocked && !challengeCompleted && newlyUnlockedAchievements.length > 0 && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={`absolute inset-0 bg-yellow-400 z-50 flex flex-col items-center justify-center text-white p-6`}>
                          {newlyUnlockedAchievements.map(achId => {
                              const ach = ACHIEVEMENTS.find(a => a.id === achId);
@@ -751,11 +796,20 @@ const App: React.FC = () => {
                     {goalStatus}
                 </div>
                 <h2 className="text-3xl font-bold text-slate-800 mb-2 fun-font">{message}</h2>
+                
+                {/* Star Display */}
                 <div className="flex justify-center gap-2 my-4">
                     {[1, 2, 3].map((star) => (
                         <Star key={star} size={40} fill={star <= lastResult.stars ? "#FBBF24" : "#E2E8F0"} className={star <= lastResult.stars ? "text-yellow-400" : "text-slate-200"} />
                     ))}
                 </div>
+
+                {/* Feedback Suggestion */}
+                {feedbackSuggestion && (
+                    <div className={`text-sm font-bold mb-6 px-4 ${isWin ? 'text-emerald-600' : 'text-slate-500'}`}>
+                        {feedbackSuggestion}
+                    </div>
+                )}
 
                 {isCampaign && (
                     <div className="bg-slate-50 rounded-2xl p-4 mb-6 text-left border border-slate-100">
@@ -778,7 +832,7 @@ const App: React.FC = () => {
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 {lastResult.accuracy >= accuracyGoal ? <Check className="text-emerald-500" size={18} /> : <X className="text-red-400" size={18} />}
-                                <span className="text-sm font-bold text-slate-600">Precisão</span>
+                                <span className="text-sm font-bold text-slate-600">Acertos</span>
                             </div>
                             <div className="text-sm">
                                 <span className={`font-bold ${lastResult.accuracy >= accuracyGoal ? 'text-emerald-600' : 'text-red-500'}`}>{lastResult.accuracy}%</span>
