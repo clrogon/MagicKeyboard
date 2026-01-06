@@ -238,7 +238,6 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                     <div className="space-y-3">
                         {users.map((user) => {
                             const maxWpm = user.history.reduce((max, h) => Math.max(max, h.wpm), 0);
-                            const totalTime = (user.history.reduce((acc, h) => acc + (h.duration || 0), 0) / 60).toFixed(1);
                             
                             return (
                                 <div key={user.id} className="bg-white p-4 rounded-[2rem] border border-slate-100 flex items-center justify-between gap-4">
