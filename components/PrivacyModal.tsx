@@ -20,58 +20,64 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose, onClearDat
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onClick={onClose} />
+      <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-md transition-opacity" onClick={onClose} />
       <motion.div 
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-2xl overflow-hidden relative z-10 font-sans border border-white"
+        className="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] w-full max-w-2xl overflow-hidden relative z-10 font-sans border-4 border-white"
       >
-        <div className={`p-6 ${colors.bg} text-white flex justify-between items-center relative overflow-hidden`}>
-             {/* Header Shine */}
-            <div className="absolute top-0 left-0 right-0 h-1/2 bg-white/10 rounded-t-[2.5rem] pointer-events-none"></div>
-
-            <h2 className="text-2xl font-bold flex items-center gap-2 relative z-10">
-                <Shield className="text-yellow-300 fill-yellow-300" /> Política de Privacidade
-            </h2>
-            <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-full transition relative z-10"><X /></button>
+        <div className="p-8 flex justify-between items-center bg-white relative z-20">
+            <div className="flex items-center gap-4">
+                <div className={`w-14 h-14 ${colors.bg} rounded-2xl flex items-center justify-center text-white shadow-lg rotate-3`}>
+                    <Shield size={28} />
+                </div>
+                <div>
+                    <h2 className="text-2xl font-bold text-slate-700 fun-font">Privacidade</h2>
+                    <p className="text-slate-400 text-sm font-bold uppercase tracking-wider">Os teus dados são teus</p>
+                </div>
+            </div>
+            <button onClick={onClose} className="p-3 bg-slate-50 hover:bg-slate-100 rounded-full text-slate-400 transition-colors">
+                <X size={24} />
+            </button>
         </div>
         
-        <div className="p-8 max-h-[70vh] overflow-y-auto space-y-8 text-slate-700 bg-stone-50">
-            <section className="bg-white p-6 rounded-[2rem] shadow-[0px_4px_10px_rgba(0,0,0,0.03)] border border-slate-100">
-                <h3 className={`text-lg font-bold ${colors.text} flex items-center gap-2 mb-3`}>
-                    <Database size={20} /> Armazenamento de Dados
+        <div className="px-8 pb-8 max-h-[60vh] overflow-y-auto space-y-6 text-slate-700 custom-scrollbar">
+            <section className="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 relative overflow-hidden group hover:bg-white hover:shadow-lg hover:border-white transition-all">
+                <div className={`absolute top-0 left-0 w-1 h-full ${colors.bg}`}></div>
+                <h3 className={`text-lg font-bold text-slate-700 flex items-center gap-2 mb-3`}>
+                    <div className="bg-white p-2 rounded-xl text-slate-400 shadow-sm"><Database size={20} /></div>
+                    Armazenamento Local
                 </h3>
-                <p className="text-sm leading-relaxed text-slate-500">
-                    O <strong>Teclado Mágico</strong> utiliza o <strong>Armazenamento Local (LocalStorage)</strong> do teu navegador para guardar o teu progresso, estrelas, conquistas e estatísticas.
-                    <br/><br/>
-                    <strong>Segurança:</strong> Estes dados permanecem estritamente no teu dispositivo. Nós não temos servidores, base de dados, nem recolhemos o teu email, nome ou qualquer informação pessoal.
+                <p className="text-sm leading-relaxed text-slate-500 pl-2">
+                    O <strong>Teclado Mágico</strong> guarda o teu progresso apenas no teu dispositivo (LocalStorage).
+                    <br/>
+                    <strong>Segurança:</strong> Não temos base de dados. Não recolhemos o teu nome, email ou localização.
                 </p>
             </section>
 
-            <section className="bg-white p-6 rounded-[2rem] shadow-[0px_4px_10px_rgba(0,0,0,0.03)] border border-slate-100">
-                <h3 className={`text-lg font-bold ${colors.text} flex items-center gap-2 mb-3`}>
-                    <Lock size={20} /> Inteligência Artificial (Gemini)
+            <section className="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 relative overflow-hidden group hover:bg-white hover:shadow-lg hover:border-white transition-all">
+                <div className={`absolute top-0 left-0 w-1 h-full bg-indigo-400`}></div>
+                <h3 className={`text-lg font-bold text-slate-700 flex items-center gap-2 mb-3`}>
+                    <div className="bg-white p-2 rounded-xl text-slate-400 shadow-sm"><Lock size={20} /></div>
+                    Inteligência Artificial
                 </h3>
-                <p className="text-sm leading-relaxed text-slate-500">
-                    Utilizamos a tecnologia Google Gemini para gerar frases criativas para os exercícios. 
-                    Quando pedimos um exercício novo, enviamos apenas um pedido anónimo com as letras que estás a aprender (ex: "exercício com F e J"). 
-                    Nenhum dado pessoal é partilhado com a Google durante este processo.
+                <p className="text-sm leading-relaxed text-slate-500 pl-2">
+                    A IA (Gemini) gera frases criativas mas apenas recebe pedidos anónimos (ex: "frase com a letra A"). 
+                    Nenhum dado pessoal é enviado para a Google.
                 </p>
             </section>
 
-            <section className={`${colors.bgSoft} p-6 rounded-[2rem] border ${colors.border}`}>
-                <h3 className={`text-lg font-bold ${colors.text} flex items-center gap-2 mb-3`}>
-                    <Eraser size={20} /> Controlo dos Teus Dados
+            <section className="bg-red-50 p-6 rounded-[2rem] border border-red-100">
+                <h3 className="text-lg font-bold text-red-500 flex items-center gap-2 mb-3">
+                    <div className="bg-white p-2 rounded-xl text-red-300 shadow-sm"><Eraser size={20} /></div>
+                    Zona de Perigo
                 </h3>
-                <p className="text-sm leading-relaxed mb-6 text-slate-600">
-                    Respeitamos o RGPD. Como os dados estão no teu dispositivo, tu tens o controlo total.
+                <p className="text-sm leading-relaxed mb-6 text-red-400 pl-2">
+                    Como os dados são teus, podes apagá-los quando quiseres. Esta ação é irreversível.
                 </p>
                 
-                <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-2xl border ${colors.border} shadow-sm`}>
-                    <div className="text-sm text-slate-400 font-medium">
-                        Desejas reiniciar o jogo ou limpar dados?
-                    </div>
+                <div className="flex justify-end">
                     <ClayButton 
                         variant="secondary"
                         onClick={() => {
@@ -79,7 +85,7 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose, onClearDat
                                 onClearData();
                             }
                         }}
-                        className="!bg-red-50 !text-red-500 hover:!bg-red-100 !shadow-none border border-red-100"
+                        className="!bg-white !text-red-500 hover:!bg-red-50 !shadow-sm border border-red-100 px-6"
                     >
                         <Eraser size={16} className="mr-2" />
                         Apagar Tudo
@@ -88,8 +94,8 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose, onClearDat
             </section>
         </div>
         
-        <div className="p-6 bg-white border-t border-slate-100 flex justify-end">
-            <ClayButton variant="primary" onClick={onClose} theme={theme} className="px-8 py-3">
+        <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end rounded-b-[2rem]">
+            <ClayButton variant="primary" onClick={onClose} theme={theme} className="px-10 py-3 shadow-xl">
                 Entendi
             </ClayButton>
         </div>

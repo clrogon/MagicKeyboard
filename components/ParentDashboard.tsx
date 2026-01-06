@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { AppState, UserProfile, CustomLesson } from '../types';
 import { ClayButton } from './ClayButton';
-import { ArrowLeft, Trash2, Clock, Trophy, Target, Calendar, Download, Upload, Plus, Pencil, BookOpen, Users, Save, GraduationCap, Lock } from 'lucide-react';
+import { ArrowLeft, Trash2, Clock, Trophy, Target, Calendar, Download, Upload, Plus, Pencil, BookOpen, Users, Save, GraduationCap, Lock, LayoutGrid, Type } from 'lucide-react';
 import { THEME_COLORS } from '../constants';
 
 interface ParentDashboardProps {
@@ -40,12 +40,6 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
       return new Date(dateStr).toLocaleDateString('pt-PT');
   };
 
-  /**
-   * GDPR / PRIVACY NOTE:
-   * Data Export implementation.
-   * This generates a JSON file entirely on the CLIENT-SIDE using the browser's Blob API.
-   * No data is sent to any external server during this process.
-   */
   const handleExport = () => {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
       const downloadAnchorNode = document.createElement('a');
@@ -56,12 +50,6 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
       downloadAnchorNode.remove();
   };
 
-  /**
-   * GDPR / PRIVACY NOTE:
-   * Data Import implementation.
-   * Reads a JSON file from the user's file system using the FileReader API.
-   * Processing happens entirely in the browser memory.
-   */
   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
       const fileReader = new FileReader();
       if (event.target.files && event.target.files.length > 0) {
@@ -70,7 +58,6 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
               if (e.target?.result) {
                   try {
                       const parsed = JSON.parse(e.target.result as string);
-                      // Basic validation to check if it's a valid app state
                       if (parsed.users) {
                           onImportData(parsed);
                       } else {
@@ -112,30 +99,30 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
   return (
     <div className="min-h-screen p-4 md:p-8 relative z-10 overflow-y-auto">
       <div className="max-w-6xl mx-auto">
-        <div className="flex items-center gap-4 mb-8">
-            <ClayButton variant="secondary" onClick={onBack} className="w-12 h-12 !rounded-full !p-0 flex items-center justify-center">
+        <div className="flex items-center gap-6 mb-10">
+            <ClayButton variant="secondary" onClick={onBack} className="w-14 h-14 !rounded-2xl !p-0 flex items-center justify-center shadow-lg">
                 <ArrowLeft size={24} />
             </ClayButton>
             <div>
                 <h1 className="text-3xl font-bold text-slate-700 fun-font">Área de Pais e Professores</h1>
-                <p className="text-slate-500">Gestão de perfis e acompanhamento de progresso</p>
+                <p className="text-slate-500 font-medium">Gestão de perfis e acompanhamento</p>
             </div>
         </div>
 
         {/* Global KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-             <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4">
-                 <div className="bg-indigo-100 p-4 rounded-2xl text-indigo-500">
+             <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-white flex items-center gap-4 hover:scale-[1.02] transition-transform">
+                 <div className="bg-indigo-100 p-4 rounded-2xl text-indigo-500 shadow-inner">
                      <Clock size={32} />
                  </div>
                  <div>
                      <div className="text-3xl font-bold text-slate-700">{totalPlayTimeHours}h</div>
-                     <div className="text-xs font-bold text-slate-400 uppercase tracking-wide">Tempo Total Jogado</div>
+                     <div className="text-xs font-bold text-slate-400 uppercase tracking-wide">Tempo Jogado</div>
                  </div>
              </div>
              
-             <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4">
-                 <div className="bg-emerald-100 p-4 rounded-2xl text-emerald-500">
+             <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-white flex items-center gap-4 hover:scale-[1.02] transition-transform">
+                 <div className="bg-emerald-100 p-4 rounded-2xl text-emerald-500 shadow-inner">
                      <Target size={32} />
                  </div>
                  <div>
@@ -144,8 +131,8 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                  </div>
              </div>
 
-             <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4">
-                 <div className="bg-rose-100 p-4 rounded-2xl text-rose-500">
+             <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-white flex items-center gap-4 hover:scale-[1.02] transition-transform">
+                 <div className="bg-rose-100 p-4 rounded-2xl text-rose-500 shadow-inner">
                      <Trophy size={32} />
                  </div>
                  <div>
@@ -155,154 +142,137 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
              </div>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="flex gap-4 mb-6 overflow-x-auto pb-2">
-            <button 
-                onClick={() => setActiveTab('users')}
-                className={`px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all ${activeTab === 'users' ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-200' : 'bg-white text-slate-500 hover:bg-slate-50'}`}
-            >
-                <Users size={18} /> Alunos
-            </button>
-            <button 
-                onClick={() => setActiveTab('classroom')}
-                className={`px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all ${activeTab === 'classroom' ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-200' : 'bg-white text-slate-500 hover:bg-slate-50'}`}
-            >
-                <GraduationCap size={18} /> Sala de Aula
-            </button>
-            <button 
-                onClick={() => setActiveTab('lessons')}
-                className={`px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all ${activeTab === 'lessons' ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-200' : 'bg-white text-slate-500 hover:bg-slate-50'}`}
-            >
-                <BookOpen size={18} /> As Minhas Lições
-            </button>
-            <button 
-                onClick={() => setActiveTab('data')}
-                className={`px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all ${activeTab === 'data' ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-200' : 'bg-white text-slate-500 hover:bg-slate-50'}`}
-            >
-                <Save size={18} /> Dados & Backup
-            </button>
+        {/* Clay Tab Navigation */}
+        <div className="bg-white/50 backdrop-blur-md p-2 rounded-[2rem] flex gap-2 mb-8 overflow-x-auto border border-white shadow-sm">
+            {[
+                { id: 'users', label: 'Alunos', icon: Users },
+                { id: 'classroom', label: 'Sala de Aula', icon: GraduationCap },
+                { id: 'lessons', label: 'Lições', icon: BookOpen },
+                { id: 'data', label: 'Dados', icon: Save },
+            ].map((tab) => (
+                <button 
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as any)}
+                    className={`
+                        flex-1 py-4 px-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all duration-300 relative overflow-hidden min-w-[140px]
+                        ${activeTab === tab.id 
+                            ? 'bg-indigo-500 text-white shadow-[0_8px_16px_rgba(99,102,241,0.3)] transform scale-[1.02]' 
+                            : 'bg-white/60 text-slate-500 hover:bg-white hover:text-slate-700'}
+                    `}
+                >
+                    {activeTab === tab.id && <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent pointer-events-none"></div>}
+                    <tab.icon size={20} className={activeTab === tab.id ? 'text-indigo-100' : 'text-slate-400'} /> 
+                    {tab.label}
+                </button>
+            ))}
         </div>
 
-        {/* Tab Content */}
-        <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden min-h-[400px] p-6">
+        {/* Tab Content Container */}
+        <div className="bg-white/80 backdrop-blur-xl rounded-[3rem] shadow-[0_20px_40px_rgba(0,0,0,0.05)] border-4 border-white p-8 min-h-[400px]">
             
             {activeTab === 'users' && (
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="bg-slate-50 border-b border-slate-100">
-                                <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider">Aluno</th>
-                                <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider">Nível</th>
-                                <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider">Último Treino</th>
-                                <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider text-right">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
+                <div className="space-y-4">
+                    <div className="flex justify-between items-center mb-6 px-2">
+                        <h3 className="text-xl font-bold text-slate-700 flex items-center gap-2">
+                            <LayoutGrid size={24} className="text-indigo-400" />
+                            Lista de Alunos
+                        </h3>
+                    </div>
+                    {users.length === 0 ? (
+                        <div className="text-center py-20 text-slate-400">
+                            Nenhum aluno registado.
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 gap-4">
                             {users.map((user) => {
                                 const lastPlayed = user.history.length > 0 ? user.history[user.history.length - 1].date : '';
                                 const colors = THEME_COLORS[user.theme];
                                 return (
-                                    <tr key={user.id} className="hover:bg-slate-50/50 transition-colors">
-                                        <td className="p-4">
-                                            <div className="flex items-center gap-4">
-                                                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl bg-gradient-to-br ${colors.gradient} text-white shadow-sm`}>
-                                                    {user.currentAvatar}
-                                                </div>
-                                                <div className="font-bold text-slate-700">{user.name}</div>
+                                    <div key={user.id} className="bg-white p-4 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col md:flex-row items-center gap-6 hover:shadow-md transition-all">
+                                        <div className={`w-16 h-16 rounded-full flex items-center justify-center text-3xl bg-gradient-to-br ${colors.gradient} text-white shadow-inner shrink-0`}>
+                                            {user.currentAvatar}
+                                        </div>
+                                        
+                                        <div className="flex-1 text-center md:text-left">
+                                            <div className="font-bold text-xl text-slate-700 mb-1">{user.name}</div>
+                                            <div className="flex flex-wrap justify-center md:justify-start gap-2">
+                                                <span className="bg-slate-100 text-slate-500 px-3 py-1 rounded-lg font-bold text-xs uppercase tracking-wide">Nível {user.playerLevel}</span>
+                                                <span className="bg-slate-100 text-slate-500 px-3 py-1 rounded-lg font-bold text-xs uppercase tracking-wide">{user.currentTitle}</span>
                                             </div>
-                                        </td>
-                                        <td className="p-4">
-                                            <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-lg font-bold text-xs">Lvl {user.playerLevel}</span>
-                                        </td>
-                                        <td className="p-4 text-slate-500 text-sm font-medium">
-                                            {lastPlayed ? (
-                                                <div className="flex items-center gap-2">
-                                                    <Calendar size={14} /> {formatDate(lastPlayed)}
-                                                </div>
-                                            ) : (
-                                                <span className="text-slate-300">Nunca</span>
-                                            )}
-                                        </td>
-                                        <td className="p-4 text-right">
-                                            <button 
-                                                onClick={() => onDeleteUser(user.id)}
-                                                className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-colors"
-                                                title="Apagar Utilizador"
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
-                                        </td>
-                                    </tr>
+                                        </div>
+
+                                        <div className="flex flex-col items-center md:items-end gap-1 text-sm text-slate-500 font-medium">
+                                            <div className="flex items-center gap-2">
+                                                <Calendar size={14} className="text-slate-400" /> 
+                                                {lastPlayed ? `Último: ${formatDate(lastPlayed)}` : 'Nunca jogou'}
+                                            </div>
+                                        </div>
+
+                                        <button 
+                                            onClick={() => onDeleteUser(user.id)}
+                                            className="p-3 bg-red-50 text-red-400 rounded-xl hover:bg-red-500 hover:text-white hover:shadow-lg transition-all"
+                                            title="Apagar Utilizador"
+                                        >
+                                            <Trash2 size={20} />
+                                        </button>
+                                    </div>
                                 );
                             })}
-                        </tbody>
-                    </table>
+                        </div>
+                    )}
                 </div>
             )}
 
             {activeTab === 'classroom' && (
-                <div className="overflow-x-auto">
-                    <div className="mb-4 bg-indigo-50 p-4 rounded-xl border border-indigo-100 text-indigo-700 text-sm flex items-center gap-3">
-                        <Lock size={20} />
-                        <span>
-                            <strong>Modo Kiosk:</strong> Quando ativado, bloqueia a mudança de Avatar e Tema, e impede que o aluno saia do perfil sem autorização do professor.
-                        </span>
+                <div>
+                    <div className="mb-6 bg-indigo-50 p-6 rounded-[2rem] border border-indigo-100 text-indigo-800 text-sm flex items-start gap-4">
+                        <div className="bg-white p-3 rounded-full shadow-sm text-indigo-500"><Lock size={24} /></div>
+                        <div>
+                            <h4 className="font-bold text-lg mb-1">Modo Kiosk (Foco na Aula)</h4>
+                            <p className="opacity-80 leading-relaxed">
+                                Quando ativado, bloqueia a mudança de Avatar e Tema, e impede que o aluno saia do perfil sem resolver um desafio matemático. Ideal para salas de aula.
+                            </p>
+                        </div>
                     </div>
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="bg-slate-50 border-b border-slate-100">
-                                <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider">Aluno</th>
-                                <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider">Progresso Geral</th>
-                                <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider">Velocidade Máx.</th>
-                                <th className="p-4 font-bold text-slate-400 text-sm uppercase tracking-wider text-center">Modo Kiosk</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                            {users.map((user) => {
-                                const maxWpm = user.history.reduce((max, h) => Math.max(max, h.wpm), 0);
-                                const totalTime = (user.history.reduce((acc, h) => acc + (h.duration || 0), 0) / 60).toFixed(1);
-                                
-                                return (
-                                    <tr key={user.id} className="hover:bg-slate-50/50 transition-colors">
-                                        <td className="p-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm bg-slate-200`}>
-                                                    {user.currentAvatar}
-                                                </div>
-                                                <span className="font-bold text-slate-700">{user.name}</span>
-                                            </div>
-                                        </td>
-                                        <td className="p-4">
-                                            <div className="flex flex-col gap-1">
-                                                <span className="text-xs font-bold text-slate-500 uppercase">Nível {user.currentLevelId}</span>
-                                                <div className="text-xs text-slate-400">{totalTime} horas de treino</div>
-                                            </div>
-                                        </td>
-                                        <td className="p-4 font-bold text-slate-700">
-                                            {maxWpm} PPM
-                                        </td>
-                                        <td className="p-4 text-center">
-                                            <button 
-                                                onClick={() => handleToggleKiosk(user.id, !!user.kioskMode)}
-                                                className={`
-                                                    relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none
-                                                    ${user.kioskMode ? 'bg-indigo-600' : 'bg-slate-200'}
-                                                `}
-                                            >
-                                                <span className={`
-                                                    inline-block h-4 w-4 transform rounded-full bg-white transition-transform
-                                                    ${user.kioskMode ? 'translate-x-6' : 'translate-x-1'}
-                                                `}/>
-                                            </button>
-                                            <div className="text-[10px] font-bold mt-1 text-slate-400 uppercase">
-                                                {user.kioskMode ? 'Ativo' : 'Desativado'}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
+                    
+                    <div className="space-y-3">
+                        {users.map((user) => {
+                            const maxWpm = user.history.reduce((max, h) => Math.max(max, h.wpm), 0);
+                            const totalTime = (user.history.reduce((acc, h) => acc + (h.duration || 0), 0) / 60).toFixed(1);
+                            
+                            return (
+                                <div key={user.id} className="bg-white p-4 rounded-[2rem] border border-slate-100 flex items-center justify-between gap-4">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 rounded-full flex items-center justify-center text-xl bg-slate-100 border-2 border-white shadow-sm">
+                                            {user.currentAvatar}
+                                        </div>
+                                        <div>
+                                            <div className="font-bold text-slate-700">{user.name}</div>
+                                            <div className="text-xs text-slate-400 font-bold uppercase">Nível {user.currentLevelId} • {maxWpm} PPM</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="flex items-center gap-3 bg-slate-50 p-2 pl-4 rounded-xl">
+                                        <span className={`text-xs font-bold uppercase tracking-wider ${user.kioskMode ? 'text-indigo-600' : 'text-slate-400'}`}>
+                                            {user.kioskMode ? 'Bloqueado' : 'Livre'}
+                                        </span>
+                                        <button 
+                                            onClick={() => handleToggleKiosk(user.id, !!user.kioskMode)}
+                                            className={`
+                                                relative inline-flex h-8 w-14 items-center rounded-full transition-all focus:outline-none shadow-inner
+                                                ${user.kioskMode ? 'bg-indigo-500' : 'bg-slate-300'}
+                                            `}
+                                        >
+                                            <span className={`
+                                                inline-block h-6 w-6 transform rounded-full bg-white transition-transform shadow-sm
+                                                ${user.kioskMode ? 'translate-x-7' : 'translate-x-1'}
+                                            `}/>
+                                        </button>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
             )}
 
@@ -310,50 +280,51 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                 <div>
                      {!showLessonForm ? (
                          <>
-                            <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-xl font-bold text-slate-700">Lições Personalizadas</h3>
-                                <ClayButton variant="primary" theme="amber" onClick={() => setShowLessonForm(true)} className="px-4 py-2">
-                                    <Plus size={18} className="mr-2" /> Criar Lição
+                            <div className="flex justify-between items-center mb-8">
+                                <h3 className="text-xl font-bold text-slate-700">As Minhas Lições</h3>
+                                <ClayButton variant="primary" theme="amber" onClick={() => setShowLessonForm(true)} className="px-6 py-3 shadow-lg">
+                                    <Plus size={20} className="mr-2" /> Criar Lição
                                 </ClayButton>
                             </div>
                             
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {appState.customLessons.length === 0 && (
-                                    <div className="col-span-2 text-center py-10 text-slate-400 border-2 border-dashed border-slate-200 rounded-2xl">
-                                        <Pencil size={40} className="mx-auto mb-2 opacity-50" />
-                                        <p>Ainda não criaste nenhuma lição.</p>
-                                        <p className="text-sm">Cria listas de palavras para trabalhos de casa!</p>
+                                    <div className="col-span-2 text-center py-16 text-slate-400 border-4 border-dashed border-slate-100 rounded-[3rem] bg-slate-50">
+                                        <Pencil size={48} className="mx-auto mb-4 opacity-30" />
+                                        <p className="text-lg font-bold">Ainda não criaste nenhuma lição.</p>
+                                        <p className="text-sm opacity-70">Cria listas de palavras para TPC!</p>
                                     </div>
                                 )}
                                 {appState.customLessons.map(lesson => (
-                                    <div key={lesson.id} className="border border-slate-100 p-4 rounded-2xl hover:shadow-md transition-shadow relative group bg-stone-50">
-                                         <h4 className="font-bold text-slate-700 mb-1">{lesson.title}</h4>
-                                         <p className="text-xs text-slate-400 font-bold uppercase mb-2">{lesson.description}</p>
-                                         <p className="text-sm text-slate-500 line-clamp-2 bg-white p-2 rounded-lg border border-slate-100 mb-2 font-mono">
+                                    <div key={lesson.id} className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 hover:shadow-lg transition-all group relative overflow-hidden">
+                                         <div className="absolute top-0 left-0 w-2 h-full bg-amber-400"></div>
+                                         <h4 className="font-bold text-lg text-slate-700 mb-1 ml-2">{lesson.title}</h4>
+                                         <p className="text-xs text-slate-400 font-bold uppercase mb-4 ml-2 tracking-wider">{lesson.description}</p>
+                                         <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-2 font-mono text-sm text-slate-600 line-clamp-2 shadow-inner">
                                              {lesson.content}
-                                         </p>
+                                         </div>
                                          <button 
                                             onClick={() => onDeleteCustomLesson(lesson.id)}
-                                            className="absolute top-4 right-4 text-slate-300 hover:text-red-500 transition-colors"
+                                            className="absolute top-6 right-6 text-slate-300 hover:text-red-500 transition-colors bg-white p-2 rounded-full shadow-sm hover:bg-red-50"
                                         >
-                                            <Trash2 size={16} />
+                                            <Trash2 size={18} />
                                         </button>
                                     </div>
                                 ))}
                             </div>
                          </>
                      ) : (
-                         <form onSubmit={handleSaveLesson} className="max-w-xl mx-auto">
-                             <div className="flex items-center gap-2 mb-6">
-                                <button type="button" onClick={() => setShowLessonForm(false)} className="bg-slate-100 p-2 rounded-full"><ArrowLeft size={16}/></button>
-                                <h3 className="text-xl font-bold text-slate-700">Nova Lição</h3>
+                         <form onSubmit={handleSaveLesson} className="max-w-2xl mx-auto bg-white p-8 rounded-[3rem] shadow-sm border border-slate-100">
+                             <div className="flex items-center gap-4 mb-8">
+                                <button type="button" onClick={() => setShowLessonForm(false)} className="bg-slate-100 p-3 rounded-full hover:bg-slate-200 transition"><ArrowLeft size={20}/></button>
+                                <h3 className="text-2xl font-bold text-slate-700">Nova Lição</h3>
                              </div>
                              
-                             <div className="space-y-4">
+                             <div className="space-y-6">
                                  <div>
-                                     <label className="block text-slate-400 font-bold text-xs uppercase mb-1">Título</label>
+                                     <label className="block text-slate-400 font-bold text-xs uppercase mb-2 ml-2">Título</label>
                                      <input 
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-700"
+                                        className="w-full bg-slate-50 rounded-2xl p-4 font-bold text-slate-700 shadow-[inset_0px_2px_4px_rgba(0,0,0,0.06)] focus:outline-none focus:ring-4 ring-amber-100"
                                         placeholder="Ex: Palavras com CH"
                                         value={lessonTitle}
                                         onChange={e => setLessonTitle(e.target.value)}
@@ -361,26 +332,26 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                                      />
                                  </div>
                                  <div>
-                                     <label className="block text-slate-400 font-bold text-xs uppercase mb-1">Descrição (Opcional)</label>
+                                     <label className="block text-slate-400 font-bold text-xs uppercase mb-2 ml-2">Descrição (Opcional)</label>
                                      <input 
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-600"
+                                        className="w-full bg-slate-50 rounded-2xl p-4 text-slate-600 shadow-[inset_0px_2px_4px_rgba(0,0,0,0.06)] focus:outline-none focus:ring-4 ring-amber-100"
                                         placeholder="Para o TPC de Sexta-feira"
                                         value={lessonDesc}
                                         onChange={e => setLessonDesc(e.target.value)}
                                      />
                                  </div>
                                  <div>
-                                     <label className="block text-slate-400 font-bold text-xs uppercase mb-1">Texto da Lição</label>
+                                     <label className="block text-slate-400 font-bold text-xs uppercase mb-2 ml-2">Texto da Lição</label>
                                      <textarea 
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-600 h-32 font-mono"
+                                        className="w-full bg-slate-50 rounded-2xl p-4 text-slate-600 h-40 font-mono shadow-[inset_0px_2px_4px_rgba(0,0,0,0.06)] focus:outline-none focus:ring-4 ring-amber-100 resize-none"
                                         placeholder="Escreve aqui as palavras ou frases..."
                                         value={lessonContent}
                                         onChange={e => setLessonContent(e.target.value)}
                                         required
                                      />
-                                     <p className="text-xs text-slate-400 mt-1">Dica: Separa palavras com espaços ou frases com pontuação.</p>
+                                     <p className="text-xs text-slate-400 mt-2 ml-2 flex items-center gap-1"><Type size={12} /> Dica: Separa palavras com espaços.</p>
                                  </div>
-                                 <ClayButton variant="primary" theme="amber" type="submit" className="w-full py-3">Guardar Lição</ClayButton>
+                                 <ClayButton variant="primary" theme="amber" type="submit" className="w-full py-4 text-lg shadow-lg">Guardar Lição</ClayButton>
                              </div>
                          </form>
                      )}
@@ -389,31 +360,30 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
 
             {activeTab === 'data' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="bg-blue-50 p-6 rounded-[2rem] border border-blue-100">
-                        <div className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-blue-500 shadow-sm mb-4">
-                            <Download size={24} />
+                    <div className="bg-blue-50 p-8 rounded-[3rem] border border-blue-100 text-center hover:bg-blue-100/50 transition-colors">
+                        <div className="bg-white w-20 h-20 rounded-full flex items-center justify-center text-blue-500 shadow-lg mb-6 mx-auto">
+                            <Download size={32} />
                         </div>
-                        <h3 className="text-lg font-bold text-slate-700 mb-2">Exportar Dados (Backup)</h3>
-                        <p className="text-sm text-slate-500 mb-6 leading-relaxed">
-                            Transfere um ficheiro seguro com todo o progresso dos alunos e lições personalizadas. 
-                            Guarda-o no teu computador ou pen drive.
+                        <h3 className="text-xl font-bold text-slate-700 mb-2">Backup (Exportar)</h3>
+                        <p className="text-slate-500 mb-8 leading-relaxed px-4">
+                            Guarda todo o progresso num ficheiro seguro no teu computador.
                         </p>
-                        <ClayButton variant="primary" theme="blue" onClick={handleExport} className="w-full">
+                        <ClayButton variant="primary" theme="blue" onClick={handleExport} className="w-full py-4 text-lg shadow-xl">
                             Descarregar Ficheiro
                         </ClayButton>
                     </div>
 
-                    <div className="bg-emerald-50 p-6 rounded-[2rem] border border-emerald-100">
-                        <div className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-emerald-500 shadow-sm mb-4">
-                            <Upload size={24} />
+                    <div className="bg-emerald-50 p-8 rounded-[3rem] border border-emerald-100 text-center hover:bg-emerald-100/50 transition-colors">
+                        <div className="bg-white w-20 h-20 rounded-full flex items-center justify-center text-emerald-500 shadow-lg mb-6 mx-auto">
+                            <Upload size={32} />
                         </div>
-                        <h3 className="text-lg font-bold text-slate-700 mb-2">Importar Dados</h3>
-                        <p className="text-sm text-slate-500 mb-6 leading-relaxed">
-                            Restaura um backup anterior ou transfere dados de outro computador. 
-                            <span className="text-red-500 font-bold"> Atenção: Isto irá substituir os dados atuais!</span>
+                        <h3 className="text-xl font-bold text-slate-700 mb-2">Restaurar (Importar)</h3>
+                        <p className="text-slate-500 mb-8 leading-relaxed px-4">
+                            Carrega um ficheiro de backup anterior. <br/><span className="text-red-400 font-bold text-xs">⚠️ Substitui os dados atuais!</span>
                         </p>
-                        <label className="cursor-pointer">
-                            <div className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-2xl text-center shadow-lg shadow-emerald-200 transition-all active:scale-95">
+                        <label className="cursor-pointer block w-full">
+                            <div className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 px-4 rounded-2xl text-center shadow-[0_10px_20px_rgba(16,185,129,0.3)] transition-all active:scale-95 text-lg relative overflow-hidden">
+                                <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent pointer-events-none"></div>
                                 Selecionar Ficheiro
                             </div>
                             <input type="file" accept=".json" onChange={handleImport} className="hidden" />
