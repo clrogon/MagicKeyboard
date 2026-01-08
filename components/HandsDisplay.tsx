@@ -122,7 +122,7 @@ export const HandsDisplay: React.FC<HandsDisplayProps> = ({
             height={200 * scale} 
             viewBox="0 0 400 200" 
             xmlns="http://www.w3.org/2000/svg"
-            className="overflow-visible"
+            className="overflow-visible filter drop-shadow-xl"
         >
             <g transform="translate(0, 10)">
                 <path d={LeftHandPaths.wrist} fill={skin.fill} stroke={skin.stroke} strokeWidth="2" />

@@ -4,7 +4,7 @@ import { Theme } from '../types';
 
 interface ClayButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   active?: boolean; // If true, renders in "pressed" state
-  variant?: 'primary' | 'secondary' | 'neutral' | 'success'; // Visual style style
+  variant?: 'primary' | 'secondary' | 'neutral' | 'success' | 'white'; // Added 'white'
   theme?: Theme; // Color theme (rose, blue, amber) used for primary variants
 }
 
@@ -64,6 +64,12 @@ export const ClayButton: React.FC<ClayButtonProps> = ({
         bg-emerald-400 text-white
         shadow-[inset_-4px_-4px_8px_rgba(0,100,50,0.2),inset_4px_4px_8px_rgba(255,255,255,0.4),0px_6px_12px_rgba(16,185,129,0.3)]
         hover:bg-emerald-500
+    `,
+    white: `
+        bg-white text-slate-700
+        shadow-[0px_6px_0px_rgba(0,0,0,0.1),0px_10px_10px_rgba(0,0,0,0.1)]
+        hover:-translate-y-1 hover:shadow-[0px_8px_0px_rgba(0,0,0,0.1),0px_15px_15px_rgba(0,0,0,0.1)]
+        active:translate-y-1 active:shadow-sm
     `
   };
 

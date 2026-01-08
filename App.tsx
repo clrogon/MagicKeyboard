@@ -709,82 +709,109 @@ const App: React.FC = () => {
         `Precisão: ${lastResult.accuracy}%\n` +
         `Data: ${new Date().toLocaleDateString('pt-PT')}`;
 
+    // Common styling for relative card content within the overlay
+    const overlayContentClass = "bg-white/10 rounded-2xl p-6 backdrop-blur-sm w-full max-h-[60vh] overflow-y-auto custom-scrollbar flex flex-col items-center";
+
+    // Determine active splash state
+    const isLevelUp = !!levelUpData;
+    const isUnlock = !isLevelUp && !!levelUnlocked;
+    const isChallenge = !isLevelUp && !isUnlock && challengeCompleted;
+    const isAchievement = !isLevelUp && !isUnlock && !isChallenge && newlyUnlockedAchievements.length > 0;
+    const isQR = showQR;
+
+    const hasActiveSplash = isLevelUp || isUnlock || isChallenge || isAchievement || isQR;
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm">
             <motion.div 
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="bg-white rounded-[2.5rem] p-8 max-w-md w-full text-center shadow-2xl relative overflow-hidden border-4 border-white"
+                className={`bg-white rounded-[2.5rem] p-8 max-w-md w-full text-center shadow-2xl relative overflow-hidden border-4 border-white flex flex-col ${hasActiveSplash ? 'min-h-[400px]' : ''}`}
             >
-                {/* Level Up Notification */}
-                {levelUpData && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={`absolute inset-0 ${colors.bg} z-50 flex flex-col items-center justify-center text-white p-6`}>
-                         <div className="bg-white/20 p-4 rounded-full mb-4 animate-bounce">
+                
+                {/* 1. LEVEL UP SPLASH */}
+                {isLevelUp && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={`flex-1 flex flex-col items-center justify-center ${colors.bg} rounded-[2rem] p-6 text-white`}>
+                         <div className="bg-white/20 p-4 rounded-full mb-4 animate-bounce shadow-lg">
                             <Star size={48} className="fill-white" />
                          </div>
-                         <h2 className="text-4xl font-bold mb-4 font-fredoka">NÍVEL DE JOGADOR {levelUpData.new}!</h2>
-                         <ClayButton onClick={() => setLevelUpData(null)} variant="secondary" theme={currentUser.theme}>Uau!</ClayButton>
+                         <h2 className="text-4xl font-bold mb-4 font-fredoka drop-shadow-sm">NÍVEL DE JOGADOR {levelUpData.new}!</h2>
+                         <div className="mt-auto">
+                            <ClayButton onClick={() => setLevelUpData(null)} variant="white" className={`${colors.text} px-8 py-3 text-lg w-full`}>Uau!</ClayButton>
+                         </div>
                     </motion.div>
                 )}
-                {/* Unlock Notification */}
-                {!levelUpData && levelUnlocked && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={`absolute inset-0 bg-emerald-500 z-50 flex flex-col items-center justify-center text-white p-6`}>
-                         <div className="bg-white/20 p-4 rounded-full mb-4 animate-bounce">
+
+                {/* 2. UNLOCK SPLASH */}
+                {isUnlock && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col items-center justify-center bg-emerald-500 rounded-[2rem] p-6 text-white">
+                         <div className="bg-white/20 p-4 rounded-full mb-4 animate-bounce shadow-lg">
                             <Unlock size={48} className="fill-white" />
                          </div>
-                         <h2 className="text-4xl font-bold mb-4 font-fredoka">NOVO DESAFIO!</h2>
-                         <p className="text-xl mb-6">Desbloqueaste o Nível {levelUnlocked}</p>
-                         <ClayButton onClick={() => setLevelUnlocked(null)} variant="secondary" theme={currentUser.theme}>Vamos lá!</ClayButton>
+                         <h2 className="text-4xl font-bold mb-4 font-fredoka drop-shadow-sm">NOVO DESAFIO!</h2>
+                         <p className="text-xl mb-8 font-medium">Desbloqueaste o Nível {levelUnlocked}</p>
+                         <div className="mt-auto w-full">
+                            <ClayButton onClick={() => setLevelUnlocked(null)} variant="white" className="text-emerald-500 px-8 py-3 text-lg w-full">Vamos lá!</ClayButton>
+                         </div>
                     </motion.div>
                 )}
                 
-                {/* Daily Challenge Notification */}
-                {!levelUpData && !levelUnlocked && challengeCompleted && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={`absolute inset-0 bg-orange-400 z-50 flex flex-col items-center justify-center text-white p-6`}>
-                         <div className="bg-white/20 p-4 rounded-full mb-4 animate-bounce">
+                {/* 3. DAILY CHALLENGE SPLASH */}
+                {isChallenge && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col items-center justify-center bg-orange-400 rounded-[2rem] p-6 text-white">
+                         <div className="bg-white/20 p-4 rounded-full mb-4 animate-bounce shadow-lg">
                             <Crown size={48} className="fill-white" />
                          </div>
-                         <h2 className="text-3xl font-bold mb-2 font-fredoka">DESAFIO DIÁRIO!</h2>
-                         <p className="text-xl mb-6">{currentUser.dailyChallenge?.description}</p>
-                         <div className="bg-white/20 px-6 py-3 rounded-xl mb-6">
-                            <span className="font-bold text-2xl">+{currentUser.dailyChallenge?.rewardXp} XP</span>
+                         <h2 className="text-3xl font-bold mb-2 font-fredoka drop-shadow-sm">DESAFIO DIÁRIO!</h2>
+                         <div className={overlayContentClass + " mb-6"}>
+                             <p className="text-xl mb-4 font-medium">{currentUser.dailyChallenge?.description}</p>
+                             <div className="bg-white text-orange-500 px-6 py-3 rounded-xl font-bold text-2xl shadow-sm">
+                                +{currentUser.dailyChallenge?.rewardXp} XP
+                             </div>
                          </div>
-                         <ClayButton onClick={() => setChallengeCompleted(false)} variant="secondary" theme={currentUser.theme}>Fantástico!</ClayButton>
+                         <div className="mt-auto w-full">
+                            <ClayButton onClick={() => setChallengeCompleted(false)} variant="white" className="text-orange-500 px-8 py-3 text-lg w-full">Fantástico!</ClayButton>
+                         </div>
                     </motion.div>
                 )}
 
-                {/* Achievement Notification */}
-                {!levelUpData && !levelUnlocked && !challengeCompleted && newlyUnlockedAchievements.length > 0 && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={`absolute inset-0 bg-yellow-400 z-50 flex flex-col items-center justify-center text-white p-6`}>
-                         {newlyUnlockedAchievements.map(achId => {
-                             const ach = ACHIEVEMENTS.find(a => a.id === achId);
-                             if (!ach) return null;
-                             const Icon = IconMap[ach.icon] || Star;
-                             return (
-                                 <div key={achId} className="flex flex-col items-center">
-                                     <div className="bg-white/20 p-4 rounded-full mb-4 animate-bounce">
-                                        <Medal size={48} className="fill-white" />
+                {/* 4. ACHIEVEMENT SPLASH */}
+                {isAchievement && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col items-center justify-center bg-yellow-400 rounded-[2rem] p-6 text-white h-full">
+                         <div className="bg-white/20 p-4 rounded-full mb-4 animate-bounce shadow-lg shrink-0">
+                            <Medal size={48} className="fill-white" />
+                         </div>
+                         <h2 className="text-3xl font-bold mb-6 font-fredoka drop-shadow-sm shrink-0">CONQUISTA!</h2>
+                         
+                         <div className={`${overlayContentClass} mb-6`}>
+                             {newlyUnlockedAchievements.map(achId => {
+                                 const ach = ACHIEVEMENTS.find(a => a.id === achId);
+                                 if (!ach) return null;
+                                 const Icon = IconMap[ach.icon] || Star;
+                                 return (
+                                     <div key={achId} className="flex flex-col items-center mb-6 last:mb-0 w-full">
+                                         <div className="bg-white/20 px-4 py-2 rounded-xl mb-2 flex items-center gap-2 backdrop-blur-md w-full justify-center shadow-sm">
+                                             <Icon size={20} />
+                                             <span className="font-bold">{ach.title}</span>
+                                         </div>
+                                         <p className="text-lg font-medium leading-tight">{ach.description}</p>
                                      </div>
-                                     <h2 className="text-3xl font-bold mb-2 font-fredoka">CONQUISTA!</h2>
-                                     <div className="bg-white/20 px-4 py-2 rounded-xl mb-4 flex items-center gap-2">
-                                         <Icon size={20} />
-                                         <span className="font-bold">{ach.title}</span>
-                                     </div>
-                                     <p className="text-lg mb-6 max-w-[80%]">{ach.description}</p>
-                                 </div>
-                             )
-                         })}
-                         <ClayButton onClick={() => setNewlyUnlockedAchievements([])} variant="secondary" theme={currentUser.theme}>Espetacular!</ClayButton>
+                                 )
+                             })}
+                         </div>
+
+                         <div className="mt-auto w-full">
+                            <ClayButton onClick={() => setNewlyUnlockedAchievements([])} variant="white" className="text-yellow-600 px-8 py-3 text-lg w-full shadow-lg">Espetacular!</ClayButton>
+                         </div>
                     </motion.div>
                 )}
 
-                {/* Magic QR Code Overlay */}
-                {showQR && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-white z-40 flex flex-col items-center justify-center p-6">
+                {/* 5. QR CODE SPLASH */}
+                {isQR && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col items-center justify-center bg-white z-40 p-2">
                         <h3 className="text-xl font-bold text-slate-700 mb-4 fun-font">Magic QR Report</h3>
-                        <div className="bg-white p-4 rounded-2xl shadow-lg border border-slate-200 mb-6 w-full max-w-[220px] flex items-center justify-center">
-                            {/* Responsive QR Code Container */}
-                            <div style={{ height: "auto", margin: "0 auto", maxWidth: 180, width: "100%" }}>
+                        <div className="bg-white p-4 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.1)] border border-slate-100 mb-6 w-full max-w-[240px] flex items-center justify-center">
+                            <div style={{ height: "auto", margin: "0 auto", maxWidth: 100 + "%", width: "100%" }}>
                                 <QRCode
                                     size={256}
                                     style={{ height: "auto", maxWidth: "100%", width: "100%" }}
@@ -802,99 +829,104 @@ const App: React.FC = () => {
                     </motion.div>
                 )}
 
-                <div className={`inline-block px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide mb-4 ${isWin ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
-                    {goalStatus}
-                </div>
-                <h2 className="text-3xl font-bold text-slate-800 mb-2 fun-font">{message}</h2>
-                
-                {/* Star Display */}
-                <div className="flex justify-center gap-2 my-4">
-                    {[1, 2, 3].map((star) => (
-                        <Star key={star} size={40} fill={star <= lastResult.stars ? "#FBBF24" : "#E2E8F0"} className={star <= lastResult.stars ? "text-yellow-400" : "text-slate-200"} />
-                    ))}
-                </div>
-
-                {/* Feedback Suggestion */}
-                {feedbackSuggestion && (
-                    <div className={`text-sm font-bold mb-6 px-4 ${isWin ? 'text-emerald-600' : 'text-slate-500'}`}>
-                        {feedbackSuggestion}
-                    </div>
-                )}
-
-                {isCampaign && (
-                    <div className="bg-slate-50 rounded-2xl p-4 mb-6 text-left border border-slate-100">
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Relatório da Missão</p>
+                {/* 6. STANDARD RESULT SCREEN (Shown only if no splash is active) */}
+                {!hasActiveSplash && (
+                    <>
+                        <div className={`inline-block px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide mb-4 self-center ${isWin ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
+                            {goalStatus}
+                        </div>
+                        <h2 className="text-3xl font-bold text-slate-800 mb-2 fun-font">{message}</h2>
                         
-                        {/* Speed Goal Check */}
-                        <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-2">
-                                {lastResult.wpm >= wpmGoal ? <Check className="text-emerald-500" size={18} /> : <X className="text-red-400" size={18} />}
-                                <span className="text-sm font-bold text-slate-600">Velocidade</span>
-                            </div>
-                            <div className="text-sm">
-                                <span className={`font-bold ${lastResult.wpm >= wpmGoal ? 'text-emerald-600' : 'text-red-500'}`}>{lastResult.wpm} PPM</span>
-                                <span className="text-slate-400 mx-1">/</span>
-                                <span className="text-slate-400">{wpmGoal} alvo</span>
-                            </div>
+                        {/* Star Display */}
+                        <div className="flex justify-center gap-2 my-4">
+                            {[1, 2, 3].map((star) => (
+                                <Star key={star} size={40} fill={star <= lastResult.stars ? "#FBBF24" : "#E2E8F0"} className={star <= lastResult.stars ? "text-yellow-400" : "text-slate-200"} />
+                            ))}
                         </div>
 
-                        {/* Accuracy Goal Check */}
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                {lastResult.accuracy >= accuracyGoal ? <Check className="text-emerald-500" size={18} /> : <X className="text-red-400" size={18} />}
-                                <span className="text-sm font-bold text-slate-600">Acertos</span>
+                        {/* Feedback Suggestion */}
+                        {feedbackSuggestion && (
+                            <div className={`text-sm font-bold mb-6 px-4 ${isWin ? 'text-emerald-600' : 'text-slate-500'}`}>
+                                {feedbackSuggestion}
                             </div>
-                            <div className="text-sm">
-                                <span className={`font-bold ${lastResult.accuracy >= accuracyGoal ? 'text-emerald-600' : 'text-red-500'}`}>{lastResult.accuracy}%</span>
-                                <span className="text-slate-400 mx-1">/</span>
-                                <span className="text-slate-400">{accuracyGoal}% alvo</span>
+                        )}
+
+                        {isCampaign && (
+                            <div className="bg-slate-50 rounded-2xl p-4 mb-6 text-left border border-slate-100">
+                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Relatório da Missão</p>
+                                
+                                {/* Speed Goal Check */}
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center gap-2">
+                                        {lastResult.wpm >= wpmGoal ? <Check className="text-emerald-500" size={18} /> : <X className="text-red-400" size={18} />}
+                                        <span className="text-sm font-bold text-slate-600">Velocidade</span>
+                                    </div>
+                                    <div className="text-sm">
+                                        <span className={`font-bold ${lastResult.wpm >= wpmGoal ? 'text-emerald-600' : 'text-red-500'}`}>{lastResult.wpm} PPM</span>
+                                        <span className="text-slate-400 mx-1">/</span>
+                                        <span className="text-slate-400">{wpmGoal} alvo</span>
+                                    </div>
+                                </div>
+
+                                {/* Accuracy Goal Check */}
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        {lastResult.accuracy >= accuracyGoal ? <Check className="text-emerald-500" size={18} /> : <X className="text-red-400" size={18} />}
+                                        <span className="text-sm font-bold text-slate-600">Acertos</span>
+                                    </div>
+                                    <div className="text-sm">
+                                        <span className={`font-bold ${lastResult.accuracy >= accuracyGoal ? 'text-emerald-600' : 'text-red-500'}`}>{lastResult.accuracy}%</span>
+                                        <span className="text-slate-400 mx-1">/</span>
+                                        <span className="text-slate-400">{accuracyGoal}% alvo</span>
+                                    </div>
+                                </div>
                             </div>
+                        )}
+
+                        {!isCampaign && (
+                            <div className="grid grid-cols-3 gap-3 mb-6">
+                                <div className="bg-blue-50 p-3 rounded-2xl">
+                                    <div className="text-[10px] md:text-xs font-bold text-blue-400 uppercase">Velocidade</div>
+                                    <div className="text-2xl md:text-3xl font-bold text-blue-600">{lastResult.wpm}</div>
+                                </div>
+                                <div className="bg-emerald-50 p-3 rounded-2xl">
+                                    <div className="text-[10px] md:text-xs font-bold text-emerald-400 uppercase">Precisão</div>
+                                    <div className="text-xl md:text-2xl font-bold text-emerald-600 leading-tight pt-1">
+                                        {lastResult.accuracy}%
+                                    </div>
+                                </div>
+                                <div className="bg-purple-50 p-3 rounded-2xl">
+                                    <div className="text-[10px] md:text-xs font-bold text-purple-400 uppercase">Ritmo</div>
+                                    <div className="text-sm md:text-base font-bold text-purple-600 leading-tight pt-1">
+                                        {getConsistencyLabel(lastResult.consistency ?? 100)}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="flex flex-col gap-3 mt-auto w-full">
+                            <div className="flex gap-3">
+                                <ClayButton variant="secondary" onClick={() => setShowQR(true)} className="flex-1">
+                                    <QrCode size={18} className="mr-2" /> QR Pro
+                                </ClayButton>
+                                <ClayButton variant="secondary" onClick={() => setCurrentScreen(AppScreen.Dashboard)} className="flex-1">
+                                    Menu
+                                </ClayButton>
+                            </div>
+
+                            {nextLevel && (
+                                <ClayButton variant="primary" theme={currentUser.theme} onClick={() => handleStartLevel(nextLevel as Level)} className="w-full py-3">
+                                    Próximo Nível <ArrowRight size={18} className="ml-2" />
+                                </ClayButton>
+                            )}
+                            {!nextLevel && (
+                                <ClayButton variant={lastResult.stars < 2 ? "primary" : "secondary"} theme={currentUser.theme} onClick={() => handleStartLevel(activeLevel)}>
+                                    {isWin ? "Jogar Novamente" : "Tentar de Novo"}
+                                </ClayButton>
+                            )}
                         </div>
-                    </div>
+                    </>
                 )}
-
-                {!isCampaign && (
-                    <div className="grid grid-cols-3 gap-3 mb-6">
-                        <div className="bg-blue-50 p-3 rounded-2xl">
-                            <div className="text-[10px] md:text-xs font-bold text-blue-400 uppercase">Velocidade</div>
-                            <div className="text-2xl md:text-3xl font-bold text-blue-600">{lastResult.wpm}</div>
-                        </div>
-                        <div className="bg-emerald-50 p-3 rounded-2xl">
-                            <div className="text-[10px] md:text-xs font-bold text-emerald-400 uppercase">Precisão</div>
-                            <div className="text-xl md:text-2xl font-bold text-emerald-600 leading-tight pt-1">
-                                {lastResult.accuracy}%
-                            </div>
-                        </div>
-                        <div className="bg-purple-50 p-3 rounded-2xl">
-                            <div className="text-[10px] md:text-xs font-bold text-purple-400 uppercase">Ritmo</div>
-                            <div className="text-sm md:text-base font-bold text-purple-600 leading-tight pt-1">
-                                {getConsistencyLabel(lastResult.consistency ?? 100)}
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                <div className="flex flex-col gap-3">
-                    <div className="flex gap-3">
-                        <ClayButton variant="secondary" onClick={() => setShowQR(true)} className="flex-1">
-                            <QrCode size={18} className="mr-2" /> QR Pro
-                        </ClayButton>
-                        <ClayButton variant="secondary" onClick={() => setCurrentScreen(AppScreen.Dashboard)} className="flex-1">
-                            Menu
-                        </ClayButton>
-                    </div>
-
-                    {nextLevel && (
-                        <ClayButton variant="primary" theme={currentUser.theme} onClick={() => handleStartLevel(nextLevel as Level)} className="w-full py-3">
-                            Próximo Nível <ArrowRight size={18} className="ml-2" />
-                        </ClayButton>
-                    )}
-                    {!nextLevel && (
-                        <ClayButton variant={lastResult.stars < 2 ? "primary" : "secondary"} theme={currentUser.theme} onClick={() => handleStartLevel(activeLevel)}>
-                            {isWin ? "Jogar Novamente" : "Tentar de Novo"}
-                        </ClayButton>
-                    )}
-                </div>
             </motion.div>
         </div>
     );
