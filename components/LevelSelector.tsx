@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { Level, UserProfile, CustomLesson } from '../types';
+import { Level, UserProfile, CustomLesson, GameMode } from '../types';
 import { ClayButton } from './ClayButton';
-import { Lock, Play, Clock, AlertCircle, Trophy, Shield, Crown, Eye, EyeOff, BookOpen, Volume2, VolumeX, Pencil, Mic, RefreshCw, KeyRound } from 'lucide-react';
+import { Lock, Play, Clock, AlertCircle, Trophy, Shield, Crown, Eye, EyeOff, BookOpen, Volume2, VolumeX, Pencil, Mic, RefreshCw, KeyRound, Library, ChevronRight, Book } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getXpForNextLevel, THEME_COLORS, HOMEWORK_CODES } from '../constants';
 
@@ -17,6 +17,7 @@ interface LevelSelectorProps {
   onSelectStoryMode: () => void;
   onSelectDictationMode: () => void; 
   onSelectCustomLesson: (lesson: CustomLesson) => void;
+  onOpenLibrary: () => void;
   onViewStats: () => void;
   onChangeAvatar: () => void;
   onShowHandGuide: () => void;
@@ -39,7 +40,7 @@ const itemVariants = {
 };
 
 const LevelSelector: React.FC<LevelSelectorProps> = ({ 
-    levels, unlockedLevels, customLessons, gameState, onSelectLevel, onSelectTimedMode, onSelectErrorMode, onSelectStoryMode, onSelectDictationMode, onSelectCustomLesson, onViewStats, onChangeAvatar, onShowHandGuide, onToggleBlindMode, onToggleSound, isBlindMode
+    levels, unlockedLevels, customLessons, gameState, onSelectLevel, onSelectTimedMode, onSelectErrorMode, onSelectStoryMode, onSelectDictationMode, onSelectCustomLesson, onOpenLibrary, onViewStats, onChangeAvatar, onShowHandGuide, onToggleBlindMode, onToggleSound, isBlindMode
 }) => {
   const { xp, playerLevel, currentTitle, currentAvatar, dailyChallenge, theme, soundEnabled } = gameState;
   
@@ -80,7 +81,7 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
         >
             <div className="flex items-center gap-6 w-full md:w-auto">
                 <button onClick={onChangeAvatar} className="relative group">
-                    <div className="w-24 h-24 bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-full flex items-center justify-center text-5xl shadow-inner group-hover:scale-105 transition-transform">
+                    <div className="w-24 h-24 bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-full flex items-center justify-center text-5xl shadow-inner group-hover:scale-105 transition-transform border-4 border-white shadow-lg">
                         {currentAvatar}
                     </div>
                     <div className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-sm text-indigo-500">
@@ -137,6 +138,22 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                 animate={{ x: 0, opacity: 1 }}
                 className="w-full lg:w-80 flex flex-col gap-4 shrink-0"
             >
+                {/* Biblioteca das Vozes Link */}
+                <button 
+                    onClick={onOpenLibrary}
+                    className="w-full bg-gradient-to-br from-amber-400 to-amber-600 p-6 rounded-[2.5rem] shadow-xl shadow-amber-200 text-white group relative overflow-hidden active:scale-95 transition-all"
+                >
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-10 -mt-10 blur-2xl group-hover:bg-white/20 transition-all"></div>
+                    <div className="relative z-10 flex flex-col items-center text-center">
+                        <Library size={48} className="mb-3 drop-shadow-md" />
+                        <h3 className="text-xl font-bold fun-font uppercase tracking-wider">Biblioteca das Vozes</h3>
+                        <p className="text-xs text-amber-100 font-bold mt-2 opacity-80">Literatura de Angola e Portugal</p>
+                        <div className="mt-4 bg-white/20 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                             Explorar Obras <ChevronRight size={14} />
+                        </div>
+                    </div>
+                </button>
+
                 <div className="bg-white/60 backdrop-blur-md p-6 rounded-[2rem] border border-white/50">
                     <h3 className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-4 ml-2">Ajudas</h3>
                     
@@ -158,7 +175,7 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                 </div>
                 
                 <div className="bg-white/60 backdrop-blur-md p-6 rounded-[2rem] border border-white/50">
-                    <h3 className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-4 ml-2">Desafios Especiais</h3>
+                    <h3 className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-4 ml-2">Preferências</h3>
                     
                     <ClayButton 
                         variant={isBlindMode ? "primary" : "secondary"} 
