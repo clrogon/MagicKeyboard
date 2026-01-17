@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import confetti from 'canvas-confetti';
 import { AppState, UserProfile, AppScreen, Level, SessionResult, GameMode, ErrorStats, Theme, KeyboardLayout, GhostRecord } from './types';
-import { LEVELS, PLAYER_TITLES, AVATARS, THEME_COLORS, LIBRARY_TEXTS } from './constants';
+import { LEVELS, PLAYER_TITLES, AVATARS, LIBRARY_TEXTS } from './constants';
 import LevelSelector from './components/LevelSelector';
 import TypingArea from './components/TypingArea';
 import StatsBoard from './components/StatsBoard';
