@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Book, ArrowLeft, Library, ChevronRight, Globe } from 'lucide-react';
-import { LIBRARY_TEXTS, THEME_COLORS } from '../constants';
+import { LIBRARY_TEXTS } from '../constants';
 import { ClayButton } from './ClayButton';
 import { Theme } from '../types';
 
@@ -12,9 +12,7 @@ interface LibraryScreenProps {
   onBack: () => void;
 }
 
-const LibraryScreen: React.FC<LibraryScreenProps> = ({ theme, onSelectText, onBack }) => {
-  const colors = THEME_COLORS[theme];
-
+const LibraryScreen: React.FC<LibraryScreenProps> = ({ onSelectText, onBack }) => {
   return (
     <div className="min-h-screen p-4 md:p-8 relative z-10 overflow-y-auto">
       <div className="max-w-6xl mx-auto">

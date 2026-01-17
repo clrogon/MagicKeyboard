@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import confetti from 'canvas-confetti';
-import { AppState, UserProfile, AppScreen, Level, SessionResult, GameMode, ErrorStats, Theme, CustomLesson, KeyboardLayout, GhostRecord } from './types';
-import { LEVELS, PLAYER_TITLES, AVATARS, THEME_COLORS, getXpForNextLevel, ACHIEVEMENTS, LIBRARY_TEXTS } from './constants';
+import { AppState, UserProfile, AppScreen, Level, SessionResult, GameMode, ErrorStats, Theme, KeyboardLayout, GhostRecord } from './types';
+import { LEVELS, PLAYER_TITLES, AVATARS, THEME_COLORS, LIBRARY_TEXTS } from './constants';
 import LevelSelector from './components/LevelSelector';
 import TypingArea from './components/TypingArea';
 import StatsBoard from './components/StatsBoard';
@@ -14,7 +14,7 @@ import PrivacyModal from './components/PrivacyModal';
 import CookieBanner from './components/CookieBanner';
 import HandGuideModal from './components/HandGuideModal';
 import ScreenRestriction from './components/ScreenRestriction';
-import { Shield, Zap, Star, LogOut, Heart, ArrowRight, Download, WifiOff, Unlock, Medal, TrendingUp, Hourglass, Target, Calendar, CalendarCheck, Crown, Hash, ShieldCheck, Clock, Check, X, Code, AtSign, Terminal, Lock, QrCode } from 'lucide-react';
+import { Heart, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { audioService } from './services/audioService';
 import { ClayButton } from './components/ClayButton';
@@ -48,9 +48,6 @@ const App: React.FC = () => {
   const [showQR, setShowQR] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showHandGuide, setShowHandGuide] = useState(false);
-  const [isOffline, setIsOffline] = useState(!navigator.onLine);
-
-  const colors = currentUser ? THEME_COLORS[currentUser.theme] : THEME_COLORS['rose'];
 
   useEffect(() => {
     localStorage.setItem('keyboardHeroState', JSON.stringify(appState));
@@ -104,6 +101,12 @@ const App: React.FC = () => {
       });
   };
 
+  const handleClearData = () => {
+      localStorage.removeItem('keyboardHeroState');
+      localStorage.removeItem('cookieConsent');
+      window.location.reload();
+  };
+
   const handleStartLevel = (level: Level) => {
     setActiveLevel(level);
     setActiveMode(GameMode.Campaign);
@@ -121,7 +124,7 @@ const App: React.FC = () => {
       setCurrentScreen(AppScreen.Exercise);
   };
 
-  const handleLevelComplete = (result: SessionResult, sessionErrors: ErrorStats, sessionCorrects: ErrorStats, ghostData?: GhostRecord) => {
+  const handleLevelComplete = (result: SessionResult, _sessionErrors: ErrorStats, _sessionCorrects: ErrorStats, _ghostData?: GhostRecord) => {
     if (!currentUser) return;
     const minAcc = result.mode === GameMode.Library ? 95 : (activeLevel.minAccuracy || 1);
     const isWin = result.accuracy >= minAcc && result.stars >= 1; 
@@ -213,6 +216,16 @@ const App: React.FC = () => {
           Feito com <Heart size={12} className="inline text-red-400" /> para Portugal e Angola.
       </footer>
       <HandGuideModal isOpen={showHandGuide} onClose={() => setShowHandGuide(false)} theme={currentUser.theme} />
+      <PrivacyModal 
+          isOpen={showPrivacyModal} 
+          onClose={() => setShowPrivacyModal(false)} 
+          onClearData={handleClearData} 
+          theme={currentUser.theme} 
+      />
+      <CookieBanner 
+          onOpenPolicy={() => setShowPrivacyModal(true)} 
+          theme={currentUser.theme} 
+      />
     </div>
   );
 };

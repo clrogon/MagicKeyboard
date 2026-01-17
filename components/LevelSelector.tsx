@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { Level, UserProfile, CustomLesson, GameMode } from '../types';
+import { Level, UserProfile, CustomLesson } from '../types';
 import { ClayButton } from './ClayButton';
-import { Lock, Play, Clock, AlertCircle, Trophy, Shield, Crown, Eye, EyeOff, BookOpen, Volume2, VolumeX, Pencil, Mic, RefreshCw, KeyRound, Library, ChevronRight, Book } from 'lucide-react';
+import { Lock, Play, Clock, AlertCircle, Trophy, Shield, Eye, EyeOff, BookOpen, Volume2, VolumeX, Pencil, Mic, RefreshCw, KeyRound, Library, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getXpForNextLevel, THEME_COLORS, HOMEWORK_CODES } from '../constants';
 
@@ -113,7 +113,7 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
                 <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-3xl p-5 w-full md:w-80 relative overflow-hidden group border border-orange-200/50">
                      <div className="flex justify-between items-start mb-2">
                         <div className="flex items-center gap-2 text-orange-600 font-bold text-xs uppercase tracking-wide">
-                            <Crown size={14} /> Desafio Diário
+                            <Trophy size={14} /> Desafio Diário
                         </div>
                         <span className="bg-white/80 text-orange-500 text-xs font-bold px-2 py-1 rounded-lg shadow-sm">
                             +{dailyChallenge.rewardXp} XP
