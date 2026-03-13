@@ -7,6 +7,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Documentação (Documentation)
+- Adicionada uma auditoria técnica completa em `docs/FULL_DEEP_CODE_AUDIT.md`, com análise de segurança, qualidade e plano de mitigação priorizado.
+
+### Corrigido (Fixed)
+- Removida a injeção de `process.env.API_KEY` no bundle cliente; a integração Gemini passa a aceitar chave apenas em runtime via `window.__MAGIC_KEYBOARD_GEMINI_KEY`.
+- Adicionados scripts `typecheck`, `lint` e `test` em `package.json` para alinhar com as regras de qualidade do projeto.
+- Atualizada a documentação de segurança para refletir corretamente que o progresso é armazenado localmente no `localStorage` (sem alegação de encriptação em repouso).
+
+
 ## [2.0.0] - 2026-03-25 (A Atualização "Sala de Aula" | The Classroom Update)
 
 ### Adicionado (Added)
