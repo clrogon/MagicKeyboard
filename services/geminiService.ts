@@ -4,13 +4,29 @@ import { Level, GameMode, ErrorStats } from '../types';
 
 let genAI: GoogleGenAI | null = null;
 
-try {
-  if (process.env.API_KEY) {
-    genAI = new GoogleGenAI({ apiKey: process.env.API_KEY });
+/**
+ * Returns an optional Gemini API key provided at runtime by the host page.
+ * This avoids bundling long-lived secrets into compiled client assets.
+ */
+const getRuntimeApiKey = (): string | undefined => {
+  const runtimeWindow = window as Window & { __MAGIC_KEYBOARD_GEMINI_KEY?: string };
+  return runtimeWindow.__MAGIC_KEYBOARD_GEMINI_KEY?.trim() || undefined;
+};
+
+const getGenAIClient = (): GoogleGenAI | null => {
+  if (genAI) return genAI;
+
+  const apiKey = getRuntimeApiKey();
+  if (!apiKey) return null;
+
+  try {
+    genAI = new GoogleGenAI({ apiKey });
+    return genAI;
+  } catch {
+    console.warn('Gemini API key missing or invalid. Falling back to local exercises.');
+    return null;
   }
-} catch {
-  console.warn("Gemini API Key not found or invalid.");
-}
+};
 
 export const generateSmartExercise = async (
     level: Level, 
@@ -25,7 +41,9 @@ export const generateSmartExercise = async (
       return "a a a";
   };
 
-  if (!genAI) {
+  const aiClient = getGenAIClient();
+
+  if (!aiClient) {
     if (mode === GameMode.Timed) {
         const samples = level.textSamples && level.textSamples.length > 0 ? level.textSamples : ["o rato roeu", "a garrafa do rei", "tres pratos de trigo"];
         return Array(5).fill(null).map(() => samples[Math.floor(Math.random() * samples.length)]).join(' ');
@@ -120,7 +138,7 @@ export const generateSmartExercise = async (
         }
     }
 
-    const response = await genAI.models.generateContent({
+    const response = await aiClient.models.generateContent({
       model,
       contents: prompt,
     });

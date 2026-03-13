@@ -7,7 +7,7 @@
 
 ### Data Sovereignty (Local-First)
 *   **No Central Database**: We do not maintain a backend database to store user profiles, progress, or activity logs.
-*   **LocalStorage**: All user data (names, avatars, XP, level progress) is encrypted at rest within the browser's `LocalStorage` on the user's physical device.
+*   **LocalStorage**: All user data (names, avatars, XP, level progress) is stored locally in the browser's `LocalStorage` on the user's physical device.
 *   **No Telemetry**: We do not use third-party analytics trackers (e.g., Google Analytics, Mixpanel) to monitor user behavior.
 
 ### AI Anonymization (Gemini API)
@@ -40,7 +40,7 @@ We take security seriously. If you discover a security vulnerability or a privac
 
 ### API Keys & Secrets
 *   **Client-Side Exposure**: This application is a client-side PWA. If you fork this repository for public deployment, you **must** configure a proxy server or use strict API Key restrictions (HTTP Referrer) in the Google Cloud Console to prevent quota theft.
-*   **Env Variables**: Never commit `.env` files containing `API_KEY` to version control.
+*   **Runtime API Keys**: Never hardcode or commit API keys. If Gemini is used, provide the key at runtime (for example `window.__MAGIC_KEYBOARD_GEMINI_KEY`) and rotate it regularly.
 
 ### Reporting Process
 1.  Email the maintainers at [claudio.r.goncalves@outlook.com] (or create a private GitHub Advisory).

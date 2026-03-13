@@ -45,7 +45,7 @@ Desenvolvidas para professores que não querem gerir logins ou bases de dados.
 ### 🛡️ Soberania de Dados (Privacy by Design)
 A segurança das crianças é a nossa prioridade número um.
 *   **Sem Base de Dados**: Não temos servidores para guardar dados de utilizadores.
-*   **Armazenamento Local**: Todo o progresso é guardado encriptado no dispositivo (LocalStorage).
+*   **Armazenamento Local**: Todo o progresso é guardado localmente no dispositivo (LocalStorage).
 *   **Anonimato na IA**: Apenas enviamos prompts anónimos à Google Gemini (ex: "Gera frase com a letra J").
 
 ### 🧠 Inteligência Artificial Contextual
@@ -93,10 +93,10 @@ O Teclado Mágico é uma **Progressive Web App (PWA)** que funciona **Offline**.
     npm install
     ```
 
-3.  **Configurar API Key**
-    Crie um ficheiro `.env` na raiz:
-    ```env
-    API_KEY=a_tua_chave_api_aqui
+3.  **(Opcional) Ativar IA Gemini em runtime**
+    Para evitar segredos embebidos no bundle, injeta a chave apenas em runtime no `index.html`:
+    ```html
+    <script>window.__MAGIC_KEYBOARD_GEMINI_KEY = "a_tua_chave_api_aqui";</script>
     ```
 
 4.  **Correr Localmente**
